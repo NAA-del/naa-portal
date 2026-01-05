@@ -1,15 +1,28 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
+from django.core.mail import send_mail
+import logging
 
-# This allows you to add Announcements from the Admin Panel
-class Announcement(models.Model):
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    date_posted = models.DateTimeField(auto_now_add=True)
+logger = logging.getLogger(__name__)
 
-    def __str__(self):
-        return self.title
+# --- Helper Function for Email ---
+def send_verification_email(user):
+    try:
+        send_mail(
+            'Account Verified - NAA',
+            f'Hello {user.first_name},\n\nYour Nigerian Academy of Audiology account has been verified. You can now log in to access member resources.',
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+        print(f"Verification email sent to {user.email}")
+    except Exception as e:
+        # This catch prevents the Admin panel from crashing (Internal Server Error)
+        logger.error(f"Email failed to send to {user.email}: {e}")
+        print(f"Email error: {e}")
+
+# --- Models ---
 
 class User(AbstractUser):
     TIER_CHOICES = [
@@ -21,13 +34,33 @@ class User(AbstractUser):
     membership_tier = models.CharField(max_length=20, choices=TIER_CHOICES, default='student')
     phone_number = models.CharField(max_length=15, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
-    is_verified = models.BooleanField(default=False) # Admin must check their license first
+    is_verified = models.BooleanField(default=False)
 
-# This allows you to manage the Executive Council
+    def save(self, *args, **kwargs):
+        # Check if this is an update to an existing user
+        if self.pk:
+            old_user = User.objects.get(pk=self.pk)
+            # If is_verified was False and is now True, send the email
+            if not old_user.is_verified and self.is_verified:
+                send_verification_email(self)
+        
+        super().save(*args, **kwargs)
+
+class Announcement(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
 class Leader(models.Model):
     name = models.CharField(max_length=100)
-    position = models.CharField(max_length=100) # e.g., President, General Secretary
+    position = models.CharField(max_length=100)
     image = models.ImageField(upload_to='leaders/')
+
+    def __str__(self):
+        return f"{self.name} - {self.position}"
 
 class StudentProfile(models.Model):
     UNIVERSITY_CHOICES = [
@@ -56,19 +89,19 @@ class Resource(models.Model):
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     file = models.FileField(upload_to='resources/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    is_public = models.BooleanField(default=False, help_text="Can anyone see this?")
-    is_verified_only = models.BooleanField(default=True, help_text="Only verified members can download")
+    is_public = models.BooleanField(default=False)
+    is_verified_only = models.BooleanField(default=True)
 
     def __str__(self):
         return f"[{self.get_category_display()}] {self.title}"
 
 class AboutPage(models.Model):
     title = models.CharField(max_length=200, default="About the Academy")
-    history_text = models.TextField(help_text="The history of NAA")
+    history_text = models.TextField()
     history_image = models.ImageField(upload_to='about/', blank=True, null=True)
     mission = models.TextField()
     vision = models.TextField()
-    aims_and_objectives = models.TextField(help_text="Separate objectives with a new line")
+    aims_and_objectives = models.TextField()
 
     class Meta:
         verbose_name_plural = "About Page Content"
@@ -87,7 +120,7 @@ class StudentAnnouncement(models.Model):
     )
 
     def __str__(self):
-        return self.titles
+        return self.title # Fixed typo: changed self.titles to self.title
 
 class CPDRecord(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cpd_records')
