@@ -168,17 +168,16 @@ def resource_library(request):
 
 @login_required
 def member_id_card(request):
-    # 1. Get Student Profile safely
     student_profile = StudentProfile.objects.filter(user=request.user).first()
     
-    # 2. LOCK: If they are a student but haven't filled the profile, BLOCK THEM.
     if request.user.membership_tier == 'student' and not student_profile:
-        messages.error(request, "Action Required: You must complete your Student Profile (University & Matric No) to view your ID Card.")
+        # Ensure 'profile' is the correct name in your urls.py
+        messages.error(request, "Action Required: Complete your Student Profile to view your ID.")
         return redirect('profile')
 
     return render(request, 'accounts/member_id.html', {
-        'member': request.user,
-        'student_info': student_profile,
+        'user': request.user, # Template uses {{ user }}
+        'student_profile': student_profile, # Template uses {{ student_profile }}
         'expiry_date': 'December 2026'
     })
 
