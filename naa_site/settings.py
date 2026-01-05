@@ -3,155 +3,121 @@ Django settings for naa_site project.
 """
 
 import os
-from pathlib import Path
 import dj_database_url
+from pathlib import Path
 
-# --------------------------------------------------
-# BASE CONFIG
-# --------------------------------------------------
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key")
+# Quick-start development settings - unsuitable for production
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default-key')
 
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+# Set DEBUG to False by default on Render, True locally
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = [
-    "naa-portal.onrender.com",
-    "localhost",
-    "127.0.0.1",
-]
+# Cloudinary URL from environment
+CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
 
-# --------------------------------------------------
-# APPLICATIONS
-# --------------------------------------------------
+ALLOWED_HOSTS = ['naa-portal.onrender.com', 'localhost', '127.0.0.1']
+
+# Application definition
 INSTALLED_APPS = [
-    # Cloudinary (media storage)
-    "cloudinary_storage",
-    "cloudinary",
-
-    # Django core
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-
-    # Local apps
-    "accounts",
+    # Cloudinary apps must be at the top or before other apps that use static/media
+    'cloudinary_storage',
+    'cloudinary',
+    
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    
+    # Your App
+    'accounts',
 ]
 
-# --------------------------------------------------
-# MIDDLEWARE
-# --------------------------------------------------
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # Static files
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # WhiteNoise for static files
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# --------------------------------------------------
-# URLS / WSGI
-# --------------------------------------------------
-ROOT_URLCONF = "naa_site.urls"
-WSGI_APPLICATION = "naa_site.wsgi.application"
+ROOT_URLCONF = 'naa_site.urls'
 
-# --------------------------------------------------
-# TEMPLATES
-# --------------------------------------------------
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],  # App templates
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [], 
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
 ]
 
-# --------------------------------------------------
-# DATABASE
-# --------------------------------------------------
+WSGI_APPLICATION = 'naa_site.wsgi.application'
+
+# Database
+# Use PostgreSQL on Render, SQLite locally if DATABASE_URL is missing
 DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600
     )
 }
 
-# --------------------------------------------------
-# AUTH / USER MODEL
-# --------------------------------------------------
-AUTH_USER_MODEL = "accounts.User"
-
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+    { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+    { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
+    { 'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+    { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
-# --------------------------------------------------
-# INTERNATIONALIZATION
-# --------------------------------------------------
-LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+# Internationalization
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# --------------------------------------------------
-# STATIC FILES (WhiteNoise)
-# --------------------------------------------------
-STATIC_URL = "/static/"
+# --- STATIC FILES (CSS, JS) - MANAGED BY WHITENOISE ---
+STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedManifestStaticFilesStorage"
-)
-
-# --------------------------------------------------
-# MEDIA FILES (Cloudinary)
-# --------------------------------------------------
-MEDIA_URL = "/media/"
-
-CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
-
+# --- MEDIA FILES (IMAGES) - MANAGED BY CLOUDINARY ---
+MEDIA_URL = '/media/'
+# If CLOUDINARY_URL is set (Production), use Cloudinary. Otherwise use local storage.
 if CLOUDINARY_URL:
-    DEFAULT_FILE_STORAGE = (
-        "cloudinary_storage.storage.MediaCloudinaryStorage"
-    )
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 else:
-    MEDIA_ROOT = BASE_DIR / "media"
+    # Local development fallback
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# --------------------------------------------------
-# DEFAULT PRIMARY KEY
-# --------------------------------------------------
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# Custom User Model
+AUTH_USER_MODEL = 'accounts.User'
 
-# --------------------------------------------------
-# EMAIL (DEV SAFE)
-# --------------------------------------------------
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-DEFAULT_FROM_EMAIL = "admin@naa.org.ng"
-SERVER_EMAIL = "server@naa.org.ng"
+# --- LOGIN / LOGOUT REDIRECTS (FIX FOR 404 ERROR) ---
+LOGIN_URL = 'login'              # Tells Django to look for /login/ instead of /accounts/login/
+LOGIN_REDIRECT_URL = 'home'      # Where to go after logging in
+LOGOUT_REDIRECT_URL = 'home'     # Where to go after logging out
 
-# --------------------------------------------------
-# SECURITY (PRODUCTION SAFE DEFAULTS)
-# --------------------------------------------------
-CSRF_TRUSTED_ORIGINS = [
-    "https://naa-portal.onrender.com",
-]
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# --- EMAIL CONFIGURATION ---
+# Currently set to print emails to the Console/Logs (Good for testing)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'admin@naa.org.ng'
+SERVER_EMAIL = 'server@naa.org.ng'
