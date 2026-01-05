@@ -37,17 +37,28 @@
 
                 <div class="card shadow-sm p-3 border-0 mt-3">
                     {% if user.profile_picture %}
-                    <!-- LOGIC CHANGED: If photo exists, show success message only. No re-upload form. -->
                     <p class="text-success small fw-bold mb-0">
                         <i class="bi bi-check-circle-fill"></i> Photo Uploaded
                     </p>
-                    <div class="alert alert-light mt-2 py-1 border-0">
-                        <small class="text-muted" style="font-size: 0.75rem;">
-                            Profile picture is locked to save storage. Contact Admin to change.
-                        </small>
+                    
+                    <!-- RESTORED: "Change Photo" Button Logic -->
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#reupload">
+                            Change Photo
+                        </button>
+                        <div class="collapse mt-2" id="reupload">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="small mb-2">{{ p_form.profile_picture }}</div>
+                                <button type="submit" name="upload_photo" class="btn btn-sm btn-primary w-100">
+                                    <i class="bi bi-upload"></i> Update
+                                </button>
+                            </form>
+                        </div>
                     </div>
+
                     {% else %}
-                    <!-- Show upload form ONLY if no photo exists -->
+                    <!-- No photo: Show upload form -->
                     <h6 class="fw-bold small">Update Profile Photo</h6>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
