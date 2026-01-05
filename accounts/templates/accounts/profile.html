@@ -1,192 +1,229 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
 
-{% block title %}My Profile - NAA{% endblock %}
-
 {% block content %}
 <div class="container mt-5 pt-5 mb-5">
-    <div class="row">
-
-        <div class="col-md-4">
-            <div class="card shadow-sm text-center p-4 border-0 mb-4">
-                <div class="mb-3">
-                    <!-- Profile Image with Fallback -->
-                    <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'assets/img/testimonials/testimonials-1.jpg' %}{% endif %}"
-                        class="rounded-circle shadow-sm" width="120" height="120" alt="Profile image"
-                        style="border: 3px solid #3fbbc0; object-fit: cover;"
-                        data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
-                        onerror="this.src=this.dataset.fallback">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            
+            {% if member.membership_tier == 'student' %}
+            <!-- 1. STUDENT ID CARD DESIGN -->
+            <div class="card shadow-lg border-0" style="border-radius: 15px; background: white; border: 1px solid #ddd;">
+                <div class="p-3 text-center text-white" style="background: #3fbbc0; border-radius: 15px 15px 0 0;">
+                    <h6 class="mb-0 fw-bold">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
+                    <small style="font-size: 0.7rem; letter-spacing: 1px;">STUDENT IDENTIFICATION CARD</small>
                 </div>
-
-                <h4>{{ user.username }}</h4>
-                <span class="badge bg-info text-dark mb-2">
-                    {{ user.get_membership_tier_display }}
-                </span>
-
-                <hr>
-
-                {% if user.is_verified %}
-                <p class="text-success fw-bold small">
-                    <i class="bi bi-patch-check-fill"></i> Verified NAA Member
-                </p>
-                {% else %}
-                <p class="text-warning fw-bold small">
-                    <i class="bi bi-exclamation-triangle"></i> Status: Pending Verification
-                </p>
-                {% endif %}
-
-                <div class="card shadow-sm p-3 border-0 mt-3">
-                    {% if user.profile_picture %}
-                    <p class="text-success small fw-bold mb-0">
-                        <i class="bi bi-check-circle-fill"></i> Photo Uploaded
-                    </p>
-                    
-                    <!-- RESTORED: "Change Photo" Button Logic -->
-                    <div class="mt-2">
-                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#reupload">
-                            Change Photo
-                        </button>
-                        <div class="collapse mt-2" id="reupload">
-                            <form method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <div class="small mb-2">{{ p_form.profile_picture }}</div>
-                                <button type="submit" name="upload_photo" class="btn btn-sm btn-primary w-100">
-                                    <i class="bi bi-upload"></i> Update
-                                </button>
-                            </form>
-                        </div>
+                
+                <div class="card-body text-center">
+                    <div class="mb-3 mt-2">
+                        {% if member.profile_picture %}
+                            <img src="{{ member.profile_picture.url }}" 
+                                 class="rounded shadow-sm" 
+                                 style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #f8f9fa;"
+                                 data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
+                                 onerror="this.src=this.dataset.fallback">
+                        {% else %}
+                            <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" 
+                                 class="rounded shadow-sm" 
+                                 style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #f8f9fa;">
+                        {% endif %}
                     </div>
 
-                    {% else %}
-                    <!-- No photo: Show upload form -->
-                    <h6 class="fw-bold small">Update Profile Photo</h6>
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="small mb-2">{{ p_form.profile_picture }}</div>
-                        <button type="submit" name="upload_photo" class="btn btn-sm btn-primary w-100">
-                            <i class="bi bi-upload"></i> Upload
-                        </button>
-                    </form>
-                    {% endif %}
+                    <h5 class="fw-bold mb-0" style="color: #2c4964;">{{ member.username|upper }}</h5>
+                    <span class="badge bg-light text-primary border mb-3">STUDENT MEMBER</span>
+
+                    <div class="bg-light p-3 rounded text-start mb-3" style="font-size: 0.85rem; border-left: 4px solid #3fbbc0;">
+                        <p class="mb-1"><strong>ID No:</strong> NAA-STU/26/{{ member.id|stringformat:"04d" }}</p>
+                        {% if student_info %}
+                            <p class="mb-1"><strong>University:</strong> {{ student_info.get_university_display }}</p>
+                            <p class="mb-0"><strong>Level:</strong> {{ student_info.level }}L</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center px-2">
+                        <div class="text-start">
+                            <small class="text-muted d-block" style="font-size: 0.6rem;">Status</small>
+                            <span class="fw-bold {% if member.is_verified %}text-success{% else %}text-warning{% endif %}" style="font-size: 0.8rem;">
+                                {% if member.is_verified %}VERIFIED{% else %}PENDING{% endif %}
+                            </span>
+                        </div>
+                        <div class="text-end">
+                             <small class="text-muted d-block" style="font-size: 0.6rem;">Validity</small>
+                             <span class="fw-bold text-dark" style="font-size: 0.8rem;">DEC 2026</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-dark text-white text-center py-1" style="border-radius: 0 0 15px 15px;">
+                    <small style="font-size: 0.6rem;">Academic Verification: www.naa.org.ng/verify</small>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-8">
-
-            <div class="card p-4 shadow-sm mb-4 border-0">
-                <h3 style="color: #2c4964;">Member Profile</h3>
-                <hr>
-                <div class="row">
-                    <div class="col-6">
-                        <p><strong>Name:</strong> {{ user.username }}</p>
+            {% elif member.membership_tier == 'fellow' %}
+            <!-- 2. FELLOW ID CARD DESIGN (PREMIUM GOLD/NAVY) -->
+            <div class="card shadow-lg border-0" style="border-radius: 15px; background: white; border: 2px solid #b8860b;">
+                <div class="p-3 text-center text-white" style="background: linear-gradient(135deg, #2c4964, #1a3044); border-radius: 15px 15px 0 0; border-bottom: 3px solid #b8860b;">
+                    <h6 class="mb-0 fw-bold" style="color: #ffd700;">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
+                    <small style="font-size: 0.7rem; letter-spacing: 2px; color: #ffd700;">FELLOW OF THE ACADEMY (FNAA)</small>
+                </div>
+                
+                <div class="card-body text-center">
+                    <div class="mb-3 mt-2">
+                        {% if member.profile_picture %}
+                            <img src="{{ member.profile_picture.url }}" 
+                                 class="rounded-circle shadow-sm" 
+                                 style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #b8860b;"
+                                 data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
+                                 onerror="this.src=this.dataset.fallback">
+                        {% else %}
+                            <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" 
+                                 class="rounded-circle shadow-sm" 
+                                 style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #b8860b;">
+                        {% endif %}
                     </div>
-                    <div class="col-6">
-                        <p><strong>Email:</strong> {{ user.email }}</p>
+
+                    <h4 class="fw-bold mb-0" style="color: #2c4964;">{{ member.username|upper }}</h4>
+                    <span class="badge bg-dark text-warning px-3 mb-3 border border-warning">ACADEMY FELLOW</span>
+
+                    <div class="bg-light p-3 rounded text-center mb-3" style="font-size: 0.9rem; border: 1px solid #b8860b; background-color: #fffdf0 !important;">
+                        <p class="mb-0 text-muted small">REGISTRATION NUMBER</p>
+                        <h5 class="fw-bold mb-0" style="color: #2c4964;">NAA-FEL/26/{{ member.id|stringformat:"04d" }}</h5>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center px-4">
+                        <div class="text-start">
+                            <small class="text-muted d-block text-uppercase" style="font-size: 0.6rem;">Clinical Status</small>
+                            <span class="fw-bold text-success" style="font-size: 0.85rem;">
+                                <i class="bi bi-patch-check-fill"></i> VERIFIED FELLOW
+                            </span>
+                        </div>
+                        <div class="text-end">
+                             <small class="text-muted d-block text-uppercase" style="font-size: 0.6rem;">Validity</small>
+                             <span class="fw-bold text-dark" style="font-size: 0.85rem;">LIFE MEMBER</span>
+                        </div>
                     </div>
                 </div>
-                <p><strong>NAA Membership Tier:</strong> {{ user.get_membership_tier_display }}</p>
-                <p><strong>Verification Status:</strong>
-                    {% if user.is_verified %}
-                    <span class="badge bg-success">Verified Professional</span>
-                    {% else %}
-                    <span class="badge bg-warning text-dark">Pending Admin Approval</span>
-                    {% endif %}
-                </p>
+                <div class="py-1 text-center" style="background: #b8860b; border-radius: 0 0 15px 15px;">
+                    <small class="text-white fw-bold" style="font-size: 0.6rem;">EXECUTIVE COUNCIL CREDENTIAL</small>
+                </div>
             </div>
 
-            <div class="row mb-4">
-                {% if user.is_verified %}
-                <div class="col-md-6 mb-3">
-                    <a href="{% url 'member_id' %}" class="btn btn-dark w-100 shadow-sm">
-                        <i class="bi bi-card-heading me-2"></i> View Digital ID
-                    </a>
+            {% elif member.membership_tier == 'associate' %}
+            <!-- 3. ASSOCIATE MEMBER DESIGN (SILVER/GRAY) -->
+            <div class="card shadow-lg border-0" style="border-radius: 15px; background: white; border: 1px solid #6c757d;">
+                <div class="p-3 text-center text-white" style="background: #6c757d; border-radius: 15px 15px 0 0;">
+                    <h6 class="mb-0 fw-bold">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
+                    <small style="font-size: 0.7rem; letter-spacing: 1px;">ASSOCIATE IDENTIFICATION</small>
                 </div>
+                
+                <div class="card-body text-center">
+                    <div class="mb-3 mt-2">
+                        {% if member.profile_picture %}
+                            <img src="{{ member.profile_picture.url }}" 
+                                 class="rounded shadow-sm" 
+                                 style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #dee2e6;"
+                                 data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
+                                 onerror="this.src=this.dataset.fallback">
+                        {% else %}
+                            <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" 
+                                 class="rounded shadow-sm" 
+                                 style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #dee2e6;">
+                        {% endif %}
+                    </div>
 
-                {% if user.membership_tier == 'student' %}
-                <div class="col-md-12 mb-3">
-                    <a href="{% url 'student_hub' %}" class="btn btn-success w-100 shadow-sm">
-                        <i class="bi bi-people-fill me-2"></i> Student Community Hub
-                    </a>
-                </div>
+                    <h5 class="fw-bold mb-0" style="color: #2c4964;">{{ member.username|upper }}</h5>
+                    <span class="badge bg-secondary px-3 mb-3">ASSOCIATE MEMBER</span>
 
-                {% elif user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
-                <div class="col-md-6 mb-3">
-                    <a href="{% url 'cpd_tracker' %}" class="btn btn-primary w-100 shadow-sm">
-                        <i class="bi bi-award me-2"></i> CPD Portfolio (Mandatory)
-                    </a>
+                    <div class="bg-light p-3 rounded text-start mb-3" style="font-size: 0.85rem; border-left: 4px solid #6c757d;">
+                        <p class="mb-0"><strong>ID No:</strong> NAA-ASC/26/{{ member.id|stringformat:"04d" }}</p>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center px-2">
+                        <div class="text-start">
+                            <small class="text-muted d-block" style="font-size: 0.6rem;">Status</small>
+                            <span class="fw-bold text-success" style="font-size: 0.8rem;">VERIFIED</span>
+                        </div>
+                        <div class="text-end">
+                             <small class="text-muted d-block" style="font-size: 0.6rem;">Expiry</small>
+                             <span class="fw-bold text-dark" style="font-size: 0.8rem;">DEC 2026</span>
+                        </div>
+                    </div>
                 </div>
-                {% endif %}
-                {% endif %}
+                <div class="bg-secondary text-white text-center py-1" style="border-radius: 0 0 15px 15px;">
+                    <small style="font-size: 0.6rem;">Verification: www.naa.org.ng/verify</small>
+                </div>
             </div>
 
-            {% if user.membership_tier == 'student' %}
-            <div class="card p-4 shadow-sm mb-4 border-0">
-                <h4 style="color: #2c4964; font-weight: 700;">
-                    <i class="bi bi-mortarboard me-2"></i> Academic Details
-                </h4>
-                <hr>
+            {% else %}
+            <!-- 4. FULL PROFESSIONAL MEMBER DESIGN (STANDARD NAVY) -->
+            <div class="card shadow-lg border-0" style="border-radius: 15px; background: white; border: 1px solid #2c4964;">
+                <div class="p-3 text-center text-white" style="background: #2c4964; border-radius: 15px 15px 0 0;">
+                    <h6 class="mb-0 fw-bold">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
+                    <small style="font-size: 0.7rem; letter-spacing: 1.5px;">OFFICIAL PROFESSIONAL ID</small>
+                </div>
+                
+                <div class="card-body text-center">
+                    <div class="mb-3 mt-2">
+                        {% if member.profile_picture %}
+                            <img src="{{ member.profile_picture.url }}" 
+                                 class="rounded-circle shadow-sm" 
+                                 style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #2c4964;"
+                                 data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
+                                 onerror="this.src=this.dataset.fallback">
+                        {% else %}
+                            <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" 
+                                 class="rounded-circle shadow-sm" 
+                                 style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #2c4964;">
+                        {% endif %}
+                    </div>
 
-                {% if student_profile %}
-                <div class="row">
-                    <div class="col-md-4">
-                        <p class="mb-1 text-muted small">University</p>
-                        <p class="fw-bold">{{ student_profile.get_university_display }}</p>
+                    <h4 class="fw-bold mb-0" style="color: #2c4964;">{{ member.username|upper }}</h4>
+                    <span class="badge bg-primary px-3 mb-3">{{ member.get_membership_tier_display|upper }}</span>
+
+                    <div class="bg-light p-3 rounded text-center mb-3" style="font-size: 0.9rem; border: 1px dashed #2c4964;">
+                        <p class="mb-0 text-muted small">REGISTRATION NUMBER</p>
+                        <h5 class="fw-bold mb-0">NAA-PRO/26/{{ member.id|stringformat:"04d" }}</h5>
                     </div>
-                    <div class="col-md-4">
-                        <p class="mb-1 text-muted small">Matric Number</p>
-                        <p class="fw-bold">{{ student_profile.matric_number }}</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p class="mb-1 text-muted small">Level</p>
-                        <p class="fw-bold">{{ student_profile.level }}L</p>
+
+                    <div class="d-flex justify-content-between align-items-center px-4">
+                        <div class="text-start">
+                            <small class="text-muted d-block text-uppercase" style="font-size: 0.6rem;">Clinical Status</small>
+                            <span class="fw-bold text-success" style="font-size: 0.85rem;">
+                                <i class="bi bi-patch-check-fill"></i> VERIFIED
+                            </span>
+                        </div>
+                        <div class="text-end">
+                             <small class="text-muted d-block text-uppercase" style="font-size: 0.6rem;">Expiration</small>
+                             <span class="fw-bold text-dark" style="font-size: 0.85rem;">DEC 2026</span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="alert alert-light mt-2 py-2 border-0">
-                    <small class="text-muted">
-                        <i class="bi bi-info-circle"></i> Academic info is locked. Contact Admin for changes.
-                    </small>
+                <div class="py-1" style="background: repeating-linear-gradient(45deg, #2c4964, #2c4964 10px, #1a3044 10px, #1a3044 20px); border-radius: 0 0 15px 15px;">
+                    <small class="text-white" style="font-size: 0.55rem; opacity: 0.8;">OFFICIAL CREDENTIAL - PROPERTY OF NAA</small>
                 </div>
-                {% else %}
-                <p class="text-primary mb-3 small">Please link your university to unlock the Student Hub.</p>
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="small fw-bold">Select University</label>
-                            {{ s_form.university }}
-                        </div>
-                        <div class="col-md-6">
-                            <label class="small fw-bold">Matric Number</label>
-                            {{ s_form.matric_number }}
-                        </div>
-                        <div class="col-md-6">
-                            <label class="small fw-bold">Current Level</label>
-                            {{ s_form.level }}
-                        </div>
-                        <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-primary w-100">Submit Details</button>
-                        </div>
-                    </div>
-                </form>
-                {% endif %}
             </div>
             {% endif %}
 
-            <div class="card shadow-sm p-4 border-0">
-                <h4 style="color: #2c4964; font-size: 1.1rem; font-weight: 700;">Section 6: Rights & Privileges</h4>
-                <ul class="list-group list-group-flush small">
-                    <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Access to National
-                        Clinical Guidelines</li>
-                    <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Voting Rights at AGM
-                        (Tiers 3 & 4)</li>
-                    <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Digital Membership
-                        Certificate</li>
-                </ul>
+            <!-- Action Buttons -->
+            <div class="mt-4 text-center no-print">
+                <button onclick="window.print()" class="btn btn-primary btn-lg shadow-sm">
+                    <i class="bi bi-printer me-2"></i>Print Official ID
+                </button>
+                <div class="mt-3">
+                    <a href="{% url 'profile' %}" class="text-decoration-none text-muted small">
+                        <i class="bi bi-arrow-left me-1"></i> Return to Profile
+                    </a>
+                </div>
             </div>
-
         </div>
     </div>
 </div>
+
+<style>
+@media print {
+    .navbar, .footer, .no-print, .main-header, .topbar, #header, #footer { display: none !important; }
+    body { background: white !important; margin: 0; padding: 0; }
+    .container { margin-top: 0 !important; padding-top: 50px !important; }
+    .card { border: 1px solid #ccc !important; box-shadow: none !important; width: 350px !important; margin: 0 auto; -webkit-print-color-adjust: exact; }
+}
+</style>
 {% endblock %}
