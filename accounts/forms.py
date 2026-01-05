@@ -15,13 +15,18 @@ class NAAUserCreationForm(UserCreationForm):
             'membership_tier': forms.Select(attrs={'class': 'form-select'}),
         }
 
+    # accounts/forms.py
+
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password"])
+        # Use .get() to avoid crashing if the password isn't there
+        password = self.cleaned_data.get("password")
+        if password:
+            user.set_password(password)
         if commit:
             user.save()
         return user
-
+    
 class StudentProfileForm(forms.ModelForm):
     class Meta:  # <--- Change this from __clat__ to Meta
         model = StudentProfile
