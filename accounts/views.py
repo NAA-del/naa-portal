@@ -8,21 +8,20 @@ from django.contrib import messages
 from django.conf import settings
 from django.http import FileResponse, Http404
 
-# 1. IMPORT YOUR MODELS
+# 1. IMPORT ALL MODELS
 from .models import (
     User, AboutPage, Announcement, Leader, 
     Resource, StudentProfile, StudentAnnouncement, CPDRecord
 )
 
-# 2. IMPORT YOUR FORMS
+# 2. IMPORT ALL FORMS
 from .forms import (
     NAAUserCreationForm, StudentProfileForm, ProfilePictureForm, CPDSubmissionForm
 )
 
-# --- Authentication Views (Register, Login, Logout) ---
+# --- Authentication Views ---
 
 def register(request):
-    # If user is already logged in, send them home
     if request.user.is_authenticated:
         return redirect('home')
 
@@ -30,11 +29,10 @@ def register(request):
         form = NAAUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Log the user in immediately after registration
             login(request, user)
             messages.success(request, "Registration successful! Welcome to the Academy.")
             
-            # If they are a student, send them to profile to add their Matric Number
+            # If student, nudge them to profile to complete details
             if user.membership_tier == 'student':
                 messages.info(request, "Please complete your student profile details.")
                 return redirect('profile')
@@ -48,7 +46,6 @@ def register(request):
     return render(request, 'accounts/register.html', {'form': form})
 
 def login_view(request):
-    # If user is already logged in, send them home
     if request.user.is_authenticated:
         return redirect('home')
 
@@ -61,7 +58,6 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.info(request, f"Welcome back, {username}!")
-                # Redirect to where they wanted to go, or home
                 redirect_url = request.GET.get('next', 'home')
                 return redirect(redirect_url)
             else:
@@ -78,7 +74,7 @@ def logout_view(request):
     messages.info(request, "You have been logged out.")
     return redirect('home')
 
-# --- Main Website Views ---
+# --- Main Views ---
 
 def home(request):
     announcements = Announcement.objects.all().order_by('-date_posted')
@@ -94,7 +90,6 @@ def home(request):
 def about(request):
     about_info = AboutPage.objects.first()
     
-    # Fallback if no About content exists yet
     if not about_info:
         about_info = {
             'title': 'About the Academy',
@@ -122,6 +117,7 @@ def profile(request):
     student_profile = getattr(request.user, 'student_profile', None)
     
     if request.user.membership_tier == 'student':
+        # Check if the POST request is meant for the Student Form (by checking a field name)
         if request.method == 'POST' and 'matric_number' in request.POST:
             if student_profile:
                 s_form = StudentProfileForm(request.POST, instance=student_profile)
@@ -147,10 +143,8 @@ def profile(request):
     return render(request, 'accounts/profile.html', context)
 
 def download_constitution(request):
-    # Look for PDF in static files
     file_path = os.path.join(settings.STATIC_ROOT, 'docs/NAA_Constitution.pdf')
     if not os.path.exists(file_path):
-        # Fallback for local development
         file_path = os.path.join(settings.BASE_DIR, 'static/docs/NAA_Constitution.pdf')
 
     if os.path.exists(file_path):
@@ -161,8 +155,6 @@ def download_constitution(request):
 @login_required
 def resource_library(request):
     resources = Resource.objects.filter(is_public=True)
-    
-    # If member is verified, show private resources too
     if request.user.is_verified:
         private_resources = Resource.objects.filter(is_public=False)
         resources = resources | private_resources
@@ -173,8 +165,14 @@ def resource_library(request):
 
 @login_required
 def member_id_card(request):
+    # 1. Get Student Profile
     student_profile = getattr(request.user, 'student_profile', None)
     
+    # 2. LOCK: If they are a student but haven't filled the profile, BLOCK THEM.
+    if request.user.membership_tier == 'student' and not student_profile:
+        messages.error(request, "Action Required: You must complete your Student Profile (University & Matric No) to view your ID Card.")
+        return redirect('profile')
+
     return render(request, 'accounts/member_id.html', {
         'member': request.user,
         'student_info': student_profile,
@@ -183,14 +181,19 @@ def member_id_card(request):
 
 @login_required
 def student_hub(request):
+    # 1. Security: Only students allowed
     if request.user.membership_tier != 'student':
         messages.warning(request, "This section is for Student Members only.")
         return redirect('profile')
 
-    announcements = StudentAnnouncement.objects.all().order_by('-date_posted')
-    
-    # Filter announcements based on university
+    # 2. LOCK: Check if profile is complete
     student_profile = getattr(request.user, 'student_profile', None)
+    if not student_profile:
+        messages.error(request, "Action Required: Please complete your Student Details (University & Matric No) to access the Student Hub.")
+        return redirect('profile')
+
+    # 3. Filter Logic
+    announcements = StudentAnnouncement.objects.all().order_by('-date_posted')
     if student_profile:
         announcements = announcements.filter(
             target_university__in=['All', student_profile.university]

@@ -10,9 +10,12 @@
         <div class="col-md-4">
             <div class="card shadow-sm text-center p-4 border-0 mb-4">
                 <div class="mb-3">
+                    <!-- Fixed Image Tag: Uses data-fallback to prevent SyntaxErrors in JS -->
                     <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'assets/img/testimonials/testimonials-1.jpg' %}{% endif %}"
                         class="rounded-circle shadow-sm" width="120" height="120" alt="Profile image"
-                        style="border: 3px solid #3fbbc0; object-fit: cover;">
+                        style="border: 3px solid #3fbbc0; object-fit: cover;"
+                        data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
+                        onerror="this.src=this.dataset.fallback">
                 </div>
 
                 <h4>{{ user.username }}</h4>
@@ -37,11 +40,24 @@
                     <p class="text-success small fw-bold mb-0">
                         <i class="bi bi-check-circle-fill"></i> Photo Uploaded
                     </p>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#reupload">Change Photo</button>
+                        <div class="collapse mt-2" id="reupload">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="small mb-2">{{ p_form.profile_picture }}</div>
+                                <button type="submit" name="upload_photo" class="btn btn-sm btn-primary w-100">
+                                    <i class="bi bi-upload"></i> Update
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                     {% else %}
                     <h6 class="fw-bold small">Update Profile Photo</h6>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <div class="small mb-2">{{ photo_form.profile_picture }}</div>
+                        <!-- Using p_form to match views.py -->
+                        <div class="small mb-2">{{ p_form.profile_picture }}</div>
                         <button type="submit" name="upload_photo" class="btn btn-sm btn-primary w-100">
                             <i class="bi bi-upload"></i> Upload
                         </button>
@@ -132,17 +148,18 @@
                 <form method="post">
                     {% csrf_token %}
                     <div class="row g-3">
+                        <!-- Using s_form to match views.py -->
                         <div class="col-md-6">
                             <label class="small fw-bold">Select University</label>
-                            {{ form.university }}
+                            {{ s_form.university }}
                         </div>
                         <div class="col-md-6">
                             <label class="small fw-bold">Matric Number</label>
-                            {{ form.matric_number }}
+                            {{ s_form.matric_number }}
                         </div>
                         <div class="col-md-6">
                             <label class="small fw-bold">Current Level</label>
-                            {{ form.level }}
+                            {{ s_form.level }}
                         </div>
                         <div class="col-12 mt-4">
                             <button type="submit" class="btn btn-primary w-100">Submit Details</button>
