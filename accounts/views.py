@@ -5,80 +5,65 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from django.db.models import Count
 from django.conf import settings
 from django.http import FileResponse, Http404
 
-# 1. IMPORT ALL MODELS
+# 1. IMPORT YOUR MODELS
 from .models import (
     User, AboutPage, Announcement, Leader, 
     Resource, StudentProfile, StudentAnnouncement, CPDRecord
 )
 
-# 2. IMPORT ALL FORMS
+# 2. IMPORT YOUR FORMS
 from .forms import (
     NAAUserCreationForm, StudentProfileForm, ProfilePictureForm, CPDSubmissionForm
 )
 
-def home(request):
-    announcements = Announcement.objects.all().order_by('-date_posted')
-    leaders = Leader.objects.all()
-    
-    # Check carefully: The dictionary starts with { and ends with }
-    context = {
-        'announcements': announcements,
-        'leaders': leaders,
-    }
-    
-    return render(request, 'accounts/home.html', context)
-
-def about(request):
-    # Fetch the very first entry in the AboutPage table
-    about_info = AboutPage.objects.first()
-    
-    # If the database is empty, create a temporary 'fake' object 
-    # so the page doesn't crash while you are testing
-    if not about_info:
-        about_info = {
-            'title': 'About NAA',
-            'history_text': 'Please add history in Admin.',
-            'mission': 'Please add mission in Admin.',
-            'vision': 'Please add vision in Admin.',
-            'aims_and_objectives': 'Objective 1\nObjective 2'
-        }
-
-    return render(request, 'accounts/about.html', {'about': about_info})
+# --- Authentication Views (Register, Login, Logout) ---
 
 def register(request):
+    # If user is already logged in, send them home
+    if request.user.is_authenticated:
+        return redirect('home')
+
     if request.method == 'POST':
         form = NAAUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Account created successfully! Please login to complete your profile.")
-            return redirect('login') # We will create the login page next
+            user = form.save()
+            # Log the user in immediately after registration
+            login(request, user)
+            messages.success(request, "Registration successful! Welcome to the Academy.")
+            
+            # If they are a student, send them to profile to add their Matric Number
+            if user.membership_tier == 'student':
+                messages.info(request, "Please complete your student profile details.")
+                return redirect('profile')
+                
+            return redirect('home')
+        else:
+            messages.error(request, "Registration failed. Please correct the errors below.")
     else:
         form = NAAUserCreationForm()
+    
     return render(request, 'accounts/register.html', {'form': form})
 
 def login_view(request):
+    # If user is already logged in, send them home
+    if request.user.is_authenticated:
+        return redirect('home')
+
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
-            
             if user is not None:
                 login(request, user)
-                messages.success(request, f"Welcome back, {username}!")
-                
-                # SMART REDIRECT LOGIC
-                # 1. If student, send to Student Hub
-                if user.membership_tier == 'student':
-                    return redirect('student_hub')
-                
-                # 2. If professional, send to Profile
-                return redirect('profile')
+                messages.info(request, f"Welcome back, {username}!")
+                # Redirect to where they wanted to go, or home
+                redirect_url = request.GET.get('next', 'home')
+                return redirect(redirect_url)
             else:
                 messages.error(request, "Invalid username or password.")
         else:
@@ -93,85 +78,94 @@ def logout_view(request):
     messages.info(request, "You have been logged out.")
     return redirect('home')
 
-# accounts/views.py
-@login_required
-def profile(request):
-    try:
-        student_profile = request.user.student_info
-    except StudentProfile.DoesNotExist:
-        student_profile = None
+# --- Main Website Views ---
 
-    if request.method == 'POST':
-        # Handle Photo Upload
-        if 'upload_photo' in request.POST:
-            photo_form = ProfilePictureForm(request.POST, request.FILES, instance=request.user)
-            if photo_form.is_valid():
-                photo_form.save()
-                messages.success(request, "Profile picture updated!")
-                return redirect('profile')
-        
-        # Handle Academic Info
-        else:
-            form = StudentProfileForm(request.POST)
-            if form.is_valid() and not student_profile:
-                new_profile = form.save(commit=False)
-                new_profile.user = request.user
-                new_profile.save()
-                messages.success(request, "Academic details locked and saved!")
-                return redirect('profile')
-    
-    form = StudentProfileForm(instance=student_profile)
-    photo_form = ProfilePictureForm(instance=request.user)
-
-    return render(request, 'accounts/profile.html', {
-        'form': form,
-        'photo_form': photo_form,
-        'student_profile': student_profile
-    })
-
-@login_required
-def student_hub(request):
-    if request.user.membership_tier != 'student':
-        return redirect('home')
-
-    # This line counts students per school - requires the import above!
-    stats = StudentProfile.objects.values('university').annotate(total=Count('university'))
-    student_resources = Resource.objects.filter(category='student')
-    announcements = StudentAnnouncement.objects.order_by('-date_posted')[:5]
+def home(request):
+    announcements = Announcement.objects.all().order_by('-date_posted')
+    leaders = Leader.objects.all()
     
     context = {
-        'resources': student_resources,
-        'stats': stats,
         'announcements': announcements,
-        'is_verified': request.user.is_verified
+        'leaders': leaders,
     }
-    return render(request, 'accounts/student_hub.html', context)
-
-# 1. The Secure Constitution Download View
-@login_required
-def download_constitution(request):
-    # Only Verified members can download (Section 6 Compliance)
-    if not request.user.is_verified:
-        return render(request, 'accounts/profile.html', {
-            'error': 'Access Denied: Your account must be verified to download the Constitution.'
-        })
     
-    file_path = os.path.join(settings.BASE_DIR, 'static', 'docs', 'constitution.pdf')
-    if os.path.exists(file_path):
-        return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
+    return render(request, 'accounts/home.html', context)
+
+def about(request):
+    about_info = AboutPage.objects.first()
+    
+    # Fallback if no About content exists yet
+    if not about_info:
+        about_info = {
+            'title': 'About the Academy',
+            'history_text': 'History content pending...',
+            'mission': 'Mission statement pending...',
+            'vision': 'Vision statement pending...',
+            'aims_and_objectives': 'Objectives pending...',
+        }
+        
+    return render(request, 'accounts/about.html', {'about': about_info})
+
+@login_required
+def profile(request):
+    # 1. Handle Profile Picture Update
+    if request.method == 'POST' and 'profile_picture' in request.FILES:
+        p_form = ProfilePictureForm(request.POST, request.FILES, instance=request.user)
+        if p_form.is_valid():
+            p_form.save()
+            messages.success(request, "Profile picture updated!")
+            return redirect('profile')
     else:
-        print(f"DEBUG: Looked for PDF at {file_path}")
-        raise Http404("The Constitution PDF is missing from the static/docs/ folder.")
+        p_form = ProfilePictureForm(instance=request.user)
+
+    # 2. Handle Student Profile Update (Only for students)
+    student_profile = getattr(request.user, 'student_profile', None)
+    
+    if request.user.membership_tier == 'student':
+        if request.method == 'POST' and 'matric_number' in request.POST:
+            if student_profile:
+                s_form = StudentProfileForm(request.POST, instance=student_profile)
+            else:
+                s_form = StudentProfileForm(request.POST)
+            
+            if s_form.is_valid():
+                student_obj = s_form.save(commit=False)
+                student_obj.user = request.user
+                student_obj.save()
+                messages.success(request, "Student details updated!")
+                return redirect('profile')
+        else:
+            s_form = StudentProfileForm(instance=student_profile) if student_profile else StudentProfileForm()
+    else:
+        s_form = None
+
+    context = {
+        'p_form': p_form,
+        's_form': s_form,
+        'student_profile': student_profile
+    }
+    return render(request, 'accounts/profile.html', context)
+
+def download_constitution(request):
+    # Look for PDF in static files
+    file_path = os.path.join(settings.STATIC_ROOT, 'docs/NAA_Constitution.pdf')
+    if not os.path.exists(file_path):
+        # Fallback for local development
+        file_path = os.path.join(settings.BASE_DIR, 'static/docs/NAA_Constitution.pdf')
+
+    if os.path.exists(file_path):
+        return FileResponse(open(file_path, 'rb'), as_attachment=True, filename='NAA_Constitution.pdf')
+    else:
+        raise Http404("Constitution file not found")
 
 @login_required
 def resource_library(request):
-    # 1. Start with resources that are marked as Public
     resources = Resource.objects.filter(is_public=True)
     
-    # 2. If user is logged in AND verified, add the restricted resources
-    if request.user.is_authenticated and request.user.is_verified:
+    # If member is verified, show private resources too
+    if request.user.is_verified:
         private_resources = Resource.objects.filter(is_public=False)
-        resources = resources | private_resources  # This combines both lists
+        resources = resources | private_resources
     
     return render(request, 'accounts/resources.html', {
         'resources': resources.order_by('-uploaded_at')
@@ -179,18 +173,37 @@ def resource_library(request):
 
 @login_required
 def member_id_card(request):
-    # If the user is a student, we want to show their university info too
-    student_info = getattr(request.user, 'student_info', None)
+    student_profile = getattr(request.user, 'student_profile', None)
     
     return render(request, 'accounts/member_id.html', {
         'member': request.user,
-        'student_info': student_info,
-        'expiry_date': 'December 2026' # You can make this dynamic later
+        'student_info': student_profile,
+        'expiry_date': 'December 2026'
+    })
+
+@login_required
+def student_hub(request):
+    if request.user.membership_tier != 'student':
+        messages.warning(request, "This section is for Student Members only.")
+        return redirect('profile')
+
+    announcements = StudentAnnouncement.objects.all().order_by('-date_posted')
+    
+    # Filter announcements based on university
+    student_profile = getattr(request.user, 'student_profile', None)
+    if student_profile:
+        announcements = announcements.filter(
+            target_university__in=['All', student_profile.university]
+        )
+    else:
+        announcements = announcements.filter(target_university='All')
+
+    return render(request, 'accounts/student_hub.html', {
+        'announcements': announcements
     })
 
 @login_required
 def cpd_tracker(request):
-    # Only show records for the logged-in user
     records = request.user.cpd_records.all().order_by('-date_completed')
     total_points = sum(record.points for record in records)
 
