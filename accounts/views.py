@@ -167,7 +167,7 @@ def resource_library(request):
     })
 
 @login_required
-def member_id_card(request):
+def member_id(request):
     student_profile = StudentProfile.objects.filter(user=request.user).first()
     
     if request.user.membership_tier == 'student' and not student_profile:

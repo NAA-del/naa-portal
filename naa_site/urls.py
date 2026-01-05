@@ -33,7 +33,7 @@ urlpatterns = [
     path('cpd-tracker/', views.cpd_tracker, name='cpd_tracker'),
     path('resources/', views.resource_library, name='resource_library'),
     path('student-hub/', views.student_hub, name='student_hub'),
-    path('member-id-card/', views.member_id_card, name='member_id'),
+    path('member-id/', views.member_id, name='member_id'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
