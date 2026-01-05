@@ -110,3 +110,19 @@ else:
 AUTH_USER_MODEL = 'accounts.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ... (Keep all your existing code)
+
+# --- EMAIL CONFIGURATION ---
+# Currently set to print emails to the Console/Logs (Good for testing)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'admin@naa.org.ng'
+SERVER_EMAIL = 'server@naa.org.ng'
+
+# --- PRODUCTION EMAIL SETUP (Uncomment and fill this when ready to send real emails) ---
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'  # Or your hosting mail server
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
