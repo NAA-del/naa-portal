@@ -1,0 +1,66 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 pt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0" style="border-radius: 15px; background: white; border: 1px solid #ddd;">
+                <div class="p-3 text-center text-white" style="background: #3fbbc0; border-radius: 15px 15px 0 0;">
+                    <h6 class="mb-0 fw-bold">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
+                    <small style="font-size: 0.7rem;">MEMBER IDENTIFICATION CARD</small>
+                </div>
+                
+                <div class="card-body text-center">
+                    <div class="mb-3 mt-2">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" class="rounded shadow-sm" style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #f8f9fa;">
+                        {% else %}
+                            <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded" style="width: 130px; border: 3px solid #f8f9fa;">
+                        {% endif %}
+                    </div>
+
+                    <h5 class="fw-bold mb-0" style="color: #2c4964;">{{ user.username|upper }}</h5>
+                    <span class="badge bg-light text-primary border mb-3">{{ user.get_membership_tier_display }}</span>
+
+                    <div class="bg-light p-3 rounded text-start mb-3" style="font-size: 0.85rem;">
+                        <p class="mb-1"><strong>ID No:</strong> NAA/2026/{{ user.id|stringformat:"04d" }}</p>
+                        {% if user.student_info %}
+                            <p class="mb-1"><strong>University:</strong> {{ user.student_info.get_university_display }}</p>
+                            <p class="mb-0"><strong>Level:</strong> {{ user.student_info.level }}L</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center px-2">
+                        <div class="text-start">
+                            <small class="text-muted d-block" style="font-size: 0.6rem;">Status</small>
+                            <span class="fw-bold {% if user.is_verified %}text-success{% else %}text-warning{% endif %}" style="font-size: 0.8rem;">
+                                {% if user.is_verified %}VERIFIED{% else %}PENDING{% endif %}
+                            </span>
+                        </div>
+                        <div class="text-end">
+                             <small class="text-muted d-block" style="font-size: 0.6rem;">Expiry</small>
+                             <span class="fw-bold text-dark" style="font-size: 0.8rem;">Dec 2026</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-dark text-white text-center py-1" style="border-radius: 0 0 15px 15px;">
+                    <small style="font-size: 0.6rem;">Verification: www.naa.org.ng/verify</small>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center no-print">
+                <button onclick="window.print()" class="btn btn-primary"><i class="bi bi-printer me-2"></i>Print Member ID</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .navbar, .footer, .no-print, .main-header, .topbar { display: none !important; }
+    body { background: white !important; }
+    .container { margin-top: 0 !important; padding-top: 0 !important; }
+}
+</style>
+{% endblock %}

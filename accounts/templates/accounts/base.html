@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>NAA - {% block title %}Nigerian Academy of Audiology{% endblock %}</title>
+
+    <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}index-page{% endblock %}">
+
+    <header id="header" class="header sticky-top">
+        <div class="branding d-flex align-items-center">
+            <div class="container position-relative d-flex align-items-center justify-content-between">
+                <a href="{% url 'home' %}" class="logo d-flex align-items-center">
+                    <img src="{% static 'images/logo.png' %}" alt="NAA Logo">
+                    <h1 class="sitename ms-2">NAA</h1>
+                </a>
+
+                <nav id="navmenu" class="navmenu">
+                    <ul>
+                        <li><a href="{% url 'home' %}#hero">Home</a></li>
+                        <li><a href="{% url 'about' %}">About</a></li>
+
+                        {% if user.is_authenticated %}
+                        <li class="dropdown"><a href="#"><span>Member</span> <i
+                                    class="bi bi-chevron-down toggle-dropdown"></i></a>
+                            <ul>
+                                <li><a href="{% url 'profile' %}">My Profile</a></li>
+
+                                {% if user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
+                                <li><a href="{% url 'cpd_tracker' %}">CPD Tracker</a></li>
+                                {% endif %}
+
+                                <li><a href="{% url 'resource_library' %}">Resources</a></li>
+
+                                {% if user.membership_tier == 'student' %}
+                                <li><a href="{% url 'student_hub' %}">Student Hub</a></li>
+                                {% endif %}
+
+                                <li><a href="{% url 'download_constitution' %}">Constitution PDF</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a href="{% url 'logout' %}">Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li class="dropdown"><a href="#"><span>Join / Login</span> <i
+                                    class="bi bi-chevron-down toggle-dropdown"></i></a>
+                            <ul>
+                                <li><a href="{% url 'login' %}">Login</a></li>
+                                <li><a href="{% url 'register' %}">Join NAA</a></li>
+                            </ul>
+                        </li>
+                        {% endif %}
+
+                        <li><a href="{% url 'home' %}#contact">Contact</a></li>
+                    </ul>
+                    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container mt-3">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer id="footer" class="footer light-background mt-5" style="padding: 30px 0; text-align: center;">
+        <div class="container">
+            <p>&copy; 2026 <strong>Nigerian Academy of Audiology</strong>. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+    <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+
+</body>
+
+</html>

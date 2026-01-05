@@ -1,0 +1,25 @@
+# Python Virtual Environment (The 53MB folder)
+venv/
+env/
+ENV/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local Database (We will use the persistent /data/db.sqlite3 on Render)
+db.sqlite3
+
+# Static files (Render will generate these during the build)
+staticfiles/
+
+# Media files (Local uploads)
+media/
+
+# Environment variables
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db

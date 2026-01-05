@@ -1,0 +1,89 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block content %}
+<section id="hero" class="hero section"
+    style="background: #f1f7f9; padding: 120px 0; display: flex; align-items: center; min-height: 70vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <h2 style="color: #2c4964; font-size: 48px; font-weight: 700; margin-bottom: 20px;">Nigerian Academy of
+                    Audiology</h2>
+                <p style="color: #437099; font-size: 20px; margin-bottom: 40px;">To promote and advance the science,
+                    education, and practice of audiology in Nigeria.</p>
+
+                <div class="d-flex justify-content-center gap-3">
+                    {% if user.is_authenticated %}
+                    {% if user.is_verified %}
+                    <a href="{% url 'download_constitution' %}" class="btn btn-primary btn-lg px-5 py-3 shadow">Download
+                        Constitution</a>
+                    {% else %}
+                    <a href="{% url 'profile' %}" class="btn btn-warning btn-lg px-5 py-3">Verification Pending - View
+                        Status</a>
+                    {% endif %}
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg px-5 py-3">Login to Access
+                        Constitution</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="announcements" class="services">
+  <div class="container">
+    <div class="section-title">
+      <h2>Latest Updates</h2>
+      <p>Stay informed with the latest news from the Academy.</p>
+    </div>
+
+    <div class="row">
+      {% for news in announcements %}
+      <div class="col-lg-4 col-md-6 icon-box">
+        <div class="icon"><i class="bi bi-megaphone"></i></div>
+        <h4 class="title"><a href="">{{ news.title }}</a></h4>
+        <p class="description">{{ news.content|truncatewords:20 }}</p>
+        <small class="text-muted">{{ news.date_posted|date:"M d, Y" }}</small>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="doctors" class="doctors section light-background">
+    <div class="container section-title">
+        <h2>Governing Council</h2>
+        <p>The leadership of the Academy (Section 8 of the Constitution)</p>
+    </div>
+
+    <div class="container">
+        <div class="row gy-4">
+            {% for leader in leaders %}
+            <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
+                <div class="team-member">
+                    <div class="member-img">
+                        {% if leader.image %}
+                        <img src="{{ leader.image.url }}" class="img-fluid" alt="{{ leader.name }}">
+                        {% else %}
+                        <img src="{% static 'assets/img/doctors/doctors-1.jpg' %}" class="img-fluid" alt="Default">
+                        {% endif %}
+                    </div>
+                    <div class="member-info text-center">
+                        <h4>{{ leader.name }}</h4>
+                        <span>{{ leader.position }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="section">
+    <div class="container section-title">
+        <h2>Contact Us</h2>
+        <p>Email: info@naa.org.ng</p>
+    </div>
+</section>
+{% endblock %}

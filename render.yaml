@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: naa-portal
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn naa_site.wsgi:application"
+    disk:
+      name: naa-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.1
+      - key: DEBUG
+        value: "False"
