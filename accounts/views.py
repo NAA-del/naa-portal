@@ -114,7 +114,10 @@ def profile(request):
         p_form = ProfilePictureForm(instance=request.user)
 
     # 2. Handle Student Profile Update (Only for students)
-    student_profile = getattr(request.user, 'student_profile', None)
+    
+    # FIX: Use a direct database query to find the profile. 
+    # This guarantees we find it if it exists, regardless of related_name.
+    student_profile = StudentProfile.objects.filter(user=request.user).first()
     
     if request.user.membership_tier == 'student':
         # Check if the POST request is meant for the Student Form (by checking a field name)
@@ -165,8 +168,8 @@ def resource_library(request):
 
 @login_required
 def member_id_card(request):
-    # 1. Get Student Profile
-    student_profile = getattr(request.user, 'student_profile', None)
+    # 1. Get Student Profile safely
+    student_profile = StudentProfile.objects.filter(user=request.user).first()
     
     # 2. LOCK: If they are a student but haven't filled the profile, BLOCK THEM.
     if request.user.membership_tier == 'student' and not student_profile:
@@ -186,8 +189,9 @@ def student_hub(request):
         messages.warning(request, "This section is for Student Members only.")
         return redirect('profile')
 
-    # 2. LOCK: Check if profile is complete
-    student_profile = getattr(request.user, 'student_profile', None)
+    # 2. LOCK: Check if profile is complete (Safe Query)
+    student_profile = StudentProfile.objects.filter(user=request.user).first()
+    
     if not student_profile:
         messages.error(request, "Action Required: Please complete your Student Details (University & Matric No) to access the Student Hub.")
         return redirect('profile')
