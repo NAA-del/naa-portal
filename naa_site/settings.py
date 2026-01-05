@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default-key')
 # Set DEBUG to False by default on Render
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*'] # We will tighten this later
+ALLOWED_HOSTS = ['naa-portal.onrender.com', 'localhost', '127.0.0.1'] # We will tighten this later
 
 
 # Application definition
