@@ -39,36 +39,51 @@
 
                 <nav id="navmenu" class="navmenu">
                     <ul>
-                        <li><a href="{% url 'home' %}" class="active">Home</a></li>
+                        <li><a href="{% url 'home' %}#hero">Home</a></li>
+                        <li><a href="{% url 'home' %}#announcements">Announcements</a></li>
                         <li><a href="{% url 'about' %}">About</a></li>
 
-                        <!-- Logic: Show different links if logged in or out -->
                         {% if user.is_authenticated %}
-                        <li class="dropdown"><a href="#"><span>Members Area</span> <i
+                        <li class="dropdown"><a href="#"><span>Member</span> <i
                                     class="bi bi-chevron-down toggle-dropdown"></i></a>
                             <ul>
                                 <li><a href="{% url 'profile' %}">My Profile</a></li>
-                                <li><a href="{% url 'resource_library' %}">Resources</a></li>
+
                                 {% if user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
                                 <li><a href="{% url 'cpd_tracker' %}">CPD Tracker</a></li>
-                                <li><a href="{% url 'member_id' %}">Digital ID Card</a></li>
-                                {% elif user.membership_tier == 'student' %}
+                                {% endif %}
+
+                                <li><a href="{% url 'resource_library' %}">Resources</a></li>
+
+                                {% if user.membership_tier == 'student' %}
                                 <li><a href="{% url 'student_hub' %}">Student Hub</a></li>
                                 {% endif %}
+
+                                <li><a href="{% url 'download_constitution' %}">Constitution PDF</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a href="{% url 'logout' %}">Logout</a></li>
                             </ul>
                         </li>
-                        <li><a class="cta-btn d-none d-sm-block" href="{% url 'logout' %}">Logout</a></li>
                         {% else %}
-                        <li><a href="{% url 'login' %}">Login</a></li>
-                        <li><a class="cta-btn d-none d-sm-block" href="{% url 'register' %}">Join NAA</a></li>
+                        <li class="dropdown"><a href="#"><span>Join / Login</span> <i
+                                    class="bi bi-chevron-down toggle-dropdown"></i></a>
+                            <ul>
+                                <li><a href="{% url 'login' %}">Login</a></li>
+                                <li><a href="{% url 'register' %}">Join NAA</a></li>
+                            </ul>
+                        </li>
                         {% endif %}
+
+                        <li><a href="{% url 'home' %}#contact">Contact</a></li>
                     </ul>
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
-
             </div>
         </div>
     </header>
+
 
     <main class="main">
         <div class="container mt-3">
