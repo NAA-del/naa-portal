@@ -146,14 +146,19 @@ def profile(request):
     return render(request, 'accounts/profile.html', context)
 
 def download_constitution(request):
-    file_path = os.path.join(settings.STATIC_ROOT, 'docs/NAA_Constitution.pdf')
+    
+    # Look for constitution.pdf in the primary static folder
+    file_path = os.path.join(settings.BASE_DIR, 'static', 'constitution.pdf')
+    
+    # Fallback check if it was moved to a subfolder like static/docs/
     if not os.path.exists(file_path):
-        file_path = os.path.join(settings.BASE_DIR, 'static/docs/NAA_Constitution.pdf')
+        file_path = os.path.join(settings.BASE_DIR, 'static', 'docs', 'constitution.pdf')
 
     if os.path.exists(file_path):
         return FileResponse(open(file_path, 'rb'), as_attachment=True, filename='NAA_Constitution.pdf')
     else:
-        raise Http404("Constitution file not found")
+        messages.error(request, "Constitution file is currently unavailable.")
+        return redirect('home')
 
 @login_required
 def resource_library(request):

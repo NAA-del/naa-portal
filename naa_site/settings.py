@@ -1,5 +1,6 @@
 """
 Django settings for naa_site project.
+Integrated with Cloudinary for Media and WhiteNoise for Static files.
 """
 
 import os
@@ -15,14 +16,17 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default-key')
 # Set DEBUG to False by default on Render, True locally
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# Cloudinary URL from environment
-CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
-
 ALLOWED_HOSTS = ['naa-portal.onrender.com', 'localhost', '127.0.0.1']
+
+# --- CLOUDINARY CONFIGURATION (BEST PRACTICE) ---
+# Uses the single CLOUDINARY_URL environment variable from your dashboard
+CLOUDINARY_STORAGE = {
+    'CLOUDINARY_URL': os.environ.get("CLOUDINARY_URL"),
+}
 
 # Application definition
 INSTALLED_APPS = [
-    # Cloudinary apps must be at the top or before other apps that use static/media
+    # Cloudinary storage MUST be before django.contrib.staticfiles
     'cloudinary_storage',
     'cloudinary',
     
@@ -39,7 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # WhiteNoise for static files
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Essential for serving static files on Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -53,7 +57,7 @@ ROOT_URLCONF = 'naa_site.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [], 
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], # Allows for a global templates folder
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -69,7 +73,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'naa_site.wsgi.application'
 
 # Database
-# Use PostgreSQL on Render, SQLite locally if DATABASE_URL is missing
+# Uses PostgreSQL on Render via DATABASE_URL, fallback to SQLite locally
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///db.sqlite3',
@@ -91,16 +95,19 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# --- STATIC FILES (CSS, JS) - MANAGED BY WHITENOISE ---
+# --- STATIC FILES (CSS, JS, Medicio Assets) ---
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# High-performance static serving for Render
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# --- MEDIA FILES (IMAGES) - MANAGED BY CLOUDINARY ---
+# --- MEDIA FILES (Images, Documents, Photos) ---
 MEDIA_URL = '/media/'
-# If CLOUDINARY_URL is set (Production), use Cloudinary. Otherwise use local storage.
-if CLOUDINARY_URL:
+
+# Use Cloudinary if the URL is set (Production/Render), otherwise use Local Media
+if os.environ.get("CLOUDINARY_URL"):
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 else:
     # Local development fallback
@@ -109,15 +116,17 @@ else:
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
 
-# --- LOGIN / LOGOUT REDIRECTS (FIX FOR 404 ERROR) ---
-LOGIN_URL = 'login'              # Tells Django to look for /login/ instead of /accounts/login/
-LOGIN_REDIRECT_URL = 'home'      # Where to go after logging in
-LOGOUT_REDIRECT_URL = 'home'     # Where to go after logging out
+# --- AUTHENTICATION REDIRECTS ---
+# Fixed to point to your URL names to avoid 404/Accounts/Login errors
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
 
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # --- EMAIL CONFIGURATION ---
-# Currently set to print emails to the Console/Logs (Good for testing)
+# Prints emails to terminal/logs (Set to SMTP for live deployment)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'admin@naa.org.ng'
 SERVER_EMAIL = 'server@naa.org.ng'
