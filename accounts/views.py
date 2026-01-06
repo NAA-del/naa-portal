@@ -168,18 +168,29 @@ def resource_library(request):
 
 @login_required
 def member_id(request):
+    """
+    This view generates the Digital ID Card.
+    It ensures the context variables 'member' and 'student_info' match the template logic.
+    """
+    # 1. Fetch the student profile if it exists
     student_profile = StudentProfile.objects.filter(user=request.user).first()
     
+    # 2. Safety check: If they are a student but haven't filled their school info
     if request.user.membership_tier == 'student' and not student_profile:
-        # Ensure 'profile' is the correct name in your urls.py
-        messages.error(request, "Action Required: Complete your Student Profile to view your ID.")
+        # Note: 'profile' should be the name of your profile URL in urls.py
+        messages.error(request, "Action Required: Please complete your Student Academic Details to view your ID Card.")
         return redirect('profile')
 
-    return render(request, 'accounts/member_id.html', {
-        'user': request.user, # Template uses {{ user }}
-        'student_profile': student_profile, # Template uses {{ student_profile }}
+    # 3. Context names MUST match the template (member_id.html) exactly.
+    # We use 'member' instead of 'user' to avoid conflicts with Django's global user context.
+    context = {
+        'member': request.user,
+        'student_info': student_profile,
         'expiry_date': 'December 2026'
-    })
+    }
+    
+    return render(request, 'accounts/member_id.html', context)
+
 
 @login_required
 def student_hub(request):
