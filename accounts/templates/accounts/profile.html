@@ -7,15 +7,15 @@
 <div class="container mt-5 pt-5 mb-5">
     <div class="row">
 
-        <!-- LEFT COLUMN: Profile Picture & Basic Info -->
         <div class="col-md-4">
             <div class="card shadow-sm text-center p-4 border-0 mb-4">
                 <div class="mb-3">
-                    <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'assets/img/testimonials/testimonials-1.jpg' %}{% endif %}"
-                        class="rounded-circle shadow-sm" width="120" height="120" alt="Profile image"
-                        style="border: 3px solid #3fbbc0; object-fit: cover;"
-                        data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
-                        onerror="this.src=this.dataset.fallback">
+                    {% if user.profile_picture %}
+                        <!-- OPTIMIZED: Small thumbnail version for the dashboard -->
+                        {% cloudinary user.profile_picture width=250 height=250 crop="fill" gravity="face" format="auto" quality="auto" class="rounded-circle shadow-sm" style="border: 3px solid #3fbbc0; object-fit: cover;" %}
+                    {% else %}
+                        <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded-circle shadow-sm" width="120" height="120" style="border: 3px solid #3fbbc0; object-fit: cover;">
+                    {% endif %}
                 </div>
 
                 <h4>{{ user.username }}</h4>
