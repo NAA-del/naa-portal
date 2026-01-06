@@ -58,7 +58,7 @@ class Announcement(models.Model):
 class Leader(models.Model):
     name = models.CharField(max_length=100)
     position = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='leaders/')
+    image = CloudinaryField('image')
 
     def __str__(self):
         return f"{self.name} - {self.position}"
@@ -99,7 +99,7 @@ class Resource(models.Model):
 class AboutPage(models.Model):
     title = models.CharField(max_length=200, default="About the Academy")
     history_text = models.TextField()
-    history_image = models.ImageField(upload_to='about/', blank=True, null=True)
+    history_image = CloudinaryField('history image', blank=True, null=True)
     mission = models.TextField()
     vision = models.TextField()
     aims_and_objectives = models.TextField()
