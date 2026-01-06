@@ -123,11 +123,26 @@ class StudentAnnouncement(models.Model):
         return self.title # Fixed typo: changed self.titles to self.title
 
 class CPDRecord(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cpd_records')
-    activity_name = models.CharField(max_length=255)
-    points = models.IntegerField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='cpd_records'
+    )
+    activity_name = models.CharField(max_length=255, help_text="e.g., NAA Annual Conference 2026")
     date_completed = models.DateField()
-    certificate = models.FileField(upload_to='cpd_certs/', null=True, blank=True)
+    points = models.PositiveIntegerField(default=5)
+    certificate = models.FileField(
+        upload_to='cpd_certificates/', 
+        null=True, 
+        blank=True,
+        help_text="Upload PDF or Image proof of participation"
+    )
+    is_verified = models.BooleanField(default=False, help_text="Admin will check this after reviewing the certificate")
+    date_recorded = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.activity_name}"
+        return f"{self.user.username} - {self.activity_name} ({self.points} pts)"
+
+    class Meta:
+        verbose_name = "CPD Record"
+        verbose_name_plural = "CPD Records"

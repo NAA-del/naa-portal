@@ -51,10 +51,10 @@ class ProfilePictureForm(forms.ModelForm):
 class CPDSubmissionForm(forms.ModelForm):
     class Meta:
         model = CPDRecord
-        fields = ['activity_name', 'points', 'date_completed', 'certificate']
+        fields = ['activity_name', 'date_completed', 'points', 'certificate']
         widgets = {
-            'date_completed': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'activity_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Annual NAA Conference'}),
+            'activity_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Activity Name'}),
+            'date_completed': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'points': forms.NumberInput(attrs={'class': 'form-control'}),
             'certificate': forms.FileInput(attrs={'class': 'form-control'}),
         }

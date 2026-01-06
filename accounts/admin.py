@@ -8,6 +8,7 @@ from .models import (
     Resource,
     StudentProfile,
     StudentAnnouncement,
+    CPDRecord
 )
 
 
@@ -15,6 +16,7 @@ from .models import (
 class NAAUserAdmin(BaseUserAdmin):
     model = User
 
+    # ================= LIST VIEW =================
     list_display = (
         'username',
         'email',
@@ -30,7 +32,9 @@ class NAAUserAdmin(BaseUserAdmin):
     )
 
     search_fields = ('username', 'email')
+    ordering = ('username',)
 
+    # ================= EDIT USER =================
     fieldsets = BaseUserAdmin.fieldsets + (
         (
             'NAA Professional Info',
@@ -44,11 +48,33 @@ class NAAUserAdmin(BaseUserAdmin):
         ),
     )
 
+    # ================= ADD USER =================
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'username',
+                'email',
+                'password1',
+                'password2',
+                'membership_tier',
+                'phone_number',
+                'is_verified',
+                'is_staff',
+                'is_active',
+            ),
+        }),
+    )
+
+    # ================= ACTIONS =================
     actions = ['verify_members', 'unverify_members']
 
     @admin.action(description='Verify selected members')
     def verify_members(self, request, queryset):
-        queryset.update(is_verified=True)
+        queryset.filter(
+            is_staff=False,
+            is_superuser=False
+        ).update(is_verified=True)
         self.message_user(request, "Selected members have been verified.")
 
     @admin.action(description='Unverify selected members')
@@ -57,7 +83,36 @@ class NAAUserAdmin(BaseUserAdmin):
         self.message_user(request, "Selected members verification revoked.")
 
 
-# Other models
+# ================= CPD RECORD ADMIN =================
+@admin.register(CPDRecord)
+class CPDRecordAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'activity_name',
+        'points',
+        'date_completed',
+        'is_verified',
+    )
+
+    list_filter = (
+        'is_verified',
+        'date_completed',
+    )
+
+    search_fields = (
+        'user__username',
+        'activity_name',
+    )
+
+    actions = ['verify_records']
+
+    @admin.action(description="Mark selected activities as Verified")
+    def verify_records(self, request, queryset):
+        queryset.update(is_verified=True)
+        self.message_user(request, "Selected CPD records have been verified.")
+
+
+# ================= OTHER MODELS =================
 admin.site.register(Announcement)
 admin.site.register(Leader)
 admin.site.register(AboutPage)

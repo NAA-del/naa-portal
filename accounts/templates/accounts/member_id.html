@@ -1,7 +1,7 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
 
-{% block title %}Digital ID Card - NAA{% endblock %}
+{% block title %}Official Digital ID - NAA{% endblock %}
 
 {% block content %}
 <div class="container mt-5 pt-5 mb-5">
@@ -9,8 +9,7 @@
         <div class="col-md-5">
 
             {% if member.membership_tier == 'student' %}
-
-            <!-- ================= STUDENT MEMBER ================= -->
+            <!-- ================= STUDENT MEMBER (TEAL) ================= -->
             <div class="card shadow-lg border-0" style="border-radius:15px;border:1px solid #ddd;">
                 <div class="p-3 text-center text-white" style="background:#3fbbc0;border-radius:15px 15px 0 0;">
                     <h6 class="mb-0 fw-bold">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
@@ -18,18 +17,21 @@
                 </div>
 
                 <div class="card-body text-center">
-                    {% include "accounts/partials/profile_image.html" with border="#3fbbc0" %}
+                    <!-- Profile Image with Syntax Fix -->
+                    <div class="mb-3 mt-2">
+                        <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}{% static 'assets/img/testimonials/testimonials-1.jpg' %}{% endif %}" 
+                             class="rounded shadow-sm" 
+                             style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #3fbbc0;"
+                             data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
+                             onerror="this.src=this.dataset.fallback">
+                    </div>
 
-                    <h5 class="fw-bold mb-0 text-uppercase" style="color:#2c4964;">
-                        {{ member.username }}
-                    </h5>
-                    <span class="badge bg-light text-primary border mb-3">
-                        STUDENT MEMBER
-                    </span>
+                    <h5 class="fw-bold mb-0 text-uppercase" style="color:#2c4964;">{{ member.username }}</h5>
+                    <span class="badge bg-light text-primary border mb-3">STUDENT MEMBER</span>
 
                     <div class="bg-light p-3 rounded text-start mb-3" style="font-size:0.85rem;border-left:4px solid #3fbbc0;">
                         <p class="mb-1">
-                            <strong>ID No:</strong> NAA-STU/{{ year }}/{{ member.id|stringformat:"04d" }}
+                            <strong>ID No:</strong> NAA-STU/{% now "y" %}/{{ member.id|stringformat:"04d" }}
                         </p>
                         {% if student_info %}
                             <p class="mb-1"><strong>University:</strong> {{ student_info.get_university_display }}</p>
@@ -46,15 +48,14 @@
                         </div>
                         <div class="text-end">
                             <small class="text-muted d-block">Validity</small>
-                            <span class="fw-bold">DEC {{ year|add:"2000" }}</span>
+                            <span class="fw-bold">DEC {% now "Y" %}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             {% elif member.membership_tier == 'associate' %}
-
-            <!-- ================= ASSOCIATE MEMBER ================= -->
+            <!-- ================= ASSOCIATE MEMBER (SILVER) ================= -->
             <div class="card shadow-lg border-0" style="border-radius:15px;border:1px solid #6c757d;">
                 <div class="p-3 text-center text-white" style="background:#6c757d;border-radius:15px 15px 0 0;">
                     <h6 class="mb-0 fw-bold">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
@@ -62,15 +63,19 @@
                 </div>
 
                 <div class="card-body text-center">
-                    {% include "accounts/partials/profile_image.html" with border="#6c757d" %}
+                    <div class="mb-3 mt-2">
+                        <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}{% static 'assets/img/testimonials/testimonials-1.jpg' %}{% endif %}" 
+                             class="rounded shadow-sm" 
+                             style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #6c757d;"
+                             data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
+                             onerror="this.src=this.dataset.fallback">
+                    </div>
 
-                    <h5 class="fw-bold mb-0 text-uppercase" style="color:#2c4964;">
-                        {{ member.username }}
-                    </h5>
+                    <h5 class="fw-bold mb-0 text-uppercase" style="color:#2c4964;">{{ member.username }}</h5>
                     <span class="badge bg-secondary mb-3">ASSOCIATE MEMBER</span>
 
                     <div class="bg-light p-3 rounded mb-3" style="font-size:0.85rem;">
-                        <strong>ID No:</strong> NAA-ASC/{{ year }}/{{ member.id|stringformat:"04d" }}
+                        <strong>ID No:</strong> NAA-ASC/{% now "y" %}/{{ member.id|stringformat:"04d" }}
                     </div>
 
                     <div class="d-flex justify-content-between px-2">
@@ -80,15 +85,14 @@
                         </div>
                         <div class="text-end">
                             <small class="text-muted d-block">Expiry</small>
-                            <span class="fw-bold">DEC {{ year|add:"2000" }}</span>
+                            <span class="fw-bold">DEC {% now "Y" %}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             {% elif member.membership_tier == 'fellow' %}
-
-            <!-- ================= FELLOW ================= -->
+            <!-- ================= FELLOW (GOLD/NAVY) ================= -->
             <div class="card shadow-lg border-0" style="border-radius:15px;border:2px solid #b8860b;">
                 <div class="p-3 text-center" style="background:#1a3044;border-radius:15px 15px 0 0;">
                     <h6 class="fw-bold text-warning mb-0">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
@@ -96,16 +100,20 @@
                 </div>
 
                 <div class="card-body text-center">
-                    {% include "accounts/partials/profile_image.html" with border="#b8860b" circle=True %}
+                    <div class="mb-3 mt-2">
+                        <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}{% static 'assets/img/testimonials/testimonials-1.jpg' %}{% endif %}" 
+                             class="rounded-circle shadow-sm" 
+                             style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #b8860b;"
+                             data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
+                             onerror="this.src=this.dataset.fallback">
+                    </div>
 
-                    <h4 class="fw-bold mb-0 text-uppercase" style="color:#2c4964;">
-                        {{ member.username }}
-                    </h4>
+                    <h4 class="fw-bold mb-0 text-uppercase" style="color:#2c4964;">{{ member.username }}</h4>
                     <span class="badge bg-dark text-warning mb-3">ACADEMY FELLOW</span>
 
                     <div class="bg-light p-3 rounded mb-3">
                         <small class="text-muted d-block">REGISTRATION NUMBER</small>
-                        <strong>NAA-FEL/{{ year }}/{{ member.id|stringformat:"04d" }}</strong>
+                        <strong>NAA-FEL/{% now "y" %}/{{ member.id|stringformat:"04d" }}</strong>
                     </div>
 
                     <div class="d-flex justify-content-between px-4">
@@ -116,8 +124,7 @@
             </div>
 
             {% elif member.membership_tier == 'full' %}
-
-            <!-- ================= FULL MEMBER ================= -->
+            <!-- ================= FULL MEMBER (NAVY) ================= -->
             <div class="card shadow-lg border-0" style="border-radius:15px;border:1px solid #2c4964;">
                 <div class="p-3 text-center text-white" style="background:#2c4964;border-radius:15px 15px 0 0;">
                     <h6 class="mb-0 fw-bold">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
@@ -125,30 +132,37 @@
                 </div>
 
                 <div class="card-body text-center">
-                    {% include "accounts/partials/profile_image.html" with border="#2c4964" circle=True %}
+                    <div class="mb-3 mt-2">
+                        <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}{% static 'assets/img/testimonials/testimonials-1.jpg' %}{% endif %}" 
+                             class="rounded-circle shadow-sm" 
+                             style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #2c4964;"
+                             data-fallback="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
+                             onerror="this.src=this.dataset.fallback">
+                    </div>
 
-                    <h4 class="fw-bold mb-0 text-uppercase" style="color:#2c4964;">
-                        {{ member.username }}
-                    </h4>
+                    <h4 class="fw-bold mb-0 text-uppercase" style="color:#2c4964;">{{ member.username }}</h4>
                     <span class="badge bg-primary mb-3">FULL MEMBER</span>
 
                     <div class="bg-light p-3 rounded mb-3">
-                        <small class="text-muted">REGISTRATION NUMBER</small>
-                        <strong>NAA-PRO/{{ year }}/{{ member.id|stringformat:"04d" }}</strong>
+                        <small class="text-muted d-block">REGISTRATION NUMBER</small>
+                        <strong>NAA-PRO/{% now "y" %}/{{ member.id|stringformat:"04d" }}</strong>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between px-4">
+                        <span class="fw-bold text-success">VERIFIED</span>
+                        <span class="fw-bold">DEC {% now "Y" %}</span>
                     </div>
                 </div>
             </div>
 
             {% else %}
-            <!-- ================= SAFETY FALLBACK ================= -->
-            <div class="alert alert-danger text-center">
-                Invalid membership type. Please contact support.
-            </div>
+            <div class="alert alert-danger text-center">Invalid membership type.</div>
             {% endif %}
 
+            <!-- Actions -->
             <div class="mt-4 text-center no-print">
                 <button onclick="window.print()" class="btn btn-primary px-4">
-                    Print Member ID
+                    <i class="bi bi-printer me-2"></i>Print Member ID
                 </button>
                 <div class="mt-2">
                     <a href="{% url 'profile' %}" class="text-muted small">Return to Dashboard</a>
@@ -158,4 +172,13 @@
         </div>
     </div>
 </div>
+
+<style>
+@media print {
+    .navbar, .footer, .no-print, .main-header, .topbar, #header, #footer { display: none !important; }
+    body { background: white !important; margin: 0; padding: 0; }
+    .container { margin-top: 0 !important; padding-top: 40px !important; }
+    .card { border: 1px solid #ccc !important; box-shadow: none !important; width: 350px !important; margin: 0 auto; -webkit-print-color-adjust: exact; }
+}
+</style>
 {% endblock %}

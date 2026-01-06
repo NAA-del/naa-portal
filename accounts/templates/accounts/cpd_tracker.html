@@ -53,6 +53,7 @@
                             <th class="px-4 py-3">Date</th>
                             <th class="py-3">Activity Description</th>
                             <th class="py-3 text-center">Points</th>
+                            <th class="py-3 text-center">Status</th>
                             <th class="py-3 text-center">Certificate</th>
                         </tr>
                     </thead>
@@ -63,6 +64,13 @@
                             <td class="py-3 fw-bold text-dark">{{ record.activity_name }}</td>
                             <td class="py-3 text-center">
                                 <span class="badge rounded-pill bg-info text-dark px-3">{{ record.points }}</span>
+                            </td>
+                            <td class="py-3 text-center">
+                                {% if record.is_verified %}
+                                    <span class="text-success small fw-bold"><i class="bi bi-patch-check-fill"></i> Verified</span>
+                                {% else %}
+                                    <span class="text-warning small">Pending Review</span>
+                                {% endif %}
                             </td>
                             <td class="py-3 text-center">
                                 {% if record.certificate %}
@@ -76,7 +84,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" class="text-center py-5 text-muted">
+                            <td colspan="5" class="text-center py-5 text-muted">
                                 <i class="bi bi-folder2-open fs-2 d-block mb-2"></i>
                                 No CPD activities recorded yet.
                             </td>
@@ -89,6 +97,7 @@
     </div>
 </div>
 
+<!-- Modal for New Activity -->
 <div class="modal fade" id="addCPDModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content border-0 shadow">
