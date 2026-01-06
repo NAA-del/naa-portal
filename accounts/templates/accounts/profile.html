@@ -10,12 +10,18 @@
 
         <div class="col-md-4">
             <div class="card shadow-sm text-center p-4 border-0 mb-4">
-                <div class="mb-3">
+                <div class="mb-3 text-center">
                     {% if user.profile_picture %}
-                        <!-- OPTIMIZED: Small thumbnail version for the dashboard -->
-                        {% cloudinary user.profile_picture width=250 height=250 crop="fill" gravity="face" format="auto" quality="auto" class="rounded-circle shadow-sm" style="border: 3px solid #3fbbc0; object-fit: cover;" %}
+                    {% cloudinary user.profile_picture
+                    width=250 height=250
+                    crop="fill" gravity="face"
+                    format="auto" quality="auto"
+                    class="rounded-circle shadow-sm"
+                    style="border: 3px solid #3fbbc0; object-fit: cover;" %}
                     {% else %}
-                        <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded-circle shadow-sm" width="120" height="120" style="border: 3px solid #3fbbc0; object-fit: cover;">
+                    <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}"
+                        class="rounded-circle shadow-sm" width="250" height="250"
+                        style="border: 3px solid #3fbbc0; object-fit: cover;">
                     {% endif %}
                 </div>
 
@@ -43,7 +49,8 @@
                         <i class="bi bi-check-circle-fill"></i> Photo Uploaded
                     </p>
                     <div class="mt-2">
-                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#reupload">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#reupload">
                             Change Photo
                         </button>
                         <div class="collapse mt-2" id="reupload">
@@ -90,25 +97,25 @@
             <!-- DASHBOARD BUTTONS -->
             <div class="row mb-4">
                 {% if user.is_verified %}
-                    <div class="col-md-6 mb-3">
-                        <a href="{% url 'member_id' %}" class="btn btn-dark w-100 shadow-sm">
-                            <i class="bi bi-card-heading me-2"></i> View Digital ID
-                        </a>
-                    </div>
+                <div class="col-md-6 mb-3">
+                    <a href="{% url 'member_id' %}" class="btn btn-dark w-100 shadow-sm">
+                        <i class="bi bi-card-heading me-2"></i> View Digital ID
+                    </a>
+                </div>
 
-                    {% if user.membership_tier == 'student' %}
-                        <div class="col-md-12 mb-3">
-                            <a href="{% url 'student_hub' %}" class="btn btn-success w-100 shadow-sm">
-                                <i class="bi bi-people-fill me-2"></i> Student Community Hub
-                            </a>
-                        </div>
-                    {% elif user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
-                        <div class="col-md-6 mb-3">
-                            <a href="{% url 'cpd_tracker' %}" class="btn btn-primary w-100 shadow-sm">
-                                <i class="bi bi-award me-2"></i> CPD Portfolio (Mandatory)
-                            </a>
-                        </div>
-                    {% endif %}
+                {% if user.membership_tier == 'student' %}
+                <div class="col-md-12 mb-3">
+                    <a href="{% url 'student_hub' %}" class="btn btn-success w-100 shadow-sm">
+                        <i class="bi bi-people-fill me-2"></i> Student Community Hub
+                    </a>
+                </div>
+                {% elif user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
+                <div class="col-md-6 mb-3">
+                    <a href="{% url 'cpd_tracker' %}" class="btn btn-primary w-100 shadow-sm">
+                        <i class="bi bi-award me-2"></i> CPD Portfolio (Mandatory)
+                    </a>
+                </div>
+                {% endif %}
                 {% endif %}
             </div>
 
@@ -121,55 +128,55 @@
                 <hr>
 
                 {% if student_profile %}
-                    <!-- LOCKED STATE -->
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="p-3 bg-light rounded text-center h-100 border">
-                                <small class="text-muted d-block mb-1">University</small>
-                                <span class="fw-bold text-primary">{{ student_profile.get_university_display }}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="p-3 bg-light rounded text-center h-100 border">
-                                <small class="text-muted d-block mb-1">Matric Number</small>
-                                <span class="fw-bold">{{ student_profile.matric_number }}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="p-3 bg-light rounded text-center h-100 border">
-                                <small class="text-muted d-block mb-1">Current Level</small>
-                                <span class="fw-bold">{{ student_profile.level }} Level</span>
-                            </div>
+                <!-- LOCKED STATE -->
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded text-center h-100 border">
+                            <small class="text-muted d-block mb-1">University</small>
+                            <span class="fw-bold text-primary">{{ student_profile.get_university_display }}</span>
                         </div>
                     </div>
-                    
-                    <div class="alert alert-info mt-3 mb-0 py-2 small border-0">
-                        <i class="bi bi-lock-fill me-2"></i> Academic details are verified.
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded text-center h-100 border">
+                            <small class="text-muted d-block mb-1">Matric Number</small>
+                            <span class="fw-bold">{{ student_profile.matric_number }}</span>
+                        </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded text-center h-100 border">
+                            <small class="text-muted d-block mb-1">Current Level</small>
+                            <span class="fw-bold">{{ student_profile.level }} Level</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mt-3 mb-0 py-2 small border-0">
+                    <i class="bi bi-lock-fill me-2"></i> Academic details are verified.
+                </div>
 
                 {% else %}
-                    <!-- UNLOCKED STATE -->
-                    <p class="text-primary mb-3 small">Please link your university to unlock the Student Hub.</p>
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="small fw-bold">Select University</label>
-                                {{ s_form.university }}
-                            </div>
-                            <div class="col-md-6">
-                                <label class="small fw-bold">Matric Number</label>
-                                {{ s_form.matric_number }}
-                            </div>
-                            <div class="col-md-6">
-                                <label class="small fw-bold">Current Level</label>
-                                {{ s_form.level }}
-                            </div>
-                            <div class="col-12 mt-4">
-                                <button type="submit" class="btn btn-primary w-100">Submit Academic Details</button>
-                            </div>
+                <!-- UNLOCKED STATE -->
+                <p class="text-primary mb-3 small">Please link your university to unlock the Student Hub.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="small fw-bold">Select University</label>
+                            {{ s_form.university }}
                         </div>
-                    </form>
+                        <div class="col-md-6">
+                            <label class="small fw-bold">Matric Number</label>
+                            {{ s_form.matric_number }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small fw-bold">Current Level</label>
+                            {{ s_form.level }}
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary w-100">Submit Academic Details</button>
+                        </div>
+                    </div>
+                </form>
                 {% endif %}
             </div>
             {% endif %}
@@ -178,9 +185,15 @@
             <div class="card shadow-sm p-4 border-0">
                 <h4 style="color: #2c4964; font-size: 1.1rem; font-weight: 700;">Membership Privileges</h4>
                 <ul class="list-group list-group-flush small">
-                    <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Access to National Clinical Guidelines</li>
-                    <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Voting Rights at AGM (Tiers 3 & 4)</li>
-                    <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Digital Membership Certificate</li>
+                    <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Access to National
+                        Clinical
+                        Guidelines</li>
+                    <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Voting Rights at AGM
+                        (Tiers 3 &
+                        4)</li>
+                    <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Digital Membership
+                        Certificate
+                    </li>
                 </ul>
             </div>
 
