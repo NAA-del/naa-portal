@@ -8,7 +8,10 @@
     <div class="row justify-content-center">
         <div class="col-md-5">
 
-            {% if member.membership_tier == 'student' %}
+            {# We use |lower to ensure 'Student', 'STUDENT', and 'student' all work #}
+            {% with tier=member.membership_tier|lower %}
+            
+            {% if tier == 'student' %}
             <!-- ================= STUDENT MEMBER (TEAL) ================= -->
             <div class="card shadow-lg border-0" style="border-radius:15px;border:1px solid #ddd;">
                 <div class="p-3 text-center text-white" style="background:#3fbbc0;border-radius:15px 15px 0 0;">
@@ -17,7 +20,6 @@
                 </div>
 
                 <div class="card-body text-center">
-                    <!-- Profile Image with Syntax Fix -->
                     <div class="mb-3 mt-2">
                         <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}{% static 'assets/img/testimonials/testimonials-1.jpg' %}{% endif %}" 
                              class="rounded shadow-sm" 
@@ -54,7 +56,7 @@
                 </div>
             </div>
 
-            {% elif member.membership_tier == 'associate' %}
+            {% elif tier == 'associate' %}
             <!-- ================= ASSOCIATE MEMBER (SILVER) ================= -->
             <div class="card shadow-lg border-0" style="border-radius:15px;border:1px solid #6c757d;">
                 <div class="p-3 text-center text-white" style="background:#6c757d;border-radius:15px 15px 0 0;">
@@ -91,7 +93,7 @@
                 </div>
             </div>
 
-            {% elif member.membership_tier == 'fellow' %}
+            {% elif tier == 'fellow' %}
             <!-- ================= FELLOW (GOLD/NAVY) ================= -->
             <div class="card shadow-lg border-0" style="border-radius:15px;border:2px solid #b8860b;">
                 <div class="p-3 text-center" style="background:#1a3044;border-radius:15px 15px 0 0;">
@@ -123,12 +125,12 @@
                 </div>
             </div>
 
-            {% elif member.membership_tier == 'full' %}
-            <!-- ================= FULL MEMBER (NAVY) ================= -->
+            {% elif tier == 'full' or member.is_staff %}
+            <!-- ================= FULL MEMBER / ADMIN (NAVY) ================= -->
             <div class="card shadow-lg border-0" style="border-radius:15px;border:1px solid #2c4964;">
                 <div class="p-3 text-center text-white" style="background:#2c4964;border-radius:15px 15px 0 0;">
                     <h6 class="mb-0 fw-bold">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
-                    <small>PROFESSIONAL IDENTIFICATION</small>
+                    <small>{% if member.is_staff %}ADMINISTRATIVE CREDENTIAL{% else %}PROFESSIONAL IDENTIFICATION{% endif %}</small>
                 </div>
 
                 <div class="card-body text-center">
@@ -141,7 +143,9 @@
                     </div>
 
                     <h4 class="fw-bold mb-0 text-uppercase" style="color:#2c4964;">{{ member.username }}</h4>
-                    <span class="badge bg-primary mb-3">FULL MEMBER</span>
+                    <span class="badge bg-primary mb-3">
+                        {% if member.is_staff %}ACADEMY STAFF{% else %}FULL MEMBER{% endif %}
+                    </span>
 
                     <div class="bg-light p-3 rounded mb-3">
                         <small class="text-muted d-block">REGISTRATION NUMBER</small>
@@ -156,8 +160,23 @@
             </div>
 
             {% else %}
-            <div class="alert alert-danger text-center">Invalid membership type.</div>
+            <!-- ================= DIAGNOSTIC FALLBACK ================= -->
+            <div class="card shadow-sm border-0 p-5 text-center">
+                <i class="bi bi-shield-exclamation text-danger display-1 mb-3"></i>
+                <h4 class="fw-bold">Configuration Error</h4>
+                <p class="text-muted">The system cannot identify your membership type.</p>
+                
+                <div class="bg-light p-3 rounded mb-3 text-start small">
+                    <p class="mb-1"><strong>Username:</strong> {{ member.username }}</p>
+                    <p class="mb-1"><strong>Database Value:</strong> <code class="bg-white px-2 py-1 border rounded">"{{ member.membership_tier }}"</code></p>
+                    <p class="mb-0 text-info"><i class="bi bi-info-circle me-1"></i> If the database value above is empty or null, please update the user in the Admin panel.</p>
+                </div>
+
+                <a href="{% url 'profile' %}" class="btn btn-outline-primary mt-2">Return to Profile</a>
+            </div>
             {% endif %}
+
+            {% endwith %}
 
             <!-- Actions -->
             <div class="mt-4 text-center no-print">
@@ -165,7 +184,7 @@
                     <i class="bi bi-printer me-2"></i>Print Member ID
                 </button>
                 <div class="mt-2">
-                    <a href="{% url 'profile' %}" class="text-muted small">Return to Dashboard</a>
+                    <a href="{% url 'profile' %}" class="text-muted small">Back to Portal</a>
                 </div>
             </div>
 
