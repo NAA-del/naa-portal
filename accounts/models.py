@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 from django.core.mail import send_mail
+from cloudinary.models import CloudinaryField
 import logging
 
 logger = logging.getLogger(__name__)
@@ -31,9 +32,9 @@ class User(AbstractUser):
         ('full', 'Full Member'),
         ('fellow', 'Fellow'),
     ]
+    profile_picture = CloudinaryField('image', null=True, blank=True)
     membership_tier = models.CharField(max_length=20, choices=TIER_CHOICES, default='student')
     phone_number = models.CharField(max_length=15, blank=True)
-    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     is_verified = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
