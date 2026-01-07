@@ -166,14 +166,34 @@ def download_constitution(request):
 
 @login_required
 def resource_library(request):
-    resources = Resource.objects.filter(is_public=True)
-    if request.user.is_verified:
-        private_resources = Resource.objects.filter(is_public=False)
-        resources = resources | private_resources
+    user = request.user
     
-    return render(request, 'accounts/resources.html', {
-        'resources': resources.order_by('-uploaded_at')
-    })
+    # 1. Define Tier Ranking for logic
+    tier_rank = {
+        'student': 1,
+        'associate': 2,
+        'full': 3,
+        'fellow': 4
+    }
+    
+    current_rank = tier_rank.get(user.membership_tier, 0)
+    
+    if not user.is_verified:
+        resources = Resource.objects.filter(access_level='public')
+    else:
+        allowed_levels = ['public']
+        if current_rank >= 1: allowed_levels.append('student')
+        if current_rank >= 2: allowed_levels.append('associate')
+        if current_rank >= 3: allowed_levels.append('full')
+        if current_rank >= 4: allowed_levels.append('fellow')
+        
+        resources = Resource.objects.filter(access_level__in=allowed_levels)
+
+    category_filter = request.GET.get('cat')
+    if category_filter:
+        resources = resources.filter(category=category_filter)
+
+    return render(request, 'accounts/resources.html', {'resources': resources})
 
 @login_required
 def member_id(request):

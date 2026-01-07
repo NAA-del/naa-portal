@@ -79,22 +79,39 @@ class StudentProfile(models.Model):
         return f"{self.user.username} ({self.university})"
 
 class Resource(models.Model):
-    CATEGORY_CHOICES = [
-        ('student', 'Student Resource'),
-        ('clinical', 'Clinical Guidelines'),
-        ('research', 'Research Papers'),
-        ('admin', 'Administrative Docs'),
+    ACCESS_LEVELS = [
+        ('public', 'General/Public'),
+        ('student', 'Student Only'),
+        ('associate', 'Associate & Above'),
+        ('full', 'Full Members & Above'),
+        ('fellow', 'Fellows Only'),
     ]
-    
-    title = models.CharField(max_length=200)
-    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
-    file = models.FileField(upload_to='resources/')
+
+    CATEGORIES = [
+        ('guideline', 'Clinical Guideline'),
+        ('academic', 'Study Material'),
+        ('research', 'Research Paper'),
+        ('governance', 'Academy Document'),
+        ('legal', 'Legal/Ethics'),
+        ('general', 'General Information'),
+    ]
+
+    title = models.CharField(max_length=255)
+    category = models.CharField(max_length=20, choices=CATEGORIES, default='general')
+    file = models.FileField(upload_to='resources/') # Or CloudinaryField('raw') for PDFs
+    access_level = models.CharField(max_length=20, choices=ACCESS_LEVELS, default='public')
+    is_verified_only = models.BooleanField(
+        default=True, 
+        help_text="If checked, only verified members can download this."
+    )
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    is_public = models.BooleanField(default=False)
-    is_verified_only = models.BooleanField(default=True)
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"[{self.get_category_display()}] {self.title}"
+        return f"[{self.get_access_level_display()}] {self.title}"
+
+    class Meta:
+        ordering = ['-uploaded_at']
 
 class AboutPage(models.Model):
     title = models.CharField(max_length=200, default="About the Academy")

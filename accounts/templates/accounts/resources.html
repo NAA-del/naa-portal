@@ -5,60 +5,87 @@
 
 {% block content %}
 <div class="container mt-5 pt-5 mb-5">
-    <div class="section-title text-center mb-5">
-        <h2 style="color: #2c4964;">Resource Library</h2>
-        <p>Official documents, clinical guidelines, and student materials.</p>
+    <div class="row mb-4 align-items-end">
+        <div class="col-md-8">
+            <h2 style="color: #2c4964; font-weight: 700;">Resource Library</h2>
+            <p class="text-muted">Access official documents and clinical resources.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="btn-group shadow-sm">
+                <a href="{% url 'resource_library' %}" class="btn btn-outline-primary btn-sm {% if not request.GET.cat %}active{% endif %}">All</a>
+                <a href="{% url 'resource_library' %}?cat=guideline" class="btn btn-outline-primary btn-sm {% if request.GET.cat == 'guideline' %}active{% endif %}">Clinical</a>
+                <a href="{% url 'resource_library' %}?cat=academic" class="btn btn-outline-primary btn-sm {% if request.GET.cat == 'academic' %}active{% endif %}">Academic</a>
+            </div>
+        </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-12">
-            {% if not user.is_verified %}
-                <div class="alert alert-warning shadow-sm border-0 mb-4">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    <strong>Notice:</strong> Some professional clinical guidelines and research papers are hidden. 
-                    Please <a href="{% url 'profile' %}" class="alert-link">check your verification status</a> to gain full access.
-                </div>
-            {% endif %}
-
-            <div class="card shadow-sm border-0">
-                <div class="table-responsive p-3">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th scope="col">Document Title</th>
-                                <th scope="col">Category</th>
-                                <th scope="col">Date Added</th>
-                                <th scope="col" class="text-end">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for resource in resources %}
-                            <tr>
-                                <td>
-                                    <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
-                                    <strong>{{ resource.title }}</strong>
-                                </td>
-                                <td>
-                                    <span class="badge bg-secondary text-capitalize">
-                                        {{ resource.get_category_display }}
-                                    </span>
-                                </td>
-                                <td class="text-muted">{{ resource.uploaded_at|date:"M d, Y" }}</td>
-                                <td class="text-end">
-                                    <a href="{{ resource.file.url }}" class="btn btn-sm btn-outline-primary" download>
-                                        <i class="bi bi-download"></i> Download
-                                    </a>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="text-center py-4">No resources available at this time.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+    {% if not user.is_verified %}
+    <div class="alert alert-info border-0 shadow-sm mb-4">
+        <div class="d-flex">
+            <i class="bi bi-shield-lock-fill fs-4 me-3"></i>
+            <div>
+                <h6 class="fw-bold mb-1">Restricted Access Mode</h6>
+                <p class="small mb-0">You are currently seeing <strong>General Resources</strong>. Professional clinical guidelines and research papers will be unlocked once your NAA membership is verified.</p>
             </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Resource Title</th>
+                        <th>Category</th>
+                        <th>Access</th>
+                        <th class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for resource in resources %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light p-2 rounded me-3 text-danger">
+                                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">{{ resource.title }}</h6>
+                                    <small class="text-muted">Added {{ resource.uploaded_at|date:"M d, Y" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge rounded-pill bg-light text-dark border">
+                                {{ resource.get_category_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if resource.access_level == 'public' %}
+                                <span class="badge bg-success-subtle text-success small">Open</span>
+                            {% else %}
+                                <span class="badge bg-primary-subtle text-primary small">
+                                    <i class="bi bi-lock-fill me-1"></i>Tier-Gated
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <a href="{{ resource.file.url }}" class="btn btn-sm btn-primary px-3 rounded-pill" download>
+                                <i class="bi bi-download me-1"></i> Download
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5">
+                            <i class="bi bi-folder-x fs-1 text-muted d-block mb-2"></i>
+                            <p class="text-muted">No documents found in this category.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

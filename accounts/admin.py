@@ -112,10 +112,18 @@ class CPDRecordAdmin(admin.ModelAdmin):
         self.message_user(request, "Selected CPD records have been verified.")
 
 
+# ================= RESOURCE ADMIN =================
+@admin.register(Resource)
+class ResourceAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'access_level', 'is_verified_only', 'uploaded_at')
+    list_filter = ('category', 'access_level', 'is_verified_only')
+    search_fields = ('title', 'description')
+    list_editable = ('access_level', 'is_verified_only') # Quick edits from the list view
+
+
 # ================= OTHER MODELS =================
 admin.site.register(Announcement)
 admin.site.register(Leader)
 admin.site.register(AboutPage)
-admin.site.register(Resource)
 admin.site.register(StudentProfile)
 admin.site.register(StudentAnnouncement)
