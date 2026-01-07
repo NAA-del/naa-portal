@@ -7,20 +7,23 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>NAA - {% block title %}Nigerian Academy of Audiology{% endblock %}</title>
 
-    <link href="{% static 'accounts/assets/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
 
+    <!-- Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <link href="{% static 'accounts/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'accounts/assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
-    <link href="{% static 'accounts/assets/vendor/aos/aos.css' %}" rel="stylesheet">
-    <link href="{% static 'accounts/assets/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
-    <link href="{% static 'accounts/assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
-    <link href="{% static 'accounts/assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
-    <link href="{% static 'accounts/assets/css/main.css' %}" rel="stylesheet">
+    <!-- Main CSS File -->
+    <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
 </head>
 
 <body class="index-page">
@@ -30,7 +33,7 @@
             <div class="container position-relative d-flex align-items-center justify-content-between">
 
                 <a href="{% url 'home' %}" class="logo d-flex align-items-center me-auto">
-                    <img src="{% static 'accounts/images/logo.png' %}" alt="NAA Logo" style="max-height: 40px; margin-right: 8px;" onerror="this.style.display='none'">
+                    <img src="{% static 'images/logo.png' %}" alt="NAA Logo" style="max-height: 40px; margin-right: 8px;" onerror="this.style.display='none'">
                     <h1 class="sitename">NAA Portal</h1>
                 </a>
 
@@ -80,9 +83,9 @@
         </div>
     </header>
 
-
     <main class="main">
         <div class="container mt-3">
+            <!-- Messages for alerts (Success/Error) -->
             {% if messages %}
             {% for message in messages %}
             <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
@@ -104,12 +107,14 @@
         </div>
     </footer>
 
-    <script src="{% static 'accounts/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'accounts/assets/vendor/aos/aos.js' %}"></script>
-    <script src="{% static 'accounts/assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
-    <script src="{% static 'accounts/assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+    <!-- Vendor JS Files -->
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+    <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
 
-    <script src="{% static 'accounts/assets/js/main.js' %}"></script>
+    <!-- Main JS File -->
+    <script src="{% static 'assets/js/main.js' %}"></script>
 
 </body>
 

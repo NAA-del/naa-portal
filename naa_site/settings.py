@@ -8,11 +8,6 @@ import dj_database_url
 from pathlib import Path
 
 
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder', # <--- This is the one that finds the accounts/static folder
-]
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -102,11 +97,7 @@ USE_TZ = True
 
 # --- STATIC FILES (CSS, JS, Medicio Assets) ---
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
-# settings.py
-STATICFILES_DIRS = [
-    BASE_DIR / "accounts" / "static",
-]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # High-performance static serving for Render
