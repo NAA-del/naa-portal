@@ -8,20 +8,18 @@
 <div class="container mt-5 pt-5 mb-5">
     <div class="row">
 
+        <!-- LEFT COLUMN -->
         <div class="col-md-4">
             <div class="mb-3">
                 {% if user.profile_picture %}
-                {% cloudinary user.profile_picture
-                width=300 height=300 crop="fill" gravity="face"
-                format="auto" quality="auto"
-                class="rounded shadow-sm" style="width: 130px; height: 130px;
-                object-fit: cover; border: 3px solid #3fbbc0;" %}
+                <img src="{% cloudinary_url user.profile_picture width=250 height=250 crop='fill' gravity='face' format='auto' quality='auto' %}"
+                    class="rounded-circle shadow-sm" style="border: 3px solid #3fbbc0; object-fit: cover;" width="250"
+                    height="250">
                 {% else %}
                 <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded-circle shadow-sm"
-                    style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #3fbbc0;">
+                    style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250">
                 {% endif %}
             </div>
-
 
             <h4>{{ user.username }}</h4>
             <span class="badge bg-info text-dark mb-2">
@@ -73,129 +71,131 @@
                 {% endif %}
             </div>
         </div>
-    </div>
 
-    <!-- RIGHT COLUMN: Details -->
-    <div class="col-md-8">
+        <!-- RIGHT COLUMN -->
+        <div class="col-md-8">
 
-        <div class="card p-4 shadow-sm mb-4 border-0">
-            <h3 style="color: #2c4964;">Member Profile</h3>
-            <hr>
-            <div class="row">
-                <div class="col-6">
-                    <p><strong>Name:</strong> {{ user.username }}</p>
+            <div class="card p-4 shadow-sm mb-4 border-0">
+                <h3 style="color:#2c4964;">Member Profile</h3>
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <p><strong>Name:</strong> {{ user.username }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <p><strong>Email:</strong> {{ user.email }}</p>
-                </div>
-            </div>
-            <p><strong>NAA Membership Tier:</strong> {{ user.get_membership_tier_display }}</p>
-        </div>
-
-        <!-- DASHBOARD BUTTONS -->
-        <div class="row mb-4">
-            {% if user.is_verified %}
-            <div class="col-md-6 mb-3">
-                <a href="{% url 'member_id' %}" class="btn btn-dark w-100 shadow-sm">
-                    <i class="bi bi-card-heading me-2"></i> View Digital ID
-                </a>
+                <p><strong>NAA Membership Tier:</strong> {{ user.get_membership_tier_display }}</p>
             </div>
 
+            <!-- DASHBOARD BUTTONS -->
+            <div class="row mb-4">
+                {% if user.is_verified %}
+                <div class="col-md-6 mb-3">
+                    <a href="{% url 'member_id' %}" class="btn btn-dark w-100 shadow-sm">
+                        <i class="bi bi-card-heading me-2"></i> View Digital ID
+                    </a>
+                </div>
+
+                {% if user.membership_tier == 'student' %}
+                <div class="col-md-12 mb-3">
+                    <a href="{% url 'student_hub' %}" class="btn btn-success w-100 shadow-sm">
+                        <i class="bi bi-people-fill me-2"></i> Student Community Hub
+                    </a>
+                </div>
+                {% elif user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
+                <div class="col-md-6 mb-3">
+                    <a href="{% url 'cpd_tracker' %}" class="btn btn-primary w-100 shadow-sm">
+                        <i class="bi bi-award me-2"></i> CPD Portfolio (Mandatory)
+                    </a>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+
+            <!-- STUDENT ACADEMIC SECTION -->
             {% if user.membership_tier == 'student' %}
-            <div class="col-md-12 mb-3">
-                <a href="{% url 'student_hub' %}" class="btn btn-success w-100 shadow-sm">
-                    <i class="bi bi-people-fill me-2"></i> Student Community Hub
-                </a>
-            </div>
-            {% elif user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
-            <div class="col-md-6 mb-3">
-                <a href="{% url 'cpd_tracker' %}" class="btn btn-primary w-100 shadow-sm">
-                    <i class="bi bi-award me-2"></i> CPD Portfolio (Mandatory)
-                </a>
-            </div>
-            {% endif %}
-            {% endif %}
-        </div>
+            <div class="card p-4 shadow-sm mb-4 border-0">
+                <h4 style="color:#2c4964;font-weight:700;">
+                    <i class="bi bi-mortarboard me-2"></i> Academic Details
+                </h4>
+                <hr>
 
-        <!-- STUDENT ACADEMIC SECTION -->
-        {% if user.membership_tier == 'student' %}
-        <div class="card p-4 shadow-sm mb-4 border-0">
-            <h4 style="color: #2c4964; font-weight: 700;">
-                <i class="bi bi-mortarboard me-2"></i> Academic Details
-            </h4>
-            <hr>
-
-            {% if student_profile %}
-            <!-- LOCKED STATE -->
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <div class="p-3 bg-light rounded text-center h-100 border">
-                        <small class="text-muted d-block mb-1">University</small>
-                        <span class="fw-bold text-primary">{{ student_profile.get_university_display }}</span>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3 bg-light rounded text-center h-100 border">
-                        <small class="text-muted d-block mb-1">Matric Number</small>
-                        <span class="fw-bold">{{ student_profile.matric_number }}</span>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3 bg-light rounded text-center h-100 border">
-                        <small class="text-muted d-block mb-1">Current Level</small>
-                        <span class="fw-bold">{{ student_profile.level }} Level</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="alert alert-info mt-3 mb-0 py-2 small border-0">
-                <i class="bi bi-lock-fill me-2"></i> Academic details are verified.
-            </div>
-
-            {% else %}
-            <!-- UNLOCKED STATE -->
-            <p class="text-primary mb-3 small">Please link your university to unlock the Student Hub.</p>
-            <form method="post">
-                {% csrf_token %}
+                {% if student_profile %}
                 <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="small fw-bold">Select University</label>
-                        {{ s_form.university }}
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded text-center h-100 border">
+                            <small class="text-muted d-block mb-1">University</small>
+                            <span class="fw-bold text-primary">{{ student_profile.get_university_display }}</span>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="small fw-bold">Matric Number</label>
-                        {{ s_form.matric_number }}
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded text-center h-100 border">
+                            <small class="text-muted d-block mb-1">Matric Number</small>
+                            <span class="fw-bold">{{ student_profile.matric_number }}</span>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="small fw-bold">Current Level</label>
-                        {{ s_form.level }}
-                    </div>
-                    <div class="col-12 mt-4">
-                        <button type="submit" class="btn btn-primary w-100">Submit Academic Details</button>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded text-center h-100 border">
+                            <small class="text-muted d-block mb-1">Current Level</small>
+                            <span class="fw-bold">{{ student_profile.level }} Level</span>
+                        </div>
                     </div>
                 </div>
-            </form>
+
+                <div class="alert alert-info mt-3 mb-0 py-2 small border-0">
+                    <i class="bi bi-lock-fill me-2"></i> Academic details are verified.
+                </div>
+
+                {% else %}
+                <p class="text-primary mb-3 small">Please link your university to unlock the Student Hub.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="small fw-bold">Select University</label>
+                            {{ s_form.university }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small fw-bold">Matric Number</label>
+                            {{ s_form.matric_number }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small fw-bold">Current Level</label>
+                            {{ s_form.level }}
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                Submit Academic Details
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
             {% endif %}
-        </div>
-        {% endif %}
 
-        <!-- RIGHTS SECTION -->
-        <div class="card shadow-sm p-4 border-0">
-            <h4 style="color: #2c4964; font-size: 1.1rem; font-weight: 700;">Membership Privileges</h4>
-            <ul class="list-group list-group-flush small">
-                <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Access to National
-                    Clinical
-                    Guidelines</li>
-                <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Voting Rights at AGM
-                    (Tiers 3 &
-                    4)</li>
-                <li class="list-group-item"><i class="bi bi-check2 text-primary me-2"></i> Digital Membership
-                    Certificate
-                </li>
-            </ul>
-        </div>
+            <!-- RIGHTS SECTION -->
+            <div class="card shadow-sm p-4 border-0">
+                <h4 style="color:#2c4964;font-size:1.1rem;font-weight:700;">Membership Privileges</h4>
+                <ul class="list-group list-group-flush small">
+                    <li class="list-group-item">
+                        <i class="bi bi-check2 text-primary me-2"></i>
+                        Access to National Clinical Guidelines
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-check2 text-primary me-2"></i>
+                        Voting Rights at AGM (Tiers 3 & 4)
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-check2 text-primary me-2"></i>
+                        Digital Membership Certificate
+                    </li>
+                </ul>
+            </div>
 
+        </div>
     </div>
-</div>
 </div>
 {% endblock %}
