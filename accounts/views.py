@@ -139,6 +139,7 @@ def profile(request):
         s_form = None
 
     context = {
+        'user': request.user,
         'p_form': p_form,
         's_form': s_form,
         'student_profile': student_profile
