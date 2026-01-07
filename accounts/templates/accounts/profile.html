@@ -12,10 +12,10 @@
             <div class="mb-3">
                 {% if user.profile_picture %}
                 {% cloudinary user.profile_picture
-                width=130 height=130 crop="thumb" gravity="face"
+                width=300 height=300 crop="fill" gravity="face"
                 format="auto" quality="auto"
-                class="rounded-circle shadow-sm"
-                style="border: 3px solid #3fbbc0; object-fit: cover;" %}
+                class="rounded shadow-sm" style="width: 130px; height: 130px;
+                object-fit: cover; border: 3px solid #3fbbc0;" %}
                 {% else %}
                 <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded-circle shadow-sm"
                     style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #3fbbc0;">
@@ -23,8 +23,10 @@
             </div>
 
 
-            <h4 class="fw-bold mb-1">{{ user.username }}</h4>
-            <span class="badge bg-info text-dark mb-2">{{ user.get_membership_tier_display }}</span>
+            <h4>{{ user.username }}</h4>
+            <span class="badge bg-info text-dark mb-2">
+                {{ user.get_membership_tier_display }}
+            </span>
 
             <hr>
 
