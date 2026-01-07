@@ -114,19 +114,19 @@ def profile(request):
         p_form = ProfilePictureForm(instance=request.user)
 
     # 2. Handle Student Profile Update (Only for students)
-    
-    # FIX: Use a direct database query to find the profile. 
+
+    # FIX: Use a direct database query to find the profile.
     # This guarantees we find it if it exists, regardless of related_name.
     student_profile = StudentProfile.objects.filter(user=request.user).first()
-    
+
     if request.user.membership_tier == 'student':
-        # Check if the POST request is meant for the Student Form (by checking a field name)
+        # Check if the POST request is meant for the Student Form
         if request.method == 'POST' and 'matric_number' in request.POST:
             if student_profile:
                 s_form = StudentProfileForm(request.POST, instance=student_profile)
             else:
                 s_form = StudentProfileForm(request.POST)
-            
+
             if s_form.is_valid():
                 student_obj = s_form.save(commit=False)
                 student_obj.user = request.user
@@ -144,8 +144,11 @@ def profile(request):
         's_form': s_form,
         'student_profile': student_profile
     }
+
     return render(request, 'accounts/profile.html', context)
 
+
+@login_required
 def download_constitution(request):
     
     # Look for constitution.pdf in the primary static folder
