@@ -12,6 +12,10 @@ from .models import (
 )
 
 
+admin.site.site_header = "NAA Portal Management"
+admin.site.site_title = "NAA Admin Portal"
+admin.site.index_title = "Welcome to the Academy Management System"
+
 @admin.register(User)
 class NAAUserAdmin(BaseUserAdmin):
     model = User
