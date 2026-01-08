@@ -12,19 +12,10 @@
         <div class="col-md-4">
             <div>
                 {% if user.profile_picture %}
-                {# 1. Generate the URL and save it to the variable 'img_url' #}
-                {% cloudinary_url user.profile_picture width=250 height=250 crop='fill' gravity='face' format='auto'
-                quality='auto' as img_url %}
-
-                {# 2. Use that variable inside the src attribute #}
-                <img src="{{ img_url }}" class="rounded-circle shadow-sm"
-                    style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250"
-                    alt="{{ user.username }}">
+                    {% cloudinary_url user.profile_picture width=250 height=250 crop='fill' gravity='face' format='auto' quality='auto' as img_url %}
+                    <img src="{{ img_url }}" class="rounded-circle shadow-sm" style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250" alt="{{ user.username }}">
                 {% else %}
-                {# Default placeholder if no picture exists #}
-                <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded-circle shadow-sm"
-                    style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250"
-                    alt="Default Profile">
+                    <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded-circle shadow-sm" style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250" alt="Default Profile">
                 {% endif %}
             </div>
 
