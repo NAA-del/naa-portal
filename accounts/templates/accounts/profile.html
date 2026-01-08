@@ -12,11 +12,13 @@
         <div class="col-md-4">
             <div>
                 {% if user.profile_picture %}
-                    {% cloudinary_url user.profile_picture width=250 height=250 crop='fill' gravity='face' format='auto' as img_url%}
-                    <img src="{{ img_url}}" class="rounded-circle shadow sm" style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250" alt="{{ user.username}}">
+                <img src="{{ user.profile_picture.url }}" class="rounded-circle shadow-sm"
+                    style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250">
                 {% else %}
-                    <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded-circle shadow-sm" style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250" alt="Default profile">
+                <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded-circle shadow-sm"
+                    style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250">
                 {% endif %}
+
             </div>
 
             <h4>{{ user.username }}</h4>
