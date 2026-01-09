@@ -68,7 +68,7 @@ class StudentProfile(models.Model):
         ('UNIMED', 'University of Medical Sciences, Ondo (UNIMED)'),
         ('FUHSI', 'Federal University of Health Sciences, Ila-Orangun (FUHSI)'),
         ('FUHSA', 'Federal University of Health Sciences, Azare (FUHSA)'),
-        ('futminna', 'Federal University of Technology, Minna'),
+        ('FUDMA', 'Federal University Dutsin-Ma, Katsina (FUDMA)'),
     ]
     
     user = models.OneToOneField(
