@@ -104,7 +104,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # --- MEDIA FILES (Images, Documents, Photos) ---
-MEDIA_URL = '/media/'
+MEDIA_URL = '/media/' 
 
 # Use Cloudinary if the URL is set (Production/Render), otherwise use Local Media
 if os.environ.get("CLOUDINARY_URL"):

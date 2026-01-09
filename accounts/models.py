@@ -68,6 +68,7 @@ class StudentProfile(models.Model):
         ('UNIMED', 'University of Medical Sciences, Ondo (UNIMED)'),
         ('FUHSI', 'Federal University of Health Sciences, Ila-Orangun (FUHSI)'),
         ('FUHSA', 'Federal University of Health Sciences, Azare (FUHSA)'),
+        ('futminna', 'Federal University of Technology, Minna'),
     ]
     
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='student_info')
