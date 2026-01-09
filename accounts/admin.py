@@ -8,7 +8,7 @@ from .models import (
     Resource,
     StudentProfile,
     StudentAnnouncement,
-    CPDRecord
+    CPDRecord,
 )
 
 

@@ -71,10 +71,19 @@ class StudentProfile(models.Model):
         ('futminna', 'Federal University of Technology, Minna'),
     ]
     
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='student_info')
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='student_info'
+    )
+    # Changed back to CharField
     university = models.CharField(max_length=100, choices=UNIVERSITY_CHOICES)
     matric_number = models.CharField(max_length=20, unique=True)
-    level = models.IntegerField(choices=[(100, '100L'), (200, '200L'), (300, '300L'), (400, '400L'), (500, '500L')])
+    
+    level = models.IntegerField(choices=[
+        (100, '100L'), (200, '200L'), (300, '300L'), 
+        (400, '400L'), (500, '500L')
+    ])
     
     def __str__(self):
         return f"{self.user.username} ({self.university})"
