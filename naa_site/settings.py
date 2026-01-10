@@ -28,9 +28,9 @@ CLOUDINARY_STORAGE = {
 # Application definition
 INSTALLED_APPS = [
     # Cloudinary storage MUST be before django.contrib.staticfiles
+    'accounts.apps.AccountsConfig',
     'cloudinary_storage',
     'cloudinary',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'accounts.apps.AccountsConfig',
+    
 ]
 
 MIDDLEWARE = [
@@ -133,10 +133,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-# Authentication
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-# Email Routing
-DEFAULT_FROM_EMAIL = 'NAA Platform <naa.academy1@gmail.com>'
+DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 EMAIL_TIMEOUT = 10
