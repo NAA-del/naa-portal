@@ -12,7 +12,7 @@ def send_verification_email(user):
     try:
         send_mail(
             'Account Verified - NAA',
-            f'Hello {user.first_name},\n\nYour Nigerian Academy of Audiology account has been verified. You can now log in to access member resources.',
+            f'Hello {user.username},\n\nYour Nigerian Academy of Audiology account has been verified. You can now log in to access member resources.',
             settings.DEFAULT_FROM_EMAIL,
             [user.email],
             fail_silently=False,  # <-- now will raise errors if email fails
