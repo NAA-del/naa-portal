@@ -24,8 +24,7 @@
                     <!-- Member Profile Picture with Cloudinary Face-Gravity -->
                     <div class="mb-3 mt-2">
                         {% if member.profile_picture %}
-                        <img src="{{ member.profile_picture|cloudinary_url:'c_fill,g_face,w_300,h_300,q_auto,f_auto' }}"
-                            class="rounded shadow-sm"
+                        <img src="{{ member.profile_picture.url }}" class="rounded shadow-sm"
                             style="width:130px;height:130px;object-fit:cover;border:3px solid #3fbbc0;">
                         {% else %}
                         <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded shadow-sm"
