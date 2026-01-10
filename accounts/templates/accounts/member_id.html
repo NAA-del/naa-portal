@@ -24,12 +24,12 @@
                     <!-- Member Profile Picture with Cloudinary Face-Gravity -->
                     <div class="mb-3 mt-2">
                         {% if member.profile_picture %}
-                        {% cloudinary member.profile_picture width=300 height=300 crop="fill" gravity="face"
-                        format="auto" quality="auto" class="rounded shadow-sm" style="width: 130px; height: 130px;
-                        object-fit: cover; border: 3px solid #3fbbc0;" %}
+                        <img src="{{ member.profile_picture|cloudinary_url:'c_fill,g_face,w_300,h_300,q_auto,f_auto' }}"
+                            class="rounded shadow-sm"
+                            style="width:130px;height:130px;object-fit:cover;border:3px solid #3fbbc0;">
                         {% else %}
                         <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded shadow-sm"
-                            style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #3fbbc0;">
+                            style="width:130px;height:130px;object-fit:cover;border:3px solid #3fbbc0;">
                         {% endif %}
                     </div>
 
@@ -137,7 +137,8 @@
             <div class="card shadow-lg border-0" style="border-radius:15px;border:1px solid #2c4964;">
                 <div class="p-3 text-center text-white" style="background:#2c4964;border-radius:15px 15px 0 0;">
                     <h6 class="mb-0 fw-bold">NIGERIAN ACADEMY OF AUDIOLOGY</h6>
-                    <small>{% if member.is_staff %}ADMINISTRATIVE CREDENTIAL{% else %}PROFESSIONAL IDENTIFICATION{% endif %}</small>
+                    <small>{% if member.is_staff %}ADMINISTRATIVE CREDENTIAL{% else %}PROFESSIONAL IDENTIFICATION{%
+                        endif %}</small>
                 </div>
 
                 <div class="card-body text-center">
