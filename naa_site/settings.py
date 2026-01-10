@@ -139,3 +139,4 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 # Email Routing
 DEFAULT_FROM_EMAIL = 'NAA Platform <naa.academy1@gmail.com>'
+EMAIL_TIMEOUT = 10

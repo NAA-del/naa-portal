@@ -15,7 +15,7 @@ def send_verification_email(user):
             f'Hello {user.first_name},\n\nYour Nigerian Academy of Audiology account has been verified. You can now log in to access member resources.',
             settings.DEFAULT_FROM_EMAIL,
             [user.email],
-            fail_silently=False,
+            fail_silently=True,
         )
         print(f"Verification email sent to {user.email}")
     except Exception as e:
