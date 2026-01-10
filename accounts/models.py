@@ -15,14 +15,13 @@ def send_verification_email(user):
             f'Hello {user.first_name},\n\nYour Nigerian Academy of Audiology account has been verified. You can now log in to access member resources.',
             settings.DEFAULT_FROM_EMAIL,
             [user.email],
-            fail_silently=True,
+            fail_silently=False,  # <-- now will raise errors if email fails
         )
         print(f"Verification email sent to {user.email}")
+        logger.info(f"Verification email sent to {user.email}")
     except Exception as e:
-        # This catch prevents the Admin panel from crashing (Internal Server Error)
         logger.error(f"Email failed to send to {user.email}: {e}")
         print(f"Email error: {e}")
-
 # --- Models ---
 
 class EmailUpdate(models.Model):
@@ -143,7 +142,7 @@ class StudentAnnouncement(models.Model):
     date_posted = models.DateTimeField(auto_now_add=True)
     target_university = models.CharField(
         max_length=20, 
-        choices=[('All', 'All Universities'), ('UNIMED', 'UNIMED'), ('FUHSI', 'FUHSI'), ('FUHSA', 'FUHSA')],
+        choices=[('All', 'All Universities'), ('UNIMED', 'UNIMED'), ('FUHSI', 'FUHSI'), ('FUHSA', 'FUHSA'), ('FUDMA', 'FUDMA')],
         default='All'
     )
 
