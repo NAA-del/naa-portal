@@ -25,6 +25,16 @@ def send_verification_email(user):
 
 # --- Models ---
 
+class EmailUpdate(models.Model):
+    title = models.CharField(max_length=200, help_text="Internal name for admins")
+    subject = models.CharField(max_length=255)
+    message = models.TextField(help_text="Email body (plain text for now)")
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
+
 class User(AbstractUser):
     TIER_CHOICES = [
         ('student', 'Student Member'),

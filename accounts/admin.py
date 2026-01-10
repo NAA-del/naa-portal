@@ -10,6 +10,7 @@ from .models import (
     StudentProfile,
     StudentAnnouncement,
     CPDRecord,
+    EmailUpdate,
 )
 
 
@@ -17,20 +18,34 @@ admin.site.site_header = "NAA Portal Management"
 admin.site.site_title = "NAA Admin Portal"
 admin.site.index_title = "Welcome to the Academy Management System"
 
-@admin.action(description="Send email to selected verified users")
-def send_email(modeladmin, request, queryset):
+@admin.action(description="Send selected email update to verified users")
+def send_update_email(modeladmin, request, queryset):
+    email_update = EmailUpdate.objects.filter(is_active=True).first()
+
+    if not email_update:
+        messages.error(request, "No active email update found.")
+        return
+
     sent = 0
     for user in queryset:
-        if user.email and user.is_verified:
+        if user.is_verified and user.email:
             send_mail(
-                "Platform Update",
-                "New content is available.",
-                settings.DEFAULT_FROM_EMAIL,
-                [user.email],
+                subject=email_update.subject,
+                message=email_update.message.replace(
+                    "{{name}}", user.first_name or user.username
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
             )
             sent += 1
 
     messages.success(request, f"{sent} emails sent successfully.")
+
+@admin.register(EmailUpdate)
+class EmailUpdateAdmin(admin.ModelAdmin):
+    list_display = ('title', 'subject', 'created_at', 'is_active')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('title', 'subject')
 
 @admin.register(User)
 class NAAUserAdmin(BaseUserAdmin):
@@ -87,7 +102,7 @@ class NAAUserAdmin(BaseUserAdmin):
     )
 
     # ================= ACTIONS =================
-    actions = ['verify_members', 'unverify_members']
+    actions = ['verify_members', 'unverify_members', send_update_email]
 
     @admin.action(description='Verify selected members')
     def verify_members(self, request, queryset):
