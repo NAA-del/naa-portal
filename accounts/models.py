@@ -37,16 +37,6 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True)
     is_verified = models.BooleanField(default=False)
 
-    def save(self, *args, **kwargs):
-        # Check if this is an update to an existing user
-        if self.pk:
-            old_user = User.objects.get(pk=self.pk)
-            # If is_verified was False and is now True, send the email
-            if not old_user.is_verified and self.is_verified:
-                send_verification_email(self)
-        
-        super().save(*args, **kwargs)
-
 class Announcement(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()

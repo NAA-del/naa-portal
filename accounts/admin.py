@@ -1,5 +1,6 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.core.mail import send_mail
 from .models import (
     User,
     Announcement,
@@ -15,6 +16,21 @@ from .models import (
 admin.site.site_header = "NAA Portal Management"
 admin.site.site_title = "NAA Admin Portal"
 admin.site.index_title = "Welcome to the Academy Management System"
+
+@admin.action(description="Send email to selected verified users")
+def send_email(modeladmin, request, queryset):
+    sent = 0
+    for user in queryset:
+        if user.email and user.is_verified:
+            send_mail(
+                "Platform Update",
+                "New content is available.",
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+            )
+            sent += 1
+
+    messages.success(request, f"{sent} emails sent successfully.")
 
 @admin.register(User)
 class NAAUserAdmin(BaseUserAdmin):

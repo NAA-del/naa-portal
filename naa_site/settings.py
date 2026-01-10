@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'accounts',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -127,6 +127,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # --- EMAIL CONFIGURATION ---
 # Prints emails to terminal/logs (Set to SMTP for live deployment)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'admin@naa.org.ng'
-SERVER_EMAIL = 'server@naa.org.ng'
+# Use SMTP for sending actual emails
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# Authentication
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+# Email Routing
+DEFAULT_FROM_EMAIL = 'NAA Platform <naa.academy1@gmail.com>'
