@@ -128,13 +128,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # --- EMAIL CONFIGURATION ---
 # Prints emails to terminal/logs (Set to SMTP for live deployment)
 # Use SMTP for sending actual emails
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
-EMAIL_TIMEOUT = 10
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
+DEFAULT_FROM_EMAIL = 'nigerianacademyofaudiology@gmail.com' # Must be the one you verify in SendGrid
