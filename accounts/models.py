@@ -3,36 +3,11 @@ from django.db import models
 from django.conf import settings
 from django.core.mail import send_mail
 from cloudinary.models import CloudinaryField
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 import logging
 
 logger = logging.getLogger(__name__)
-
-# --- Helper Function for Email ---
-def send_verification_email(user):
-    try:
-        send_mail(
-            'Account Verified - NAA',
-            f'Hello {user.username},\n\nYour Nigerian Academy of Audiology account has been verified. You can now log in to access member resources.',
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,  # <-- now will raise errors if email fails
-        )
-        print(f"Verification email sent to {user.email}")
-        logger.info(f"Verification email sent to {user.email}")
-    except Exception as e:
-        logger.error(f"Email failed to send to {user.email}: {e}")
-        print(f"Email error: {e}")
-# --- Models ---
-
-class EmailUpdate(models.Model):
-    title = models.CharField(max_length=200, help_text="Internal name for admins")
-    subject = models.CharField(max_length=255)
-    message = models.TextField(help_text="Email body (plain text for now)")
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.title
 
 class User(AbstractUser):
     TIER_CHOICES = [
@@ -44,7 +19,59 @@ class User(AbstractUser):
     profile_picture = CloudinaryField('image', null=True, blank=True)
     membership_tier = models.CharField(max_length=20, choices=TIER_CHOICES, default='student')
     phone_number = models.CharField(max_length=15, blank=True)
+    sendgrid_template_id = models.CharField(max_length=100, blank=True, null=True, help_text="d-55d095291d714497a445e6f9768ffd31")
     is_verified = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            # Check if is_verified is changing from False to True
+            old_user = User.objects.get(pk=self.pk)
+            if not old_user.is_verified and self.is_verified:
+                send_verification_email(self)
+        
+        super().save(*args, **kwargs)
+
+def send_verification_email(user):
+    email_template = EmailUpdate.objects.filter(
+        is_active=True, 
+        title__icontains="Verification"
+    ).first()
+
+    # 2. Safety check: If no template or ID is found, stop or use fallback
+    if not email_template or not email_template.sendgrid_template_id:
+        logger.warning(f"No SendGrid Template found in Admin for verification.")
+        return
+
+    # 3. Build the SendGrid Message
+    message = Mail(
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to_emails=user.email
+    )
+    
+    message.template_id = email_template.sendgrid_template_id
+
+    message.dynamic_template_data = {
+        'subject': email_template.subject,
+        'username': user.username,
+        'body_text': email_template.message,  # Text you wrote in the Admin
+    }
+
+    try:
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        sg.send(message)
+        logger.info(f"SendGrid Dynamic Email sent to {user.email}")
+    except Exception as e:
+        logger.error(f"SendGrid Error: {e}")
+
+class EmailUpdate(models.Model):
+    title = models.CharField(max_length=200, help_text="Internal name for admins")
+    subject = models.CharField(max_length=255)
+    message = models.TextField(help_text="Email body (plain text for now)")
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
 
 class Announcement(models.Model):
     title = models.CharField(max_length=200)
