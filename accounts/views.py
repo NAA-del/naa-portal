@@ -223,29 +223,37 @@ def member_id(request):
 
 @login_required
 def student_hub(request):
-    # 1. Security: Only students allowed
+    
     if request.user.membership_tier != 'student':
         messages.warning(request, "This section is for Student Members only.")
         return redirect('profile')
 
-    # 2. LOCK: Check if profile is complete (Safe Query)
     student_profile = StudentProfile.objects.filter(user=request.user).first()
-    
     if not student_profile:
-        messages.error(request, "Action Required: Please complete your Student Details (University & Matric No) to access the Student Hub.")
+        messages.error(request, "Action Required: Please complete your Student Details to access the Student Hub.")
         return redirect('profile')
 
-    # 3. Filter Logic
-    announcements = StudentAnnouncement.objects.all().order_by('-date_posted')
-    if student_profile:
-        announcements = announcements.filter(
-            target_university__in=['All', student_profile.university]
-        )
+    resources = Resource.objects.filter(category='academic')
+
+    # 4. Apply Verification and Access Level rules
+    if not request.user.is_verified:
+        resources = resources.filter(access_level='public')
     else:
-        announcements = announcements.filter(target_university='All')
+        resources = resources.filter(access_level__in=['public', 'student'])
+
+    if not request.user.is_verified:
+        resources = resources.filter(is_verified_only=False)
+
+    resources = resources.order_by('-uploaded_at')[:4]
+
+    announcements = StudentAnnouncement.objects.all().order_by('-date_posted')
+    announcements = announcements.filter(
+        target_university__in=['All', student_profile.university]
+    )
 
     return render(request, 'accounts/student_hub.html', {
-        'announcements': announcements
+        'announcements': announcements,
+        'resources': resources,  # Now the template can see the files!
     })
 
 @login_required
