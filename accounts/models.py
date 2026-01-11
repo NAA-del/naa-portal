@@ -19,7 +19,6 @@ class User(AbstractUser):
     profile_picture = CloudinaryField('image', null=True, blank=True)
     membership_tier = models.CharField(max_length=20, choices=TIER_CHOICES, default='student')
     phone_number = models.CharField(max_length=15, blank=True)
-    sendgrid_template_id = models.CharField(max_length=100, blank=True, null=True, help_text="d-55d095291d714497a445e6f9768ffd31")
     is_verified = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
@@ -68,6 +67,7 @@ class EmailUpdate(models.Model):
     subject = models.CharField(max_length=255)
     message = models.TextField(help_text="Email body (plain text for now)")
     created_at = models.DateTimeField(auto_now_add=True)
+    sendgrid_template_id = models.CharField(max_length=100, blank=True, null=True, help_text="d-55d095291d714497a445e6f9768ffd31")
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
