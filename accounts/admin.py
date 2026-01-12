@@ -20,37 +20,24 @@ admin.site.index_title = "Welcome to the Academy Management System"
 
 @admin.action(description="Send Active Template to FILTERED users")
 def send_update_email(modeladmin, request, queryset):
+    # 1. Fetch the active template from the database
     email_update = EmailUpdate.objects.filter(is_active=True).first()
 
     if not email_update:
         messages.error(request, "Error: You must create an 'Email Update' and check 'Is Active' first.")
         return
 
+    # Import the helper function we wrote in models.py
+    from .models import send_custom_template_email
+
     sent_count = 0
     for user in queryset:
-        # 2. Only send to people with emails who are verified
+        # Only send to verified users with email addresses
         if user.email and user.is_verified:
-            # We use our new dynamic function from models.py
-            from .models import send_verification_email # Reuse the SendGrid logic
-            
-            # If you want to use the specific template selected:
-            message = Mail(
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to_emails=user.email
-            )
-            message.template_id = email_update.sendgrid_template_id
-            message.dynamic_template_data = {
-                'subject': email_update.subject,
-                'username': user.username,
-                'body_text': email_update.message,
-            }
-            
-            try:
-                sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
-                sg.send(message)
+            # We call the helper function here!
+            success = send_custom_template_email(user, email_update)
+            if success:
                 sent_count += 1
-            except Exception:
-                continue
 
     messages.success(request, f"Successfully sent '{email_update.title}' to {sent_count} users.")
 
@@ -118,12 +105,14 @@ class NAAUserAdmin(BaseUserAdmin):
     actions = ['verify_members', 'unverify_members', send_update_email]
 
     @admin.action(description='Verify selected members')
-    def verify_members(self, request, queryset):
-        queryset.filter(
-            is_staff=False,
-            is_superuser=False
-        ).update(is_verified=True)
-        self.message_user(request, "Selected members have been verified.")
+def verify_members(self, request, queryset):
+    count = 0
+    # Loop through and call save() to trigger the send_verification_email logic
+    for user in queryset.filter(is_staff=False, is_superuser=False, is_verified=False):
+        user.is_verified = True
+        user.save() # This triggers the save() method in models.py
+        count += 1
+    self.message_user(request, f"{count} members verified and notified via email.")
 
     @admin.action(description='Unverify selected members')
     def unverify_members(self, request, queryset):
