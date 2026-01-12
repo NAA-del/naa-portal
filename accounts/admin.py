@@ -18,28 +18,41 @@ admin.site.site_header = "NAA Portal Management"
 admin.site.site_title = "NAA Admin Portal"
 admin.site.index_title = "Welcome to the Academy Management System"
 
-@admin.action(description="Send selected email update to verified users")
+@admin.action(description="Send Active Template to FILTERED users")
 def send_update_email(modeladmin, request, queryset):
     email_update = EmailUpdate.objects.filter(is_active=True).first()
 
     if not email_update:
-        messages.error(request, "No active email update found.")
+        messages.error(request, "Error: You must create an 'Email Update' and check 'Is Active' first.")
         return
 
-    sent = 0
+    sent_count = 0
     for user in queryset:
-        if user.is_verified and user.email:
-            send_mail(
-                subject=email_update.subject,
-                message=email_update.message.replace(
-                    "{{name}}", user.first_name or user.username
-                ),
+        # 2. Only send to people with emails who are verified
+        if user.email and user.is_verified:
+            # We use our new dynamic function from models.py
+            from .models import send_verification_email # Reuse the SendGrid logic
+            
+            # If you want to use the specific template selected:
+            message = Mail(
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
+                to_emails=user.email
             )
-            sent += 1
+            message.template_id = email_update.sendgrid_template_id
+            message.dynamic_template_data = {
+                'subject': email_update.subject,
+                'username': user.username,
+                'body_text': email_update.message,
+            }
+            
+            try:
+                sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+                sg.send(message)
+                sent_count += 1
+            except Exception:
+                continue
 
-    messages.success(request, f"{sent} emails sent successfully.")
+    messages.success(request, f"Successfully sent '{email_update.title}' to {sent_count} users.")
 
 @admin.register(EmailUpdate)
 class EmailUpdateAdmin(admin.ModelAdmin):

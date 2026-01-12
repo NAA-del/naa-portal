@@ -62,6 +62,32 @@ def send_verification_email(user):
     except Exception as e:
         logger.error(f"SendGrid Error: {e}")
 
+def send_custom_template_email(user, email_update_obj):
+    """
+    Takes a user and an EmailUpdate object and sends it via SendGrid
+    """
+    if not email_update_obj.sendgrid_template_id or not user.email:
+        return False
+
+    message = Mail(
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to_emails=user.email
+    )
+    message.template_id = email_update_obj.sendgrid_template_id
+    message.dynamic_template_data = {
+        'subject': email_update_obj.subject,
+        'username': user.username,
+        'body_text': email_update_obj.message,
+    }
+
+    try:
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        sg.send(message)
+        return True
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+
 class EmailUpdate(models.Model):
     title = models.CharField(max_length=200, help_text="Internal name for admins")
     subject = models.CharField(max_length=255)
