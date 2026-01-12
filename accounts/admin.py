@@ -105,15 +105,15 @@ class NAAUserAdmin(BaseUserAdmin):
     actions = ['verify_members', 'unverify_members', send_update_email]
 
     @admin.action(description='Verify selected members')
-def verify_members(self, request, queryset):
-    count = 0
+    def verify_members(self, request, queryset):
+        count = 0
     # Loop through and call save() to trigger the send_verification_email logic
-    for user in queryset.filter(is_staff=False, is_superuser=False, is_verified=False):
-        user.is_verified = True
-        user.save() # This triggers the save() method in models.py
-        count += 1
-    self.message_user(request, f"{count} members verified and notified via email.")
-
+        for user in queryset.filter(is_staff=False, is_superuser=False, is_verified=False):
+            user.is_verified = True
+            user.save() # This triggers the save() method in models.py
+            count += 1
+        self.message_user(request, f"{count} members verified and notified via email.")
+        
     @admin.action(description='Unverify selected members')
     def unverify_members(self, request, queryset):
         queryset.update(is_verified=False)
