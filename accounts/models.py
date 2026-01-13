@@ -23,11 +23,7 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         if self.pk:
-            # Check if is_verified is changing from False to True
-            old_user = User.objects.get(pk=self.pk)
-            if not old_user.is_verified and self.is_verified:
-                send_verification_email(self)
-        
+            
         super().save(*args, **kwargs)
 
 def send_verification_email(user):
