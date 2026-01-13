@@ -50,6 +50,8 @@ class EmailUpdateAdmin(admin.ModelAdmin):
 @admin.register(User)
 class NAAUserAdmin(BaseUserAdmin):
     model = User
+    
+    readonly_fields = ('date_verified',)
 
     # ================= LIST VIEW =================
     list_display = (
