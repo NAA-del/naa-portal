@@ -20,9 +20,11 @@ class User(AbstractUser):
     membership_tier = models.CharField(max_length=20, choices=TIER_CHOICES, default='student')
     phone_number = models.CharField(max_length=15, blank=True)
     is_verified = models.BooleanField(default=False)
+    date_verified = models.DateTimeField(null=True, blank=True, editable=False)
 
     def save(self, *args, **kwargs):
         if self.pk:
+            pass
             
         super().save(*args, **kwargs)
 

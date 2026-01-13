@@ -57,6 +57,7 @@ class NAAUserAdmin(BaseUserAdmin):
         'email',
         'membership_tier',
         'is_verified',
+        'date_verified',
         'is_staff',
     )
 
@@ -78,6 +79,7 @@ class NAAUserAdmin(BaseUserAdmin):
                     'membership_tier',
                     'phone_number',
                     'is_verified',
+                    'date_verified',
                 )
             },
         ),

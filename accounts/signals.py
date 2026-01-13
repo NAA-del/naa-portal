@@ -19,4 +19,6 @@ def store_old_verification_status(sender, instance, **kwargs):
 @receiver(post_save, sender=User)
 def send_email_when_verified(sender, instance, created, **kwargs):
     if not created and not instance._old_is_verified and instance.is_verified:
+        User.objects.filter(pk=instance.pk).update(date_verified=timezone.now())
+        
         send_verification_email(instance)
