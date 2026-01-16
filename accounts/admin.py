@@ -107,7 +107,7 @@ class NAAUserAdmin(BaseUserAdmin):
     )
 
     # ================= ACTIONS =================
-    actions = ['verify_members', 'unverify_members', send_update_email]
+    actions = ['verify_members', 'unverify_members', send_update_email, 'send_dashboard_notification']
 
     @admin.action(description='Verify selected members')
     def verify_members(self, request, queryset):
@@ -123,6 +123,29 @@ class NAAUserAdmin(BaseUserAdmin):
     def unverify_members(self, request, queryset):
         queryset.update(is_verified=False)
         self.message_user(request, "Selected members verification revoked.")
+        
+    @admin.action(description="Notify selected members on their Dashboards")
+    def send_dashboard_notification(self, request, queryset):
+        # Get the active template content to use as the message
+        email_update = EmailUpdate.objects.filter(is_active=True).first()
+        
+        if not email_update:
+            self.message_user(request, "Please create an 'Email Update' template first.", level=messages.ERROR)
+            return
+
+        for user in queryset:
+            # Create a database record for each selected user
+            Notification.objects.create(
+                user=user,
+                title=email_update.subject,
+                message=email_update.message
+            )
+        
+        self.message_user(
+            request,
+            f"Successfully alerted {queryset.count()} members on their dashboards.",
+            level=messages.SUCCESS
+        )
 
 
 # ================= CPD RECORD ADMIN =================
@@ -167,30 +190,6 @@ class NotificationAdmin(admin.ModelAdmin):
     list_display = ('user', 'title', 'is_read', 'created_at')
     list_filter = ('is_read', 'created_at')
     search_fields = ('user__username', 'title')
-    actions = ['send_dashboard_notification']  # <--- Add the action here
-
-    @admin.action(description="Notify selected members on their Dashboards")
-    def send_dashboard_notification(self, request, queryset):
-        # Get the active template content to use as the message
-        email_update = EmailUpdate.objects.filter(is_active=True).first()
-        
-        if not email_update:
-            self.message_user(request, "Please create an 'Email Update' template first.", level=messages.ERROR)
-            return
-
-        for user in queryset:
-            # Create a database record for each selected user
-            Notification.objects.create(
-                user=user,
-                title=email_update.subject,
-                message=email_update.message
-            )
-        
-        self.message_user(
-            request,
-            f"Successfully alerted {queryset.count()} members on their dashboards.",
-            level=messages.SUCCESS
-        )
 
 
 # ================= OTHER MODELS =================
