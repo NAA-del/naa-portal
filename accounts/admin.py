@@ -46,7 +46,7 @@ def send_update_email(modeladmin, request, queryset):
 class EmailUpdateAdmin(admin.ModelAdmin):
     list_display = ('title', 'subject', 'created_at', 'is_active')
     list_filter = ('is_active', 'created_at')
-    search_fields = ('title', 'subject')
+    search_fields = ('title', 'subject', 'message')
 
 @admin.register(User)
 class NAAUserAdmin(BaseUserAdmin):
