@@ -11,7 +11,7 @@ from django.http import FileResponse, Http404
 # 1. IMPORT ALL MODELS
 from .models import (
     User, AboutPage, Announcement, Leader, 
-    Resource, StudentProfile, StudentAnnouncement, CPDRecord
+    Resource, StudentProfile, StudentAnnouncement, CPDRecord, Notification
 )
 
 # 2. IMPORT ALL FORMS
@@ -277,3 +277,10 @@ def cpd_tracker(request):
         'total_points': total_points,
         'form': form
     })
+    
+@login_required
+def mark_notification_read(request, pk):
+    notification = get_object_or_404(Notification, pk=pk, user=request.user)
+    notification.is_read = True
+    notification.save()
+    return redirect(request.META.get('HTTP_REFERER', 'profile'))

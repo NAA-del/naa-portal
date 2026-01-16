@@ -58,6 +58,26 @@
         <!-- RIGHT COLUMN -->
         <div class="col-md-8">
 
+            {% for notification in user.notifications.all %}
+            {% if not notification.is_read %}
+            <div class="alert alert-info border-0 shadow-sm mb-4 py-3"
+                style="border-left: 5px solid #3fbbc0 !important; background-color: #f0fbfc;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-megaphone-fill text-info me-3" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h5 class="fw-bold mb-1" style="color: #2c4964;">{{ notification.title }}</h5>
+                            <p class="mb-0 text-dark">{{ notification.message }}</p>
+                        </div>
+                    </div>
+                    <a href="{% url 'mark_notification_read' notification.pk %}" class="btn-close"
+                        aria-label="Close"></a>
+                </div>
+                <small class="text-muted d-block mt-2 ps-5">Received {{ notification.created_at|timesince }} ago</small>
+            </div>
+            {% endif %}
+            {% endfor %}
+
             <div class="card p-4 shadow-sm mb-4 border-0">
                 <h3 style="color:#2c4964;">Member Profile</h3>
                 <hr>
