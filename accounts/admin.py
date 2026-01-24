@@ -126,29 +126,28 @@ class NAAUserAdmin(BaseUserAdmin):
         
     @admin.action(description="Notify selected members on their Dashboards")
     def send_dashboard_notification(self, request, queryset):
-        # Get the active template content to use as the message
-        email_update = EmailUpdate.objects.filter(is_active=True).first()
-        
-        if not email_update:
-            self.message_user(request, "Please create an 'Email Update' template first.", level=messages.ERROR)
+        # Fetch the Active template
+        email_template = EmailUpdate.objects.filter(is_active=True).first()
+
+        if not email_template:
+            self.message_user(request, "No active Email Template found.", level=messages.ERROR)
             return
 
         for user in queryset:
-            
-            personalized_message = email_update.message.replace('{{ username }}', user.username)
-            # Create a database record for each selected user
+            # 1. Clean the message and ensure replacement works
+            msg = email_template.message
+            # Replace common variations of the placeholder
+            msg = msg.replace('{{username}}', user.username).replace('{{ username }}', user.username)
+
+            # 2. Create the notification
             Notification.objects.create(
                 user=user,
-                title=email_update.subject,
-                message=personalized_message
-            )
-        
-        self.message_user(
-            request,
-            f"Successfully alerted {queryset.count()} members on their dashboards.",
-            level=messages.SUCCESS
-        )
+                title=email_template.subject,
+                message=msg,
+                is_read=False # Ensure it shows as NEW to the user
+             )
 
+        self.message_user(request, f"Sent to {queryset.count()} members.", level=messages.SUCCESS)
 
 # ================= CPD RECORD ADMIN =================
 @admin.register(CPDRecord)
@@ -203,27 +202,15 @@ class ResourceAdmin(admin.ModelAdmin):
     
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    # Added 'message' (truncated) and 'is_read' for better tracking
+    # Simplified list view for the NAA Portal
     list_display = ('user', 'title', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at', 'user__membership_tier') #
+    search_fields = ('user__username', 'title', 'message') #
     
-    # Allows you to quickly filter to see who HASN'T read the webinar invite yet
-    list_filter = ('is_read', 'created_at', 'user__membership_tier')
-    
-    search_fields = ('user__username', 'title', 'message')
-    
-    # This prevents you from accidentally marking it as read/unread in the edit page
+    # REMOVE fieldsets for now to avoid "Add Page" errors. 
+    # This makes the form simple top-to-bottom.
+    fields = ('user', 'title', 'message', 'is_read')
     readonly_fields = ('created_at',)
-    
-    # Organizing the view so the message is easy to read
-    fieldsets = (
-        (None, {
-            'fields': ('user', 'title', 'is_read')
-        }),
-        ('Content', {
-            'fields': ('message', 'created_at')
-        }),
-    )
-
 
 # ================= OTHER MODELS =================
 admin.site.register(Leader)
