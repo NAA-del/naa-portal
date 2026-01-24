@@ -134,11 +134,13 @@ class NAAUserAdmin(BaseUserAdmin):
             return
 
         for user in queryset:
+            
+            personalized_message = email_update.message.replace('{{ username }}', user.username)
             # Create a database record for each selected user
             Notification.objects.create(
                 user=user,
                 title=email_update.subject,
-                message=email_update.message
+                message=personalized_message
             )
         
         self.message_user(
@@ -201,9 +203,26 @@ class ResourceAdmin(admin.ModelAdmin):
     
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
+    # Added 'message' (truncated) and 'is_read' for better tracking
     list_display = ('user', 'title', 'is_read', 'created_at')
-    list_filter = ('is_read', 'created_at')
-    search_fields = ('user__username', 'title')
+    
+    # Allows you to quickly filter to see who HASN'T read the webinar invite yet
+    list_filter = ('is_read', 'created_at', 'user__membership_tier')
+    
+    search_fields = ('user__username', 'title', 'message')
+    
+    # This prevents you from accidentally marking it as read/unread in the edit page
+    readonly_fields = ('created_at',)
+    
+    # Organizing the view so the message is easy to read
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'title', 'is_read')
+        }),
+        ('Content', {
+            'fields': ('message', 'created_at')
+        }),
+    )
 
 
 # ================= OTHER MODELS =================
