@@ -176,6 +176,20 @@ class CPDRecordAdmin(admin.ModelAdmin):
         queryset.update(is_verified=True)
         self.message_user(request, "Selected CPD records have been verified.")
 
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = (
+        'title',
+        'is_published',
+        'featured',
+        'author',
+        'date_posted',
+        'updated_at',
+    )
+    list_filter = ('is_published', 'featured', 'date_posted')
+    search_fields = ('title', 'summary', 'content')
+    list_editable = ('is_published', 'featured')
+    ordering = ('-featured', '-date_posted')
 
 # ================= RESOURCE ADMIN =================
 @admin.register(Resource)
@@ -193,7 +207,6 @@ class NotificationAdmin(admin.ModelAdmin):
 
 
 # ================= OTHER MODELS =================
-admin.site.register(Announcement)
 admin.site.register(Leader)
 admin.site.register(AboutPage)
 admin.site.register(StudentProfile)

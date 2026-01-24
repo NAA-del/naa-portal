@@ -29,6 +29,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile, name='profile'),
+    path('announcement/<int:pk>/',views.announcement,name='announcement'),
     path('download-constitution/', views.download_constitution, name='download_constitution'),
     path('cpd-tracker/', views.cpd_tracker, name='cpd_tracker'),
     path('resources/', views.resource_library, name='resource_library'),

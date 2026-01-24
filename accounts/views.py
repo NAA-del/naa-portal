@@ -77,15 +77,16 @@ def logout_view(request):
 # --- Main Views ---
 
 def home(request):
-    announcements = Announcement.objects.all().order_by('-date_posted')
+    announcements = Announcement.objects.filter(
+        is_published=True
+    ).order_by('-featured', '-date_posted')
+
     leaders = Leader.objects.all()
-    
-    context = {
+
+    return render(request, 'accounts/home.html', {
         'announcements': announcements,
         'leaders': leaders,
-    }
-    
-    return render(request, 'accounts/home.html', context)
+    })
 
 def about(request):
     about_info = AboutPage.objects.first()
@@ -284,3 +285,16 @@ def mark_notification_read(request, pk):
     notification.is_read = True
     notification.save()
     return redirect(request.META.get('HTTP_REFERER', 'profile'))
+
+def announcement(request, pk):
+    announcement = get_object_or_404(
+        Announcement,
+        pk=pk,
+        is_published=True
+    )
+
+    return render(
+        request,
+        'accounts/announcement.html',
+        {'announcement': announcement}
+    )

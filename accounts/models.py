@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 from django.core.mail import send_mail
+from django_ckeditor_5.fields import CKEditor5Field
 from cloudinary.models import CloudinaryField
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
@@ -99,11 +100,23 @@ class EmailUpdate(models.Model):
 
 class Announcement(models.Model):
     title = models.CharField(max_length=200)
-    content = models.TextField()
+    summary = models.TextField(blank=True, help_text="Short preview shown on home page")
+    content = CKEditor5Field(config_name='announcement')
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    is_published = models.BooleanField(default=True)
+    featured = models.BooleanField(default=False)
     date_posted = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    image = CloudinaryField('image', blank=True, null=True)
 
     def __str__(self):
         return self.title
+
 
 class Leader(models.Model):
     name = models.CharField(max_length=100)

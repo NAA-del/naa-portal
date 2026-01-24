@@ -7,7 +7,8 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-10 text-center">
-        <h2 style="color: #2c4964; font-size: 48px; font-weight: 700; margin-bottom: 20px;">Nigerian Academy of Audiology</h2>
+        <h2 style="color: #2c4964; font-size: 48px; font-weight: 700; margin-bottom: 20px;">Nigerian Academy of
+          Audiology</h2>
         <p style="color: #437099; font-size: 20px; margin-bottom: 40px;">To promote and advance the science, education,
           and practice of audiology in Nigeria.</p>
 
@@ -40,8 +41,19 @@
       <div class="col-lg-4 col-md-6">
         <div class="card shadow-sm h-100 p-4">
           <span class="text-primary small">{{ post.date_posted|date:"M d, Y" }}</span>
-          <h3 class="mt-2">{{ post.title }}</h3>
-          <p>{{ post.content|truncatewords:20 }}</p>
+          <h3 class="mt-2">
+            <a href="{% url 'announcement' post.pk %}">
+              {{ post.title }}
+            </a>
+          </h3>
+
+          <p>
+            {{ post.summary|default:post.content|truncatewords:20 }}
+          </p>
+
+          <a href="{% url 'announcement' post.pk %}" class="small text-primary">
+            Read more →
+          </a>
         </div>
       </div>
       {% empty %}
