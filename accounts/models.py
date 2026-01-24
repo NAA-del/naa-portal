@@ -30,10 +30,8 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
 def send_verification_email(user):
-    email_template = EmailUpdate.objects.filter(
-        is_active=True, 
-        title__icontains="Verification"
-    ).first()
+    
+    email_template = EmailUpdate.objects.filter(title__icontains="Verification").first()
 
     # 2. Safety check: If no template or ID is found, stop or use fallback
     if not email_template or not email_template.sendgrid_template_id:
