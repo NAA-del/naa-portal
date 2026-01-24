@@ -101,7 +101,7 @@ class EmailUpdate(models.Model):
 class Announcement(models.Model):
     title = models.CharField(max_length=200)
     summary = models.TextField(blank=True, help_text="Short preview shown on home page")
-    content = CKEditor5Field(config_name='announcement')
+    content = CKEditor5Field(config_name='default')
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
