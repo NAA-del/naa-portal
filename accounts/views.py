@@ -321,8 +321,10 @@ def exco_master_dashboard(request):
     # 1. Gather Academy-wide Metrics
     total_members = User.objects.count()
     verified_members = User.objects.filter(is_verified=True).count()
-    pending_verifications = User.objects.filter(is_verified=False).count()
-    pending_members = User.objects.filter(is_verified=False, is_staff=False),
+    
+    # Filter out staff/admins from pending counts to keep it focused on members
+    pending_members_queryset = User.objects.filter(is_verified=False, is_staff=False)
+    pending_verifications = pending_members_queryset.count()
     
     # 2. Committee Oversight
     committees = Committee.objects.all()
@@ -332,7 +334,7 @@ def exco_master_dashboard(request):
         'total_members': total_members,
         'verified_members': verified_members,
         'pending_count': pending_verifications,
-        'pending_members': pending_members,
+        'pending_members': pending_members_queryset, # <-- COMMA REMOVED HERE
         'committees': committees,
         'latest_reports': latest_reports,
     }
