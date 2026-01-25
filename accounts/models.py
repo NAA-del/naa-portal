@@ -202,11 +202,11 @@ class Resource(models.Model):
 
 class AboutPage(models.Model):
     title = models.CharField(max_length=200, default="About the Academy")
-    history_text = models.TextField()
+    history_text = CKEditor5Field(config_name='default')
     history_image = CloudinaryField('history image', blank=True, null=True)
-    mission = models.TextField()
-    vision = models.TextField()
-    aims_and_objectives = models.TextField()
+    mission = CKEditor5Field(config_name='default')
+    vision = CKEditor5Field(config_name='default')
+    aims_and_objectives = CKEditor5Field(config_name='default')
 
     class Meta:
         verbose_name_plural = "About Page Content"
@@ -216,7 +216,7 @@ class AboutPage(models.Model):
 
 class StudentAnnouncement(models.Model):
     title = models.CharField(max_length=200)
-    content = models.TextField()
+    content = CKEditor5Field(config_name='default')
     date_posted = models.DateTimeField(auto_now_add=True)
     target_university = models.CharField(
         max_length=20, 
@@ -260,7 +260,7 @@ class Notification(models.Model):
         related_name='notifications'
     )
     title = models.CharField(max_length=200)
-    message = models.TextField()
+    message = CKEditor5Field(config_name='default')
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -284,8 +284,27 @@ class CommitteeAnnouncement(models.Model):
     committee = models.ForeignKey(Committee, on_delete=models.CASCADE, related_name='announcements')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = CKEditor5Field(config_name='default')
     date_posted = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.committee.name}: {self.title}"
+
+class Article(models.Model):
+    STATUS_CHOICES = [
+        ('draft', 'Draft/Pending Review'),
+        ('published', 'Published'),
+        ('archived', 'Archived'),
+    ]
+    
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    content = CKEditor5Field(config_name='default')
+    image = CloudinaryField('image', blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft') # For EXCO review
+    is_public = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

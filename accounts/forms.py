@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User
-from .models import StudentProfile, CPDRecord, CommitteeReport, CommitteeAnnouncement
+from django_ckeditor_5.widgets import CKEditor5Widget
+from .models import StudentProfile, CPDRecord, CommitteeReport, CommitteeAnnouncement, Article
 
 class NAAUserCreationForm(UserCreationForm):
     class Meta:
@@ -75,4 +76,12 @@ class CommitteeAnnouncementForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class ArticleSubmissionForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        fields = ['title', 'image', 'content']
+        widgets = {
+            'content': CKEditor5Widget(config_name='default'),
         }

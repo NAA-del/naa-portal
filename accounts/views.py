@@ -86,11 +86,13 @@ def home(request):
     announcements = Announcement.objects.filter(
         is_published=True
     ).order_by('-featured', '-date_posted')
+    articles = Article.objects.filter(status='published', is_public=True).order_by('-created_at')[:3]
 
     leaders = Leader.objects.all()
 
     return render(request, 'accounts/home.html', {
         'announcements': announcements,
+        'articles': articles,
         'leaders': leaders,
     })
 
@@ -429,3 +431,23 @@ class ExcoReportFetchAPI(APIView):
         reports = CommitteeReport.objects.all().order_by('-uploaded_at')
         serializer = CommitteeReportSerializer(reports, many=True)
         return Response(serializer.data)
+    
+@login_required
+def submit_article(request):
+    if not request.user.is_verified:
+        messages.warning(request, "Only verified members can submit articles for the NAA Journal.")
+        return redirect('profile')
+
+    if request.method == 'POST':
+        form = ArticleSubmissionForm(request.POST, request.FILES)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.author = request.user
+            article.status = 'draft' # Force draft status for review
+            article.save()
+            messages.success(request, "Article submitted! It will be live after EXCO review.")
+            return redirect('profile')
+    else:
+        form = ArticleSubmissionForm()
+
+    return render(request, 'accounts/submit_article.html', {'form': form})

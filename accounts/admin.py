@@ -15,7 +15,8 @@ from .models import (
     Role,
     Committee,
     CommitteeReport,     
-    CommitteeAnnouncement
+    CommitteeAnnouncement,
+    Article
 )
 
 
@@ -238,6 +239,11 @@ class CommitteeAnnouncementAdmin(admin.ModelAdmin):
     list_display = ('title', 'committee', 'author', 'date_posted')
     list_filter = ('committee', 'date_posted')
     search_fields = ('title', 'content')
+    
+@admin.register(Article)
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'created_at', 'is_public')
+    prepopulated_fields = {'slug': ('title',)} # Automatically creates URLs from titles
 
 # ================= OTHER MODELS =================
 admin.site.register(Leader)
