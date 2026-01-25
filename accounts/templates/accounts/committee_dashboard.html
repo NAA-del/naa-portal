@@ -94,13 +94,21 @@
                                     <tbody>
                                         {% for member in members %}
                                         <tr>
-                                            <td><strong>{{ member.username }}</strong><br><small>{{ member.email
-                                                    }}</small></td>
-                                            <td><span class="badge bg-info text-dark">{{
-                                                    member.get_membership_tier_display }}</span></td>
-                                            <td>{% if member.is_verified %}<span
-                                                    class="text-success small">Verified</span>{% else %}<span
-                                                    class="text-warning small">Pending</span>{% endif %}</td>
+                                            <td>
+                                                <strong>{{ member.username }}</strong><br>
+                                                <small class="text-muted">{{ member.email }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info text-dark">
+                                                    {{ member.get_membership_tier_display }} </span>
+                                            </td>
+                                            <td>
+                                                {% if member.is_verified %}
+                                                <span class="text-success small">Verified</span>
+                                                {% else %}
+                                                <span class="text-warning small">Pending</span>
+                                                {% endif %}
+                                            </td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
