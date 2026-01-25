@@ -451,3 +451,8 @@ def submit_article(request):
         form = ArticleSubmissionForm()
 
     return render(request, 'accounts/submit_article.html', {'form': form})
+
+def article_detail(request, pk):
+    # This specifically looks for an Article, not an Announcement
+    article = get_object_or_404(Article, pk=pk, status='published')
+    return render(request, 'accounts/article_detail.html', {'article': article})
