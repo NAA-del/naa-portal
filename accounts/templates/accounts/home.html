@@ -103,20 +103,22 @@
       <div class="col-lg-4">
         <div class="card border-0 shadow-sm h-100 overflow-hidden">
           {% if article.image %}
-            <img src="{{ article.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+          <img src="{{ article.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
           {% endif %}
           <div class="card-body">
             <h5 class="fw-bold">{{ article.title }}</h5>
             <p class="text-muted small">{{ article.content|striptags|truncatewords:15 }}</p>
-            <a href="#" class="btn btn-link text-primary p-0">Read Full Article →</a>
+
+            <a href="{% url 'article_detail' article.pk %}" class="btn btn-link text-primary p-0">
+              Read Full Article →
+            </a>
           </div>
         </div>
+        {% empty %}
+        <p class="text-center text-muted">Educational articles are coming soon.</p>
+        {% endfor %}
       </div>
-      {% empty %}
-      <p class="text-center text-muted">Educational articles are coming soon.</p>
-      {% endfor %}
     </div>
-  </div>
 </section>
 
 <section id="contact" class="section">

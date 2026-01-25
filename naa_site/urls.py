@@ -48,6 +48,9 @@ urlpatterns = [
     path('exco/master-dashboard/', views.exco_master_dashboard, name='exco_master_dashboard'),
     path('exco/verify/<int:user_id>/', views.exco_verify_member, name='exco_verify_member'),
     path('exco/post-national/', views.post_national_announcement, name='post_national_announcement'),
+    path('articles/', views.home, name='article_list'), 
+    path('article/<int:pk>/', views.announcement, name='article_detail'),
+    path('submit-article/', views.submit_article, name='submit_article'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

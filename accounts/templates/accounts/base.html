@@ -50,6 +50,7 @@
 
                                 {% if user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
                                 <li><a href="{% url 'cpd_tracker' %}">CPD Tracker</a></li>
+                                <li><a href="{% url 'submit_article' %}">Submit an Article</a></li>
                                 {% endif %}
 
                                 <li><a href="{% url 'resource_library' %}">Resources</a></li>
@@ -60,6 +61,7 @@
 
                                 {% if user.directed_committees.exists %}
                                 <li><a href="{% url 'committee_dashboard' %}">Committee Management</a></li>
+                                <li><a href="{% url 'submit_article' %}">Submit an Article</a></li>
                                 {% endif %}
 
                                 {% if user.roles.all.exists %}
