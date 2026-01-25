@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User
-from .models import StudentProfile, CPDRecord
+from .models import StudentProfile, CPDRecord, CommitteeReport, CommitteeAnnouncement
 
 class NAAUserCreationForm(UserCreationForm):
     class Meta:
@@ -57,4 +57,22 @@ class CPDSubmissionForm(forms.ModelForm):
             'date_completed': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'points': forms.NumberInput(attrs={'class': 'form-control'}),
             'certificate': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+        
+class CommitteeReportForm(forms.ModelForm):
+    class Meta:
+        model = CommitteeReport
+        fields = ['title', 'file']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Monthly Report - Jan 2026'}),
+            'file': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+        
+class CommitteeAnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = CommitteeAnnouncement
+        fields = ['title', 'content']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }

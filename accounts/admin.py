@@ -12,6 +12,10 @@ from .models import (
     CPDRecord,
     EmailUpdate,
     Notification,
+    Role,
+    Committee,
+    CommitteeReport,     
+    CommitteeAnnouncement
 )
 
 
@@ -80,6 +84,7 @@ class NAAUserAdmin(BaseUserAdmin):
             {
                 'fields': (
                     'membership_tier',
+                    'roles',
                     'phone_number',
                     'is_verified',
                     'date_verified',
@@ -211,6 +216,26 @@ class NotificationAdmin(admin.ModelAdmin):
     # This makes the form simple top-to-bottom.
     fields = ('user', 'title', 'message', 'is_read')
     readonly_fields = ('created_at',)
+
+@admin.register(Role)
+class RoleAdmin(admin.ModelAdmin):
+    list_display = ('name', 'permissions_level')
+
+@admin.register(Committee)
+class CommitteeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'director')
+    filter_horizontal = ('members',)
+    
+@admin.register(CommitteeReport)
+class CommitteeReportAdmin(admin.ModelAdmin):
+    list_display = ('title', 'committee', 'submitted_by', 'uploaded_at')
+    list_filter = ('committee', 'uploaded_at')
+
+@admin.register(CommitteeAnnouncement)
+class CommitteeAnnouncementAdmin(admin.ModelAdmin):
+    list_display = ('title', 'committee', 'author', 'date_posted')
+    list_filter = ('committee', 'date_posted')
+    search_fields = ('title', 'content')
 
 # ================= OTHER MODELS =================
 admin.site.register(Leader)

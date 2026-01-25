@@ -179,6 +179,29 @@
             </div>
             {% endif %}
 
+            {% if user.committees.exists %}
+            <div class="card shadow-sm p-4 border-0 mb-4" style="border-left: 5px solid #3fbbc0 !important;">
+                <h4 style="color:#2c4964; font-weight:700;">
+                    <i class="bi bi-megaphone me-2"></i> Committee Updates
+                </h4>
+                <hr>
+
+                {% for committee in user.committees.all %}
+                <h6 class="fw-bold text-primary">{{ committee.name }}</h6>
+
+                {% for announcement in committee.announcements.all|dictsortreversed:"date_posted"|slice:":3" %}
+                <div class="mb-3 border-bottom pb-2">
+                    <p class="mb-1 fw-bold">{{ announcement.title }}</p>
+                    <p class="small text-muted mb-1">{{ announcement.content|truncatewords:20 }}</p>
+                    <small class="text-info">{{ announcement.date_posted|date:"M d, Y" }}</small>
+                </div>
+                {% empty %}
+                <p class="small text-muted">No recent announcements from this committee.</p>
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <!-- RIGHTS SECTION -->
             <div class="card shadow-sm p-4 border-0">
                 <h4 style="color:#2c4964;font-size:1.1rem;font-weight:700;">Membership Privileges</h4>

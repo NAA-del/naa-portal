@@ -10,6 +10,21 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+class Role(models.Model):
+    name = models.CharField(max_length=100) # e.g., "EXCO", "Trustee (BoT)", "Committee Director"
+    permissions_level = models.IntegerField(default=1) # To rank authority
+
+    def __str__(self):
+        return self.name
+
+class Committee(models.Model):
+    name = models.CharField(max_length=100) # e.g., "SCOPHA", "Education Committee"
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='committees')
+    director = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='directed_committees')
+
+    def __str__(self):
+        return self.name
+
 class User(AbstractUser):
     TIER_CHOICES = [
         ('student', 'Student Member'),
@@ -22,6 +37,7 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True)
     is_verified = models.BooleanField(default=False)
     date_verified = models.DateTimeField(null=True, blank=True, editable=False)
+    roles = models.ManyToManyField(Role, blank=True, related_name='users')
 
     def save(self, *args, **kwargs):
         if self.pk:
@@ -253,3 +269,23 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.user.username}: {self.title}"
+
+class CommitteeReport(models.Model):
+    committee = models.ForeignKey(Committee, on_delete=models.CASCADE, related_name='reports')
+    submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    file = models.FileField(upload_to='committee_reports/') # Stored securely
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.committee.name} - {self.title}"
+    
+class CommitteeAnnouncement(models.Model):
+    committee = models.ForeignKey(Committee, on_delete=models.CASCADE, related_name='announcements')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.committee.name}: {self.title}"

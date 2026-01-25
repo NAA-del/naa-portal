@@ -7,6 +7,11 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.conf import settings
 from django.http import FileResponse, Http404
+from .models import Committee, CommitteeReport
+    
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import MemberSerializer, CommitteeReportSerializer
 
 # 1. IMPORT ALL MODELS
 from .models import (
@@ -16,7 +21,8 @@ from .models import (
 
 # 2. IMPORT ALL FORMS
 from .forms import (
-    NAAUserCreationForm, StudentProfileForm, ProfilePictureForm, CPDSubmissionForm
+    NAAUserCreationForm, StudentProfileForm, ProfilePictureForm, CPDSubmissionForm, CommitteeReportForm,
+    CommitteeAnnouncementForm
 )
 
 # --- Authentication Views ---
@@ -298,3 +304,70 @@ def announcement(request, pk):
         'accounts/announcement.html',
         {'announcement': announcement}
     )
+
+class MemberListAPI(APIView):
+    def get(self, request):
+        members = User.objects.all()
+        serializer = MemberSerializer(members, many=True)
+        return Response(serializer.data)
+
+# accounts/views.py
+
+@login_required
+def committee_dashboard(request):
+    # 1. Identify the committee this user manages
+    my_committee = Committee.objects.filter(director=request.user).first()
+    
+    if not my_committee:
+        messages.warning(request, "Access Denied: You are not a Committee Director.")
+        return redirect('profile')
+
+    # 2. Initialize both forms
+    ann_form = CommitteeAnnouncementForm()
+    report_form = CommitteeReportForm()
+
+    # 3. Handle Form Submissions
+    if request.method == 'POST':
+        # Check if the "Post Announcement" button was clicked
+        if 'post_announcement' in request.POST:
+            ann_form = CommitteeAnnouncementForm(request.POST)
+            if ann_form.is_valid():
+                ann = ann_form.save(commit=False)
+                ann.committee = my_committee
+                ann.author = request.user
+                ann.save()
+                messages.success(request, "Announcement posted successfully!")
+                return redirect('committee_dashboard')
+
+        # Check if the "Upload Report" button was clicked
+        elif 'upload_report' in request.POST:
+            report_form = CommitteeReportForm(request.POST, request.FILES)
+            if report_form.is_valid():
+                report = report_form.save(commit=False)
+                report.committee = my_committee
+                report.submitted_by = request.user
+                report.save()
+                messages.success(request, "Report uploaded successfully!")
+                return redirect('committee_dashboard')
+
+    # 4. Prepare data for the page
+    context = {
+        'committee': my_committee,
+        'members': my_committee.members.all(),
+        'member_count': my_committee.members.count(),
+        'announcements': my_committee.announcements.all().order_by('-date_posted'),
+        'reports': my_committee.reports.all().order_by('-uploaded_at'),
+        'ann_form': ann_form,
+        'report_form': report_form,
+    }
+    return render(request, 'accounts/committee_dashboard.html', context)
+
+class ExcoReportFetchAPI(APIView):
+    def get(self, request):
+        # Security Check: Does this user have the 'EXCO' role?
+        if not request.user.roles.filter(name="EXCO").exists():
+            return Response({"error": "Unauthorized"}, status=403)
+        
+        reports = CommitteeReport.objects.all().order_by('-uploaded_at')
+        serializer = CommitteeReportSerializer(reports, many=True)
+        return Response(serializer.data)

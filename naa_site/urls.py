@@ -20,6 +20,7 @@ from django.contrib.auth import views as auth_views
 from accounts import views
 from django.conf import settings
 from django.conf.urls.static import static
+from accounts.views import MemberListAPI
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,6 +42,9 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'),name='password_reset_confirm'),
     path('reset/done/',auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),name='password_reset_complete'),
     path('notification/read/<int:pk>/', views.mark_notification_read, name='mark_notification_read'),
+    path('api/members/', MemberListAPI.as_view(), name='member_api'),
+    path('committee-dashboard/', views.committee_dashboard, name='committee_dashboard'),
+    path('api/exco/all-reports/', views.ExcoReportFetchAPI.as_view(), name='exco_reports_api'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

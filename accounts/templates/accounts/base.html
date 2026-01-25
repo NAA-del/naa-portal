@@ -33,7 +33,8 @@
             <div class="container position-relative d-flex align-items-center justify-content-between">
 
                 <a href="{% url 'home' %}" class="logo d-flex align-items-center me-auto">
-                    <img src="{% static 'images/logo.png' %}" alt="NAA Logo" style="max-height: 64px; margin-right: 12px;" onerror="this.style.display='none'">
+                    <img src="{% static 'images/logo.png' %}" alt="NAA Logo"
+                        style="max-height: 64px; margin-right: 12px;" onerror="this.style.display='none'">
                 </a>
 
                 <nav id="navmenu" class="navmenu">
@@ -55,6 +56,20 @@
 
                                 {% if user.membership_tier == 'student' %}
                                 <li><a href="{% url 'student_hub' %}">Student Hub</a></li>
+                                {% endif %}
+
+                                {% if user.directed_committees.exists %}
+                                <li><a href="{% url 'committee_dashboard' %}">Committee Management</a></li>
+                                {% endif %}
+
+                                {% if user.roles.all %}
+                                {% for role in user.roles.all %}
+                                {% if role.name == "EXCO" %}
+                                <li><a class="dropdown-item text-danger fw-bold" href="{% url 'exco_reports_api' %}">
+                                        <i class="bi bi-shield-lock me-2"></i>EXCO: All Reports (API)
+                                    </a></li>
+                                {% endif %}
+                                {% endfor %}
                                 {% endif %}
 
                                 <li><a href="{% url 'download_constitution' %}">Constitution PDF</a></li>
