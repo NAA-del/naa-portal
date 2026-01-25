@@ -56,7 +56,7 @@ class EmailUpdateAdmin(admin.ModelAdmin):
 class NAAUserAdmin(BaseUserAdmin):
     model = User
     
-    readonly_fields = ('date_verified',)
+    readonly_fields = ('date_verified', 'last_login',)
 
     # ================= LIST VIEW =================
     list_display = (
@@ -64,6 +64,7 @@ class NAAUserAdmin(BaseUserAdmin):
         'email',
         'membership_tier',
         'is_verified',
+        'last_login',
         'date_verified',
         'is_staff',
     )
@@ -71,6 +72,7 @@ class NAAUserAdmin(BaseUserAdmin):
     list_filter = (
         'membership_tier',
         'is_verified',
+        'last_login'
         'is_staff',
     )
 
