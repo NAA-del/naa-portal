@@ -16,7 +16,7 @@ from .serializers import MemberSerializer, CommitteeReportSerializer
 # 1. IMPORT ALL MODELS
 from .models import (
     User, AboutPage, Announcement, Leader, 
-    Resource, StudentProfile, StudentAnnouncement, CPDRecord, Notification
+    Resource, StudentProfile, StudentAnnouncement, CPDRecord, Notification, Article
 )
 
 # 2. IMPORT ALL FORMS
