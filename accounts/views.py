@@ -322,6 +322,7 @@ def exco_master_dashboard(request):
     total_members = User.objects.count()
     verified_members = User.objects.filter(is_verified=True).count()
     pending_verifications = User.objects.filter(is_verified=False).count()
+    pending_members = User.objects.filter(is_verified=False, is_staff=False),
     
     # 2. Committee Oversight
     committees = Committee.objects.all()
@@ -331,10 +332,42 @@ def exco_master_dashboard(request):
         'total_members': total_members,
         'verified_members': verified_members,
         'pending_count': pending_verifications,
+        'pending_members': pending_members,
         'committees': committees,
         'latest_reports': latest_reports,
     }
     return render(request, 'accounts/exco_master_dashboard.html', context)
+
+@login_required
+def exco_verify_member(request, user_id):
+    # Security: Ensure ONLY EXCO can do this
+    if not request.user.roles.filter(name="EXCO").exists():
+        messages.error(request, "Unauthorized access.")
+        return redirect('profile')
+        
+    member_to_verify = get_object_or_404(User, id=user_id)
+    member_to_verify.is_verified = True
+    member_to_verify.save() # This triggers the SendGrid email automatically
+    
+    messages.success(request, f"Member {member_to_verify.username} is now verified.")
+    return redirect('exco_master_dashboard')
+
+@login_required
+def post_national_announcement(request):
+    if not request.user.roles.filter(name="EXCO").exists():
+        return redirect('profile')
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        if title and content:
+            # Create a general announcement for the Home Page
+            Announcement.objects.create(title=title, content=content)
+            messages.success(request, "National announcement published!")
+        else:
+            messages.error(request, "Title and Content are required.")
+            
+    return redirect('exco_master_dashboard')
 
 @login_required
 def committee_dashboard(request):

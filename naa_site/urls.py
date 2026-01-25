@@ -46,6 +46,8 @@ urlpatterns = [
     path('committee-dashboard/', views.committee_dashboard, name='committee_dashboard'),
     path('api/exco/all-reports/', views.ExcoReportFetchAPI.as_view(), name='exco_reports_api'),
     path('exco/master-dashboard/', views.exco_master_dashboard, name='exco_master_dashboard'),
+    path('exco/verify/<int:user_id>/', views.exco_verify_member, name='exco_verify_member'),
+    path('exco/post-national/', views.post_national_announcement, name='post_national_announcement'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
