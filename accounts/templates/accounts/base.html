@@ -61,7 +61,6 @@
 
                                 {% if user.directed_committees.exists %}
                                 <li><a href="{% url 'committee_dashboard' %}">Committee Management</a></li>
-                                <li><a href="{% url 'submit_article' %}">Submit an Article</a></li>
                                 {% endif %}
 
                                 {% if user.roles.all.exists %}
