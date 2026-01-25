@@ -72,7 +72,7 @@ class NAAUserAdmin(BaseUserAdmin):
     list_filter = (
         'membership_tier',
         'is_verified',
-        'last_login'
+        'last_login',
         'is_staff',
     )
 
