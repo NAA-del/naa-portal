@@ -22,7 +22,7 @@ from .models import (
 # 2. IMPORT ALL FORMS
 from .forms import (
     NAAUserCreationForm, StudentProfileForm, ProfilePictureForm, CPDSubmissionForm, CommitteeReportForm,
-    CommitteeAnnouncementForm
+    CommitteeAnnouncementForm, ArticleSubmissionForm
 )
 
 # --- Authentication Views ---
