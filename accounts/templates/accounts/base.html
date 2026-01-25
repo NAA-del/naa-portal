@@ -62,12 +62,20 @@
                                 <li><a href="{% url 'committee_dashboard' %}">Committee Management</a></li>
                                 {% endif %}
 
-                                {% if user.roles.all %}
+                                {% if user.roles.all.exists %}
                                 {% for role in user.roles.all %}
                                 {% if role.name == "EXCO" %}
-                                <li><a class="dropdown-item text-danger fw-bold" href="{% url 'exco_reports_api' %}">
+                                <li>
+                                    <a class="dropdown-item text-danger fw-bold" href="{% url 'exco_reports_api' %}">
                                         <i class="bi bi-shield-lock me-2"></i>EXCO: All Reports (API)
-                                    </a></li>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item fw-bold text-primary"
+                                        href="{% url 'exco_master_dashboard' %}">
+                                        <i class="bi bi-speedometer2 me-2"></i>Master Dashboard
+                                    </a>
+                                </li>
                                 {% endif %}
                                 {% endfor %}
                                 {% endif %}

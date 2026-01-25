@@ -1,0 +1,71 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <h2 class="fw-bold" style="color: #2c4964;">NAA Executive Command Center</h2>
+    <hr>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-3 bg-primary text-white">
+                <h6>Total Academy Population</h6>
+                <h2 class="fw-bold">{{ total_members }}</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-3 bg-success text-white">
+                <h6>Verified Professionals</h6>
+                <h2 class="fw-bold">{{ verified_members }}</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-3 bg-warning text-dark">
+                <h6>Pending Verifications</h6>
+                <h2 class="fw-bold">{{ pending_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white fw-bold">Active Committees</div>
+                <div class="list-group list-group-flush">
+                    {% for comm in committees %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ comm.name }}
+                        <span class="badge bg-secondary">{{ comm.members.count }} Members</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white fw-bold">Recent Governance Reports</div>
+                <div class="card-body p-0">
+                    <table class="table mb-0 small">
+                        <thead>
+                            <tr>
+                                <th>Committee</th>
+                                <th>Date</th>
+                                <th>File</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rpt in latest_reports %}
+                            <tr>
+                                <td>{{ rpt.committee.name }}</td>
+                                <td>{{ rpt.uploaded_at|date:"M d" }}</td>
+                                <td><a href="{{ rpt.file.url }}" target="_blank">View</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

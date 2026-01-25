@@ -311,7 +311,30 @@ class MemberListAPI(APIView):
         serializer = MemberSerializer(members, many=True)
         return Response(serializer.data)
 
-# accounts/views.py
+@login_required
+def exco_master_dashboard(request):
+    # Security: Only allow users with the 'EXCO' role
+    if not request.user.roles.filter(name="EXCO").exists():
+        messages.error(request, "Access restricted to Executive Council only.")
+        return redirect('profile')
+
+    # 1. Gather Academy-wide Metrics
+    total_members = User.objects.count()
+    verified_members = User.objects.filter(is_verified=True).count()
+    pending_verifications = User.objects.filter(is_verified=False).count()
+    
+    # 2. Committee Oversight
+    committees = Committee.objects.all()
+    latest_reports = CommitteeReport.objects.all().order_by('-uploaded_at')[:10]
+
+    context = {
+        'total_members': total_members,
+        'verified_members': verified_members,
+        'pending_count': pending_verifications,
+        'committees': committees,
+        'latest_reports': latest_reports,
+    }
+    return render(request, 'accounts/exco_master_dashboard.html', context)
 
 @login_required
 def committee_dashboard(request):
