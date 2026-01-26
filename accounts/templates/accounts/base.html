@@ -9,12 +9,8 @@
 
     <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
 
-    <!-- Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Vendor CSS Files -->
     <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
@@ -22,103 +18,64 @@
     <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
     <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
-    <!-- Main CSS File -->
     <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
 </head>
 
 <body class="index-page">
 
-    <!-- Header -->
     <header id="header" class="header sticky-top">
         <div class="branding d-flex align-items-center">
             <div class="container position-relative d-flex align-items-center justify-content-between">
 
-                <!-- Logo -->
                 <a href="{% url 'home' %}" class="logo d-flex align-items-center me-auto">
-                    <img src="{% static 'images/logo.png' %}" alt="NAA Logo"
-                        style="max-height: 64px; margin-right: 12px;" onerror="this.style.display='none'">
+                    <img src="{% static 'images/logo.png' %}" alt="NAA Logo" style="max-height: 64px; margin-right: 12px;" onerror="this.style.display='none'">
                 </a>
 
-                <!-- Navigation -->
                 <nav id="navmenu" class="navmenu">
                     <ul>
                         <li><a href="{% url 'home' %}#hero">Home</a></li>
                         <li><a href="{% url 'about' %}">About</a></li>
 
-                        <!-- User dropdown -->
                         {% if user.is_authenticated %}
                         <li class="dropdown">
-                            <a href="#">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                 <span><i class="bi bi-person-circle me-1"></i>Members</span>
                                 <i class="bi bi-chevron-down toggle-dropdown"></i>
                             </a>
                             <ul class="shadow-sm">
-
-                                <!-- Core account -->
-                                <li>
-                                    <a href="{% url 'profile' %}">
-                                        <i class="bi bi-person me-2"></i>My Profile
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="{% url 'resource_library' %}">
-                                        <i class="bi bi-book me-2"></i>Library
-                                    </a>
-                                </li>
+                                <li><a href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>My Profile</a></li>
+                                <li><a href="{% url 'resource_library' %}"><i class="bi bi-book me-2"></i>Library</a></li>
 
                                 {% if user.membership_tier == 'student' %}
-                                <li>
-                                    <a href="{% url 'student_hub' %}">
-                                        <i class="bi bi-mortarboard me-2"></i>Student Hub
-                                    </a>
-                                </li>
+                                <li><a href="{% url 'student_hub' %}"><i class="bi bi-mortarboard me-2"></i>Student Hub</a></li>
                                 {% else %}
-                                <li>
-                                    <a href="{% url 'cpd_tracker' %}">
-                                        <i class="bi bi-award me-2"></i>CPD Tracker
-                                    </a>
-                                </li>
+                                <li><a href="{% url 'cpd_tracker' %}"><i class="bi bi-award me-2"></i>CPD Tracker</a></li>
                                 {% endif %}
 
-                                <!-- Committees -->
                                 {% if user.committees.exists or user.directed_committees.exists %}
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        My Committees
-                                        <i class="bi bi-chevron-down ms-1"></i>
+                                <li><hr class="dropdown-divider"></li>
+                                <li class="dropdown-header small text-uppercase py-2 ps-3 text-muted">My Committees</li>
+
+                                {% for committee in user.committees.all %}
+                                <li>
+                                    <a href="{% url 'committee_workspace' committee.id %}">
+                                        <i class="bi bi-people me-2"></i>{{ committee.name }}
                                     </a>
-                                    <ul class="dropdown-menu">
-
-                                        {% for committee in user.committees.all %}
-                                        <li>
-                                            <a class="dropdown-item"
-                                                href="{% url 'committee_workspace' committee.id %}">
-                                                <i class="bi bi-people me-2"></i>{{ committee.name }}
-                                            </a>
-                                        </li>
-                                        {% endfor %}
-
-                                        {% for committee in user.directed_committees.all %}
-                                        <li>
-                                            <a class="dropdown-item fw-bold text-primary"
-                                                href="{% url 'committee_dashboard' committee.id %}">
-                                                <i class="bi bi-person-badge me-2"></i>{{ committee.name }}
-                                                <span class="badge bg-primary ms-1"
-                                                    style="font-size: 0.6rem;">Dir</span>
-                                            </a>
-                                        </li>
-                                        {% endfor %}
-
-                                    </ul>
                                 </li>
+                                {% endfor %}
+
+                                {% for committee in user.directed_committees.all %}
+                                <li>
+                                    <a href="{% url 'committee_dashboard' committee.id %}" class="fw-bold text-primary">
+                                        <i class="bi bi-person-badge me-2"></i>Manage {{ committee.name }}
+                                        <span class="badge bg-primary ms-1" style="font-size: 0.6rem;">Dir</span>
+                                    </a>
+                                </li>
+                                {% endfor %}
                                 {% endif %}
 
-                                <!-- EXCO roles -->
                                 {% if user.roles.exists %}
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a href="{% url 'exco_master_dashboard' %}" class="fw-bold text-danger">
                                         <i class="bi bi-shield-lock me-2"></i>EXCO Dashboard
@@ -126,26 +83,21 @@
                                 </li>
                                 {% endif %}
 
-                                <!-- Logout -->
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a href="{% url 'logout' %}" class="text-muted">
                                         <i class="bi bi-box-arrow-right me-2"></i>Logout
                                     </a>
                                 </li>
-
                             </ul>
                         </li>
                         {% else %}
-                        <!-- Guest / Login -->
                         <li class="dropdown">
-                            <a href="#">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                 <span>Member Access</span>
                                 <i class="bi bi-chevron-down toggle-dropdown"></i>
                             </a>
-                            <ul>
+                            <ul class="shadow-sm">
                                 <li><a href="{% url 'login' %}">Login</a></li>
                                 <li><a href="{% url 'register' %}">Create Account</a></li>
                             </ul>
@@ -156,44 +108,37 @@
                     </ul>
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
-
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="main">
         <div class="container mt-3">
-
-            <!-- Messages -->
             {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
-                role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
             {% endif %}
-
-            {% block content %}{% endblock %}
         </div>
+
+        {% block content %}
+        {% endblock %}
     </main>
 
-    <!-- Footer -->
     <footer id="footer" class="footer light-background mt-5" style="padding: 30px 0; text-align: center;">
         <div class="container">
             <p>&copy; 2026 <strong>Nigerian Academy of Audiology</strong>. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <!-- Vendor JS Files -->
     <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
     <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
     <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
 
-    <!-- Main JS File -->
     <script src="{% static 'assets/js/main.js' %}"></script>
 
 </body>

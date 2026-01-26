@@ -93,30 +93,32 @@
             </div>
 
             <!-- DASHBOARD BUTTONS -->
-            <div class="row mb-4">
-                {% if user.is_verified %}
-                <div class="col-md-6 mb-3">
-                    <a href="{% url 'member_id' %}" class="btn btn-dark w-100 shadow-sm">
+            <div class="row g-3 mt-4"> {% if user.is_verified %}
+                <div class="col-12 col-md-6">
+                    <a href="{% url 'member_id' %}" class="btn btn-dark w-100 py-2 shadow-sm">
                         <i class="bi bi-card-heading me-2"></i> View Digital ID
                     </a>
                 </div>
 
                 {% if user.membership_tier == 'student' %}
-                <div class="col-md-12 mb-3">
-                    <a href="{% url 'student_hub' %}" class="btn btn-success w-100 shadow-sm">
+                <div class="col-12">
+                    <a href="{% url 'student_hub' %}" class="btn btn-success w-100 py-2 shadow-sm">
                         <i class="bi bi-people-fill me-2"></i> Student Community Hub
                     </a>
                 </div>
                 {% elif user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
-                <div class="col-md-6 mb-3">
-                    <a href="{% url 'cpd_tracker' %}" class="btn btn-primary w-100 shadow-sm">
+                <div class="col-12 col-md-6">
+                    <a href="{% url 'cpd_tracker' %}" class="btn btn-primary w-100 py-2 shadow-sm">
                         <i class="bi bi-award me-2"></i> CPD Portfolio (Mandatory)
-                    </a>
-                    <a href="{% url 'submit_article' %}" class="btn btn-primary btn-sm px-3">
-                        <i class="bi bi-pencil-square me-1"></i> Submit Article
                     </a>
                 </div>
                 {% endif %}
+
+                <div class="col-12">
+                    <a href="{% url 'submit_article' %}" class="btn btn-outline-primary w-100 py-2 shadow-sm">
+                        <i class="bi bi-pencil-square me-2"></i> Submit Article to Journal
+                    </a>
+                </div>
                 {% endif %}
             </div>
 
