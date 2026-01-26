@@ -535,6 +535,7 @@ def committee_workspace(request, pk):
         'committee': committee,
         'members': committee.members.all(),
         'reports': committee.reports.all(), # Reports shared with the team
+        'announcements': announcements,
         'is_director': is_director,
         'is_exco': is_exco,
     }
