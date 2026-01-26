@@ -4,6 +4,8 @@
 
 {% block content %}
 <div class="container mt-5 pt-4 mb-5">
+
+    <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
             <nav aria-label="breadcrumb">
@@ -12,32 +14,42 @@
                     <li class="breadcrumb-item active">{{ committee.name }}</li>
                 </ol>
             </nav>
+
             <h2 class="fw-bold" style="color: #2c4964;">{{ committee.name }} Management</h2>
             <p class="text-muted">Directing: {{ request.user.username }}</p>
         </div>
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-3"
-                    style="background: #f1f7f9; border-left: 5px solid #3fbbc0 !important;">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-white p-3 me-3">
-                            <i class="bi bi-people-fill text-primary fs-4"></i>
-                        </div>
-                        <div>
-                            <h6 class="text-uppercase text-muted small fw-bold mb-0">Total Members</h6>
-                            <h2 class="fw-bold mb-0" style="color: #2c4964;">{{ member_count }}</h2>
-                        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3"
+                 style="background: #f1f7f9; border-left: 5px solid #3fbbc0 !important;">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-white p-3 me-3">
+                        <i class="bi bi-people-fill text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-uppercase text-muted small fw-bold mb-0">Total Members</h6>
+                        <h2 class="fw-bold mb-0" style="color: #2c4964;">{{ member_count }}</h2>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Main Content -->
     <div class="row">
+
+        <!-- Left Column -->
         <div class="col-lg-4">
+
+            <!-- Announcement -->
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-primary text-white py-3">
-                    <h5 class="mb-0 small fw-bold"><i class="bi bi-megaphone me-2"></i>Post Committee Announcement</h5>
+                    <h5 class="mb-0 small fw-bold">
+                        <i class="bi bi-megaphone me-2"></i>Post Committee Announcement
+                    </h5>
                 </div>
                 <div class="card-body">
                     <form method="post">
@@ -50,10 +62,12 @@
                 </div>
             </div>
 
+            <!-- Report Upload -->
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-dark text-white py-3">
-                    <h5 class="mb-0 small fw-bold"><i class="bi bi-file-earmark-arrow-up me-2"></i>Submit Official
-                        Report</h5>
+                    <h5 class="mb-0 small fw-bold">
+                        <i class="bi bi-file-earmark-arrow-up me-2"></i>Submit Official Report
+                    </h5>
                 </div>
                 <div class="card-body">
                     <form method="post" enctype="multipart/form-data">
@@ -65,23 +79,64 @@
                     </form>
                 </div>
             </div>
+
         </div>
 
+        <!-- Right Column -->
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
+
+                    <!-- Tabs -->
                     <ul class="nav nav-tabs" id="committeeTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active fw-bold" id="members-tab" data-bs-toggle="tab"
-                                data-bs-target="#members" type="button">Committee Members</button>
+                        <li class="nav-item">
+                            <button class="nav-link active fw-bold"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#members"
+                                    type="button">
+                                Committee Members
+                            </button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link fw-bold" id="reports-tab" data-bs-toggle="tab"
-                                data-bs-target="#reports" type="button">Submission History</button>
+                        <li class="nav-item">
+                            <button class="nav-link fw-bold"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#reports"
+                                    type="button">
+                                Submission History
+                            </button>
                         </li>
                     </ul>
-                    <div class="tab-content pt-3" id="committeeTabContent">
-                        <div class="tab-pane fade show active" id="members" role="tabpanel">
+
+                    <!-- Tab Content -->
+                    <div class="tab-content pt-3">
+
+                        <!-- Members Tab -->
+                        <div class="tab-pane fade show active" id="members">
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold mb-0">Member Directory</h6>
+
+                                <form method="get"
+                                      action="{% url 'export_committee_members_csv' committee.id %}"
+                                      class="row g-2">
+                                    <div class="col-auto">
+                                        <input type="date" name="start"
+                                               class="form-control form-control-sm"
+                                               title="Start Date">
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="date" name="end"
+                                               class="form-control form-control-sm"
+                                               title="End Date">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-download me-1"></i>Export CSV
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
                             <div class="table-responsive">
                                 <table class="table align-middle">
                                     <thead class="table-light">
@@ -100,13 +155,14 @@
                                             </td>
                                             <td>
                                                 <span class="badge bg-info text-dark">
-                                                    {{ member.get_membership_tier_display }} </span>
+                                                    {{ member.get_membership_tier_display }}
+                                                </span>
                                             </td>
                                             <td>
                                                 {% if member.is_verified %}
-                                                <span class="text-success small">Verified</span>
+                                                    <span class="text-success small">Verified</span>
                                                 {% else %}
-                                                <span class="text-warning small">Pending</span>
+                                                    <span class="text-warning small">Pending</span>
                                                 {% endif %}
                                             </td>
                                         </tr>
@@ -114,28 +170,40 @@
                                     </tbody>
                                 </table>
                             </div>
+
                         </div>
 
-                        <div class="tab-pane fade" id="reports" role="tabpanel">
+                        <!-- Reports Tab -->
+                        <div class="tab-pane fade" id="reports">
                             <ul class="list-group list-group-flush">
                                 {% for report in reports %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
                                         <p class="mb-0 fw-bold">{{ report.title }}</p>
-                                        <small class="text-muted">{{ report.uploaded_at|date:"M d, Y" }}</small>
+                                        <small class="text-muted">
+                                            {{ report.uploaded_at|date:"M d, Y" }}
+                                        </small>
                                     </div>
-                                    <a href="{{ report.file.url }}" class="btn btn-sm btn-outline-secondary"
-                                        target="_blank">View File</a>
+                                    <a href="{{ report.file.url }}"
+                                       class="btn btn-sm btn-outline-secondary"
+                                       target="_blank">
+                                        View File
+                                    </a>
                                 </li>
                                 {% empty %}
-                                <li class="list-group-item text-center py-4 text-muted">No reports submitted yet.</li>
+                                <li class="list-group-item text-center py-4 text-muted">
+                                    No reports submitted yet.
+                                </li>
                                 {% endfor %}
                             </ul>
                         </div>
+
                     </div>
+
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 {% endblock %}

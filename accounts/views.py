@@ -474,33 +474,37 @@ def article_detail(request, pk):
     return render(request, 'accounts/article_detail.html', {'article': article})
 
 @login_required
-def export_members_csv(request):
-    # Security: Verify EXCO or Trustee status
-    is_exco = request.user.roles.filter(name="Exco").exists()
-    is_trustee = request.user.roles.filter(name="Trustee").exists()
+def export_committee_members_csv(request, committee_id):
+    # 1. Fetch the committee and check permissions
+    committee = get_object_or_404(Committee, id=committee_id)
+    is_exco_trustee = request.user.roles.filter(name__in=["Exco", "Trustee"]).exists()
+    is_director = (committee.director == request.user)
 
-    if not (is_exco or is_trustee):
-        messages.error(request, "Unauthorized.")
-        return redirect('profile')
+    if not (is_exco_trustee or is_director):
+        messages.error(request, "Access restricted.")
+        return redirect('committee_dashboard', pk=committee_id)
 
-    # Get date filters from the URL (e.g., ?start=2025-01-01)
-    start_date = request.GET.get('start')
-    end_date = request.GET.get('end')
-
+    # 2. Setup Response
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="NAA_Members_{datetime.now().strftime("%Y%m%d")}.csv"'
+    response['Content-Disposition'] = f'attachment; filename="{committee.name}_Members.csv"'
 
     writer = csv.writer(response)
     writer.writerow(['Username', 'Email', 'Tier', 'Date Joined'])
 
-    members = User.objects.all()
+    # 3. Apply Filters
+    # Start with only members of this committee
+    members = committee.members.all() 
 
-    # Apply filters if provided
+    # RESTORED: Date Filter Logic
+    start_date = request.GET.get('start')
+    end_date = request.GET.get('end')
+
     if start_date:
         members = members.filter(date_joined__date__gte=start_date)
     if end_date:
         members = members.filter(date_joined__date__lte=end_date)
 
+    # 4. Write Data
     for m in members:
         writer.writerow([m.username, m.email, m.get_membership_tier_display(), m.date_joined])
 
