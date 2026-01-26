@@ -43,11 +43,23 @@
                         <li><a href="{% url 'about' %}">About</a></li>
 
                         {% if user.is_authenticated %}
-                        <li class="dropdown"><a href="#"><span>Member Portal</span> <i
-                                    class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <li class="dropdown">
+                            <a href="#">
+                                <span>Member Portal</span>
+                                <i class="bi bi-chevron-down toggle-dropdown"></i>
+                            </a>
+
                             <ul>
-                                <li><a href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>My Profile</a></li>
-                                <li><a href="{% url 'resource_library' %}"><i class="bi bi-book me-2"></i>Resources</a>
+                                <li>
+                                    <a href="{% url 'profile' %}">
+                                        <i class="bi bi-person me-2"></i>My Profile
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{% url 'resource_library' %}">
+                                        <i class="bi bi-book me-2"></i>Resources
+                                    </a>
                                 </li>
 
                                 {% if user.membership_tier == 'student' %}
@@ -60,13 +72,10 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li class="dropdown-header text-uppercase small ps-3 text-muted">My Committees</li>
-                                {% if user.committees.exists or user.directed_committees.exists %}
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
                                 <li class="dropdown-header text-uppercase small ps-3 text-muted"
-                                    style="font-size: 0.7rem;">My Committees</li>
+                                    style="font-size: 0.7rem;">
+                                    My Committees
+                                </li>
 
                                 {% for committee in user.committees.all %}
                                 <li>
@@ -86,25 +95,37 @@
                                 {% endfor %}
                                 {% endif %}
 
-                                {% if user.roles.all.exists %}
+                                {% if user.roles.exists %}
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li class="dropdown-header text-uppercase small ps-3 text-danger">Governance</li>
-                                <li><a href="{% url 'exco_master_dashboard' %}" class="text-primary fw-bold">
+                                <li class="dropdown-header text-uppercase small ps-3 text-danger">
+                                    Governance
+                                </li>
+
+                                <li>
+                                    <a href="{% url 'exco_master_dashboard' %}" class="text-primary fw-bold">
                                         <i class="bi bi-speedometer2 me-2"></i>Master Dashboard
-                                    </a></li>
-                                    {% if is_trustee %}
-                                        <li><a href="#" class="text-warning small ps-3">Trustee</a></li>
-                                    {% endif %}
+                                    </a>
+                                </li>
+
+                                {% if is_trustee %}
+                                <li>
+                                    <a href="#" class="text-warning small ps-3">Trustee</a>
+                                </li>
+                                {% endif %}
                                 {% endif %}
 
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a href="{% url 'logout' %}" class="text-muted">Logout</a></li>
+
+                                <li>
+                                    <a href="{% url 'logout' %}" class="text-muted">Logout</a>
+                                </li>
                             </ul>
                         </li>
+
                         {% else %}
                         <li class="dropdown"><a href="#"><span>Join / Login</span> <i
                                     class="bi bi-chevron-down toggle-dropdown"></i></a>
