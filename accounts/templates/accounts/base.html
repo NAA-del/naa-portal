@@ -67,12 +67,6 @@
                                     </a>
                                 </li>
 
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'submit_article' %}">
-                                        <i class="bi bi-pencil-square me-2"></i>Submit Article
-                                    </a>
-                                </li>
-
                                 {% if user.membership_tier == 'student' %}
                                 <li>
                                     <a href="{% url 'student_hub' %}">
