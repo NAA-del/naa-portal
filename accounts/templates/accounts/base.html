@@ -43,49 +43,66 @@
                         <li><a href="{% url 'about' %}">About</a></li>
 
                         {% if user.is_authenticated %}
-                        <li class="dropdown"><a href="#"><span>Member</span> <i
+                        <li class="dropdown"><a href="#"><span>Member Portal</span> <i
                                     class="bi bi-chevron-down toggle-dropdown"></i></a>
                             <ul>
-                                <li><a href="{% url 'profile' %}">My Profile</a></li>
-
-                                {% if user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
-                                <li><a href="{% url 'cpd_tracker' %}">CPD Tracker</a></li>
-                                <li><a href="{% url 'submit_article' %}">Submit an Article</a></li>
-                                {% endif %}
-
-                                <li><a href="{% url 'resource_library' %}">Resources</a></li>
+                                <li><a href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>My Profile</a></li>
+                                <li><a href="{% url 'resource_library' %}"><i class="bi bi-book me-2"></i>Resources</a>
+                                </li>
 
                                 {% if user.membership_tier == 'student' %}
                                 <li><a href="{% url 'student_hub' %}">Student Hub</a></li>
+                                {% elif user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
+                                <li><a href="{% url 'cpd_tracker' %}">CPD Tracker</a></li>
                                 {% endif %}
 
-                                {% if user.directed_committees.exists %}
-                                <li><a href="{% url 'committee_dashboard' %}">Committee Management</a></li>
-                                {% endif %}
-
-                                {% if user.roles.all.exists %}
-                                {% for role in user.roles.all %}
-                                {% if role.name == "EXCO" %}
-                                <li>
-                                    <a class="dropdown-item text-danger fw-bold" href="{% url 'exco_reports_api' %}">
-                                        <i class="bi bi-shield-lock me-2"></i>EXCO: All Reports (API)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item fw-bold text-primary"
-                                        href="{% url 'exco_master_dashboard' %}">
-                                        <i class="bi bi-speedometer2 me-2"></i>Master Dashboard
-                                    </a>
-                                </li>
-                                {% endif %}
-                                {% endfor %}
-                                {% endif %}
-
-                                <li><a href="{% url 'download_constitution' %}">Constitution PDF</a></li>
+                                {% if user.committees.exists or user.directed_committees.exists %}
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a href="{% url 'logout' %}">Logout</a></li>
+                                <li class="dropdown-header text-uppercase small ps-3 text-muted">My Committees</li>
+                                {% if user.committees.exists or user.directed_committees.exists %}
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li class="dropdown-header text-uppercase small ps-3 text-muted"
+                                    style="font-size: 0.7rem;">My Committees</li>
+
+                                {% for committee in user.committees.all %}
+                                <li>
+                                    <a href="{% url 'committee_workspace' committee.id %}">
+                                        <i class="bi bi-people me-2"></i>{{ committee.name }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+
+                                {% for committee in user.directed_committees.all %}
+                                <li>
+                                    <a href="{% url 'committee_dashboard' committee.id %}" class="fw-bold text-primary">
+                                        <i class="bi bi-person-badge me-2"></i>{{ committee.name }}
+                                        <span class="badge bg-primary ms-1" style="font-size: 0.6rem;">Dir</span>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                                {% endif %}
+
+                                {% if user.roles.all.exists %}
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li class="dropdown-header text-uppercase small ps-3 text-danger">Governance</li>
+                                <li><a href="{% url 'exco_master_dashboard' %}" class="text-primary fw-bold">
+                                        <i class="bi bi-speedometer2 me-2"></i>Master Dashboard
+                                    </a></li>
+                                    {% if is_trustee %}
+                                        <li><a href="#" class="text-warning small ps-3">Trustee</a></li>
+                                    {% endif %}
+                                {% endif %}
+
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a href="{% url 'logout' %}" class="text-muted">Logout</a></li>
                             </ul>
                         </li>
                         {% else %}
