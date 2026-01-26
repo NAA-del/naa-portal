@@ -51,6 +51,7 @@ urlpatterns = [
     path('articles/', views.home, name='article_list'), 
     path('article/<int:pk>/', views.article_detail, name='article_detail'),
     path('submit-article/', views.submit_article, name='submit_article'),
+    path('exco/export-members/', views.export_members_csv, name='export_members_csv'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

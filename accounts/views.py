@@ -1,4 +1,5 @@
 import os
+import csv
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -6,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.conf import settings
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from .models import Committee, CommitteeReport
     
 from rest_framework.views import APIView
@@ -316,11 +317,15 @@ class MemberListAPI(APIView):
 @login_required
 def exco_master_dashboard(request):
     # Security: Only allow users with the 'EXCO' role
-    if not request.user.roles.filter(name="EXCO").exists():
-        messages.error(request, "Access restricted to Executive Council only.")
+    is_exco = request.user.roles.filter(name="EXCO").exists()
+    is_trustee = request.user.roles.filter(name="Trustee").exists()
+
+    if not (is_exco or is_trustee):
+        messages.error(request, "Access restricted to Academy Leadership.")
         return redirect('profile')
 
     # 1. Gather Academy-wide Metrics
+    
     total_members = User.objects.count()
     verified_members = User.objects.filter(is_verified=True).count()
     
@@ -334,6 +339,7 @@ def exco_master_dashboard(request):
 
     context = {
         'total_members': total_members,
+        'is_trustee': is_trustee,
         'verified_members': verified_members,
         'pending_count': pending_verifications,
         'pending_members': pending_members_queryset, # <-- COMMA REMOVED HERE
@@ -456,3 +462,31 @@ def article_detail(request, pk):
     # This specifically looks for an Article, not an Announcement
     article = get_object_or_404(Article, pk=pk, status='published')
     return render(request, 'accounts/article_detail.html', {'article': article})
+
+@login_required
+def export_members_csv(request):
+    # Security: Ensure only Admin or Trustee can download [cite: 8, 51]
+    is_exco = request.user.roles.filter(name="EXCO").exists()
+    is_trustee = request.user.roles.filter(name="Trustee").exists()
+
+    if not (is_exco or is_trustee):
+        messages.error(request, "Unauthorized access.")
+        return redirect('profile')
+
+    # Create the HttpResponse object with the appropriate CSV header [cite: 35]
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="NAA_Member_List.csv"'
+
+    writer = csv.writer(response)
+    # Write the Header Row
+    writer.writerow(['Username', 'Email', 'Tier', 'Phone', 'Verified Status', 'Date Joined'])
+
+    # Fetch all members [cite: 37]
+    members = User.objects.all().values_list(
+        'username', 'email', 'membership_tier', 'phone_number', 'is_verified', 'date_joined'
+    )
+
+    for member in members:
+        writer.writerow(member)
+
+    return response
