@@ -530,6 +530,8 @@ def committee_workspace(request, pk):
     if not (is_member or is_director or is_exco):
         messages.error(request, "You are not assigned to this committee.")
         return redirect('profile')
+    
+    announcements = committee.announcements.all().order_by('-date_posted')
 
     context = {
         'committee': committee,

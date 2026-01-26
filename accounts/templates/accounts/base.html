@@ -89,13 +89,13 @@
 
                                 <!-- Committees -->
                                 {% if user.committees.exists or user.directed_committees.exists %}
-                                <li class="dropdown dropend">
-                                    <a href="#" class="dropdown-toggle d-flex align-items-center"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span>My Committees</span>
-                                        <i class="bi bi-chevron-right ms-1"></i>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        My Committees
+                                        <i class="bi bi-chevron-down ms-1"></i>
                                     </a>
                                     <ul class="dropdown-menu">
+
                                         {% for committee in user.committees.all %}
                                         <li>
                                             <a class="dropdown-item"
@@ -115,6 +115,7 @@
                                             </a>
                                         </li>
                                         {% endfor %}
+
                                     </ul>
                                 </li>
                                 {% endif %}
