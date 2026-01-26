@@ -83,15 +83,17 @@
 
                                 <!-- Committees -->
                                 {% if user.committees.exists or user.directed_committees.exists %}
-                                <li>
-                                    <a href="#">
+                                <li class="dropdown dropend">
+                                    <a href="#" class="dropdown-toggle d-flex align-items-center"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
                                         <span>My Committees</span>
-                                        <i class="bi bi-chevron-right toggle-dropdown"></i>
+                                        <i class="bi bi-chevron-right ms-1"></i>
                                     </a>
-                                    <ul>
+                                    <ul class="dropdown-menu">
                                         {% for committee in user.committees.all %}
                                         <li>
-                                            <a href="{% url 'committee_workspace' committee.id %}">
+                                            <a class="dropdown-item"
+                                                href="{% url 'committee_workspace' committee.id %}">
                                                 <i class="bi bi-people me-2"></i>{{ committee.name }}
                                             </a>
                                         </li>
@@ -99,8 +101,8 @@
 
                                         {% for committee in user.directed_committees.all %}
                                         <li>
-                                            <a href="{% url 'committee_dashboard' committee.id %}"
-                                                class="fw-bold text-primary">
+                                            <a class="dropdown-item fw-bold text-primary"
+                                                href="{% url 'committee_dashboard' committee.id %}">
                                                 <i class="bi bi-person-badge me-2"></i>{{ committee.name }}
                                                 <span class="badge bg-primary ms-1"
                                                     style="font-size: 0.6rem;">Dir</span>
@@ -110,7 +112,7 @@
                                     </ul>
                                 </li>
                                 {% endif %}
-                                
+
                                 <!-- EXCO roles -->
                                 {% if user.roles.exists %}
                                 <li>
