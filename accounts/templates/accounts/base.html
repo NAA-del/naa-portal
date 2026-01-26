@@ -37,12 +37,8 @@
                         </a> 
                         <ul class="shadow-sm">
                             <li><a href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>My Profile</a></li>
-                            <li><a href="{% url 'resource_library' %}"><i class="bi bi-book me-2"></i>Library</a></li>
-
-                            {% if user.is_verified %}
-                            <li><a href="{% url 'submit_article' %}"><i class="bi bi-journal-plus me-2"></i>Submit Article</a></li>
-                            {% endif %}
-
+                            <li><a href="{% url 'resource_library' %}"><i class="bi bi-book me-2"></i>Resources</a></li>
+                            
                             {% if user.membership_tier == 'student' %}
                             <li><a href="{% url 'student_hub' %}"><i class="bi bi-mortarboard me-2"></i>Student Hub</a></li>
                             {% else %}
