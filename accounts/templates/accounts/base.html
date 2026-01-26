@@ -45,51 +45,36 @@
                         {% if user.is_authenticated %}
                         <li class="dropdown">
                             <a href="#">
-                                <span>Member Portal</span>
+                                <span>Account</span>
                                 <i class="bi bi-chevron-down toggle-dropdown"></i>
                             </a>
-
                             <ul>
-                                <li>
-                                    <a href="{% url 'profile' %}">
-                                        <i class="bi bi-person me-2"></i>My Profile
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="{% url 'resource_library' %}">
-                                        <i class="bi bi-book me-2"></i>Resources
-                                    </a>
+                                <li><a href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>My Profile</a></li>
+                                <li><a href="{% url 'resource_library' %}"><i class="bi bi-book me-2"></i>Library</a>
                                 </li>
 
                                 {% if user.membership_tier == 'student' %}
-                                <li><a href="{% url 'student_hub' %}">Student Hub</a></li>
-                                {% elif user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
-                                <li><a href="{% url 'cpd_tracker' %}">CPD Tracker</a></li>
+                                <li><a href="{% url 'student_hub' %}"><i class="bi bi-mortarboard me-2"></i>Student
+                                        Hub</a></li>
+                                {% else %}
+                                <li><a href="{% url 'cpd_tracker' %}"><i class="bi bi-award me-2"></i>CPD Tracker</a>
+                                </li>
                                 {% endif %}
 
                                 {% if user.committees.exists or user.directed_committees.exists %}
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li class="dropdown-header text-uppercase small ps-3 text-muted"
-                                    style="font-size: 0.7rem;">
-                                    My Committees
-                                </li>
+                                <li class="dropdown-header small text-uppercase">My Teams</li>
 
                                 {% for committee in user.committees.all %}
-                                <li>
-                                    <a href="{% url 'committee_workspace' committee.id %}">
-                                        <i class="bi bi-people me-2"></i>{{ committee.name }}
-                                    </a>
-                                </li>
+                                <li><a href="{% url 'committee_workspace' committee.id %}">{{ committee.name }}</a></li>
                                 {% endfor %}
 
                                 {% for committee in user.directed_committees.all %}
                                 <li>
-                                    <a href="{% url 'committee_dashboard' committee.id %}" class="fw-bold text-primary">
-                                        <i class="bi bi-person-badge me-2"></i>{{ committee.name }}
-                                        <span class="badge bg-primary ms-1" style="font-size: 0.6rem;">Dir</span>
+                                    <a href="{% url 'committee_dashboard' committee.id %}" class="text-primary fw-bold">
+                                        <i class="bi bi-gear-fill me-1"></i>Manage {{ committee.name }}
                                     </a>
                                 </li>
                                 {% endfor %}
@@ -99,39 +84,23 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li class="dropdown-header text-uppercase small ps-3 text-danger">
-                                    Governance
-                                </li>
-
-                                <li>
-                                    <a href="{% url 'exco_master_dashboard' %}" class="text-primary fw-bold">
-                                        <i class="bi bi-speedometer2 me-2"></i>Master Dashboard
-                                    </a>
-                                </li>
-
-                                {% if is_trustee %}
-                                <li>
-                                    <a href="#" class="text-warning small ps-3">Trustee</a>
-                                </li>
-                                {% endif %}
+                                <li><a href="{% url 'exco_master_dashboard' %}" class="text-danger fw-bold">EXCO
+                                        Dashboard</a></li>
                                 {% endif %}
 
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-
-                                <li>
-                                    <a href="{% url 'logout' %}" class="text-muted">Logout</a>
-                                </li>
+                                <li><a href="{% url 'logout' %}" class="text-muted">Logout</a></li>
                             </ul>
                         </li>
-
                         {% else %}
-                        <li class="dropdown"><a href="#"><span>Join / Login</span> <i
+                        <li class="dropdown">
+                            <a href="#"><span>Member Access</span> <i
                                     class="bi bi-chevron-down toggle-dropdown"></i></a>
                             <ul>
                                 <li><a href="{% url 'login' %}">Login</a></li>
-                                <li><a href="{% url 'register' %}">Join NAA</a></li>
+                                <li><a href="{% url 'register' %}">Create Account</a></li>
                             </ul>
                         </li>
                         {% endif %}

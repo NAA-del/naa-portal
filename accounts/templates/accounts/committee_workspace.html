@@ -6,7 +6,7 @@
         <h2 class="fw-bold" style="color: #2c4964;">{{ committee.name }} Workspace</h2>
 
         {% if is_director or is_exco %}
-        <form method="get" action="{% url 'export_members_csv' committee.id %}" class="row g-2">
+        <form method="get" action="{% url 'export_committee_members_csv' committee.id %}" class="row g-2"></form>
             <div class="col-auto">
                 <input type="date" name="start" class="form-control form-control-sm" title="Start Date">
             </div>
