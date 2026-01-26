@@ -8,7 +8,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.conf import settings
 from django.http import FileResponse, Http404, HttpResponse
-from .models import Committee, CommitteeReport
+from datetime import datetime
+from django.core.mail import send_mail
     
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -17,7 +18,7 @@ from .serializers import MemberSerializer, CommitteeReportSerializer
 # 1. IMPORT ALL MODELS
 from .models import (
     User, AboutPage, Announcement, Leader, 
-    Resource, StudentProfile, StudentAnnouncement, CPDRecord, Notification, Article
+    Resource, StudentProfile, StudentAnnouncement, CPDRecord, Notification, Article, Committee, CommitteeReport
 )
 
 # 2. IMPORT ALL FORMS
@@ -451,7 +452,16 @@ def submit_article(request):
             article.author = request.user
             article.status = 'draft' # Force draft status for review
             article.save()
-            messages.success(request, "Article submitted! It will be live after EXCO review.")
+            
+            send_mail(
+                subject="New NAA Article Submitted for Review",
+                message=f"A new article titled '{article.title}' has been submitted by {request.user.username}. Please log in to the EXCO Dashboard to review it.",
+                from_email="nigerianacademyofaudiology@gmail.com",
+                recipient_list=["nigerianacademyofaudiology@gmail.com"], # Or your specific EXCO list
+                fail_silently=True,
+            )
+
+            messages.success(request, "Article submitted! It will be live after committee review.")
             return redirect('profile')
     else:
         form = ArticleSubmissionForm()
@@ -465,28 +475,33 @@ def article_detail(request, pk):
 
 @login_required
 def export_members_csv(request):
-    # Security: Ensure only Admin or Trustee can download [cite: 8, 51]
-    is_exco = request.user.roles.filter(name="EXCO").exists()
+    # Security: Verify EXCO or Trustee status
+    is_exco = request.user.roles.filter(name="Exco").exists()
     is_trustee = request.user.roles.filter(name="Trustee").exists()
 
     if not (is_exco or is_trustee):
-        messages.error(request, "Unauthorized access.")
+        messages.error(request, "Unauthorized.")
         return redirect('profile')
 
-    # Create the HttpResponse object with the appropriate CSV header [cite: 35]
+    # Get date filters from the URL (e.g., ?start=2025-01-01)
+    start_date = request.GET.get('start')
+    end_date = request.GET.get('end')
+
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="NAA_Member_List.csv"'
+    response['Content-Disposition'] = f'attachment; filename="NAA_Members_{datetime.now().strftime("%Y%m%d")}.csv"'
 
     writer = csv.writer(response)
-    # Write the Header Row
-    writer.writerow(['Username', 'Email', 'Tier', 'Phone', 'Verified Status', 'Date Joined'])
+    writer.writerow(['Username', 'Email', 'Tier', 'Date Joined'])
 
-    # Fetch all members [cite: 37]
-    members = User.objects.all().values_list(
-        'username', 'email', 'membership_tier', 'phone_number', 'is_verified', 'date_joined'
-    )
+    members = User.objects.all()
 
-    for member in members:
-        writer.writerow(member)
+    # Apply filters if provided
+    if start_date:
+        members = members.filter(date_joined__date__gte=start_date)
+    if end_date:
+        members = members.filter(date_joined__date__lte=end_date)
+
+    for m in members:
+        writer.writerow([m.username, m.email, m.get_membership_tier_display(), m.date_joined])
 
     return response
