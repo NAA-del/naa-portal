@@ -28,76 +28,108 @@
 
 <body class="index-page">
 
+    <!-- Header -->
     <header id="header" class="header sticky-top">
         <div class="branding d-flex align-items-center">
             <div class="container position-relative d-flex align-items-center justify-content-between">
 
+                <!-- Logo -->
                 <a href="{% url 'home' %}" class="logo d-flex align-items-center me-auto">
                     <img src="{% static 'images/logo.png' %}" alt="NAA Logo"
                         style="max-height: 64px; margin-right: 12px;" onerror="this.style.display='none'">
                 </a>
 
+                <!-- Navigation -->
                 <nav id="navmenu" class="navmenu">
                     <ul>
                         <li><a href="{% url 'home' %}#hero">Home</a></li>
                         <li><a href="{% url 'about' %}">About</a></li>
 
+                        <!-- User dropdown -->
                         {% if user.is_authenticated %}
                         <li class="dropdown">
                             <a href="#">
-                                <span>Account</span>
+                                <span><i class="bi bi-person-circle me-1"></i>Members</span>
                                 <i class="bi bi-chevron-down toggle-dropdown"></i>
                             </a>
-                            <ul>
-                                <li><a href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>My Profile</a></li>
-                                <li><a href="{% url 'resource_library' %}"><i class="bi bi-book me-2"></i>Library</a>
+                            <ul class="shadow-sm">
+
+                                <!-- Core account -->
+                                <li>
+                                    <a href="{% url 'profile' %}">
+                                        <i class="bi bi-person me-2"></i>My Profile
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{% url 'resource_library' %}">
+                                        <i class="bi bi-book me-2"></i>Library
+                                    </a>
                                 </li>
 
                                 {% if user.membership_tier == 'student' %}
-                                <li><a href="{% url 'student_hub' %}"><i class="bi bi-mortarboard me-2"></i>Student
-                                        Hub</a></li>
+                                <li>
+                                    <a href="{% url 'student_hub' %}">
+                                        <i class="bi bi-mortarboard me-2"></i>Student Hub
+                                    </a>
+                                </li>
                                 {% else %}
-                                <li><a href="{% url 'cpd_tracker' %}"><i class="bi bi-award me-2"></i>CPD Tracker</a>
+                                <li>
+                                    <a href="{% url 'cpd_tracker' %}">
+                                        <i class="bi bi-award me-2"></i>CPD Tracker
+                                    </a>
                                 </li>
                                 {% endif %}
 
+                                <!-- Committees -->
                                 {% if user.committees.exists or user.directed_committees.exists %}
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li class="dropdown-header small text-uppercase">My Teams</li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li class="dropdown-header small text-uppercase text-muted">My Committees</li>
 
                                 {% for committee in user.committees.all %}
-                                <li><a href="{% url 'committee_workspace' committee.id %}">{{ committee.name }}</a></li>
+                                <li>
+                                    <a href="{% url 'committee_workspace' committee.id %}">
+                                        <i class="bi bi-people me-2"></i>{{ committee.name }}
+                                    </a>
+                                </li>
                                 {% endfor %}
 
                                 {% for committee in user.directed_committees.all %}
                                 <li>
-                                    <a href="{% url 'committee_dashboard' committee.id %}" class="text-primary fw-bold">
-                                        <i class="bi bi-gear-fill me-1"></i>Manage {{ committee.name }}
+                                    <a href="{% url 'committee_dashboard' committee.id %}" class="fw-bold text-primary">
+                                        <i class="bi bi-gear-fill me-2"></i>Manage {{ committee.name }}
                                     </a>
                                 </li>
                                 {% endfor %}
                                 {% endif %}
 
+                                <!-- EXCO roles -->
                                 {% if user.roles.exists %}
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <hr class="dropdown-divider">
+                                    <a href="{% url 'exco_master_dashboard' %}" class="fw-bold text-danger">
+                                        <i class="bi bi-shield-lock me-2"></i>EXCO Dashboard
+                                    </a>
                                 </li>
-                                <li><a href="{% url 'exco_master_dashboard' %}" class="text-danger fw-bold">EXCO
-                                        Dashboard</a></li>
                                 {% endif %}
 
+                                <!-- Logout -->
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <hr class="dropdown-divider">
+                                    <a href="{% url 'logout' %}" class="text-muted">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                    </a>
                                 </li>
-                                <li><a href="{% url 'logout' %}" class="text-muted">Logout</a></li>
+
                             </ul>
                         </li>
                         {% else %}
+                        <!-- Guest / Login -->
                         <li class="dropdown">
-                            <a href="#"><span>Member Access</span> <i
-                                    class="bi bi-chevron-down toggle-dropdown"></i></a>
+                            <a href="#">
+                                <span>Member Access</span>
+                                <i class="bi bi-chevron-down toggle-dropdown"></i>
+                            </a>
                             <ul>
                                 <li><a href="{% url 'login' %}">Login</a></li>
                                 <li><a href="{% url 'register' %}">Create Account</a></li>
@@ -109,13 +141,16 @@
                     </ul>
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
+
             </div>
         </div>
     </header>
 
+    <!-- Main Content -->
     <main class="main">
         <div class="container mt-3">
-            <!-- Messages for alerts (Success/Error) -->
+
+            <!-- Messages -->
             {% if messages %}
             {% for message in messages %}
             <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
@@ -125,12 +160,12 @@
             </div>
             {% endfor %}
             {% endif %}
-        </div>
 
-        {% block content %}
-        {% endblock %}
+            {% block content %}{% endblock %}
+        </div>
     </main>
 
+    <!-- Footer -->
     <footer id="footer" class="footer light-background mt-5" style="padding: 30px 0; text-align: center;">
         <div class="container">
             <p>&copy; 2026 <strong>Nigerian Academy of Audiology</strong>. All Rights Reserved.</p>
