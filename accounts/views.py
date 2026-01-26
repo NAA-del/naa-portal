@@ -18,7 +18,8 @@ from .serializers import MemberSerializer, CommitteeReportSerializer
 # 1. IMPORT ALL MODELS
 from .models import (
     User, AboutPage, Announcement, Leader, 
-    Resource, StudentProfile, StudentAnnouncement, CPDRecord, Notification, Article, Committee, CommitteeReport
+    Resource, StudentProfile, StudentAnnouncement, CPDRecord, Notification, Article, Committee, CommitteeReport,
+    CommitteeAnnouncement
 )
 
 # 2. IMPORT ALL FORMS
@@ -380,50 +381,50 @@ def post_national_announcement(request):
             
     return redirect('exco_master_dashboard')
 
+
 @login_required
-def committee_dashboard(request):
-    # 1. Identify the committee this user manages
-    my_committee = Committee.objects.filter(director=request.user).first()
+def committee_dashboard(request, pk):
+    # Use the pk from the URL to get the specific committee
+    committee = get_object_or_404(Committee, pk=pk)
     
-    if not my_committee:
-        messages.warning(request, "Access Denied: You are not a Committee Director.")
+    # Security: Ensure the user is the Director of THIS committee or EXCO
+    is_exco = request.user.roles.filter(name__in=["Exco", "Trustee"]).exists()
+    if committee.director != request.user and not is_exco:
+        messages.warning(request, "Access Denied: You do not manage this committee.")
         return redirect('profile')
 
-    # 2. Initialize both forms
     ann_form = CommitteeAnnouncementForm()
     report_form = CommitteeReportForm()
 
-    # 3. Handle Form Submissions
     if request.method == 'POST':
-        # Check if the "Post Announcement" button was clicked
         if 'post_announcement' in request.POST:
             ann_form = CommitteeAnnouncementForm(request.POST)
             if ann_form.is_valid():
                 ann = ann_form.save(commit=False)
-                ann.committee = my_committee
+                ann.committee = committee
                 ann.author = request.user
                 ann.save()
-                messages.success(request, "Announcement posted successfully!")
-                return redirect('committee_dashboard')
+                messages.success(request, "Announcement posted!")
+                # FIX: Pass the pk back to the redirect
+                return redirect('committee_dashboard', pk=pk)
 
-        # Check if the "Upload Report" button was clicked
         elif 'upload_report' in request.POST:
             report_form = CommitteeReportForm(request.POST, request.FILES)
             if report_form.is_valid():
                 report = report_form.save(commit=False)
-                report.committee = my_committee
+                report.committee = committee
                 report.submitted_by = request.user
                 report.save()
-                messages.success(request, "Report uploaded successfully!")
-                return redirect('committee_dashboard')
+                messages.success(request, "Report uploaded!")
+                # FIX: Pass the pk back to the redirect
+                return redirect('committee_dashboard', pk=pk)
 
-    # 4. Prepare data for the page
     context = {
-        'committee': my_committee,
-        'members': my_committee.members.all(),
-        'member_count': my_committee.members.count(),
-        'announcements': my_committee.announcements.all().order_by('-date_posted'),
-        'reports': my_committee.reports.all().order_by('-uploaded_at'),
+        'committee': committee,
+        'members': committee.members.all(),
+        'member_count': committee.members.count(),
+        'announcements': committee.announcements.all().order_by('-date_posted'),
+        'reports': committee.reports.all().order_by('-uploaded_at'),
         'ann_form': ann_form,
         'report_form': report_form,
     }
@@ -538,3 +539,33 @@ def committee_workspace(request, pk):
         'is_exco': is_exco,
     }
     return render(request, 'accounts/committee_workspace.html', context)
+
+@login_required
+def delete_committee_announcement(request, pk):
+    announcement = get_object_or_404(CommitteeAnnouncement, pk=pk)
+    committee_id = announcement.committee.id
+    
+    # Security: Only the Director of the committee or EXCO can delete
+    is_exco = request.user.roles.filter(name__in=["Exco", "Trustee"]).exists()
+    if announcement.committee.director != request.user and not is_exco:
+        messages.error(request, "Unauthorized to delete this announcement.")
+        return redirect('committee_dashboard', pk=committee_id)
+
+    announcement.delete()
+    messages.success(request, "Announcement removed.")
+    return redirect('committee_dashboard', pk=committee_id)
+
+@login_required
+def delete_committee_report(request, pk):
+    report = get_object_or_404(CommitteeReport, pk=pk)
+    committee_id = report.committee.id
+    
+    # Security check
+    is_exco = request.user.roles.filter(name__in=["Exco", "Trustee"]).exists()
+    if report.committee.director != request.user and not is_exco:
+        messages.error(request, "Unauthorized to delete this report.")
+        return redirect('committee_dashboard', pk=committee_id)
+
+    report.delete()
+    messages.success(request, "Report deleted.")
+    return redirect('committee_dashboard', pk=committee_id)

@@ -43,7 +43,7 @@ urlpatterns = [
     path('reset/done/',auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),name='password_reset_complete'),
     path('notification/read/<int:pk>/', views.mark_notification_read, name='mark_notification_read'),
     path('api/members/', MemberListAPI.as_view(), name='member_api'),
-    path('committee-dashboard/', views.committee_dashboard, name='committee_dashboard'),
+    path('committee-dashboard/<int:pk>/', views.committee_dashboard, name='committee_dashboard'),
     path('api/exco/all-reports/', views.ExcoReportFetchAPI.as_view(), name='exco_reports_api'),
     path('exco/master-dashboard/', views.exco_master_dashboard, name='exco_master_dashboard'),
     path('exco/verify/<int:user_id>/', views.exco_verify_member, name='exco_verify_member'),
@@ -54,6 +54,8 @@ urlpatterns = [
     path('exco/export-members/', views.export_members_csv, name='export_members_csv'),
     path('committee/export/<int:committee_id>/', views.export_members_csv, name='export_committee_members_csv'),
     path('committee/workspace/<int:pk>/', views.committee_workspace, name='committee_workspace'),
+    path('announcement/delete/<int:pk>/', views.delete_committee_announcement, name='delete_announcement'),
+    path('report/delete/<int:pk>/', views.delete_committee_report, name='delete_report'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

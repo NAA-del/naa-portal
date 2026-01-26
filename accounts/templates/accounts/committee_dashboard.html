@@ -44,7 +44,7 @@
         <!-- Left Column -->
         <div class="col-lg-4">
 
-            <!-- Announcement -->
+            <!-- Announcement Form -->
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-primary text-white py-3">
                     <h5 class="mb-0 small fw-bold">
@@ -61,6 +61,33 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Announcements List -->
+            {% for ann in announcements %}
+            <div class="d-flex justify-content-between align-items-start border-bottom pb-2 mb-2">
+                <div>
+                    <h6 class="mb-0 fw-bold">{{ ann.title }}</h6>
+                    <p class="small text-muted mb-0">
+                        {{ ann.content|truncatechars:100 }}
+                    </p>
+                </div>
+
+                <form method="post"
+                      action="{% url 'delete_announcement' ann.pk %}"
+                      class="ms-2">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="btn btn-link text-danger p-0"
+                            onclick="return confirm('Are you sure you want to delete this announcement?');">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            </div>
+            {% empty %}
+            <p class="text-muted small text-center mt-3">
+                No announcements yet.
+            </p>
+            {% endfor %}
 
             <!-- Report Upload -->
             <div class="card shadow-sm border-0 mb-4">
@@ -184,11 +211,18 @@
                                             {{ report.uploaded_at|date:"M d, Y" }}
                                         </small>
                                     </div>
-                                    <a href="{{ report.file.url }}"
-                                       class="btn btn-sm btn-outline-secondary"
-                                       target="_blank">
-                                        View File
-                                    </a>
+                                    <div class="btn-group">
+                                        <a href="{{ report.file.url }}"
+                                           class="btn btn-sm btn-outline-secondary"
+                                           target="_blank">
+                                            View
+                                        </a>
+                                        <a href="{% url 'delete_report' report.pk %}"
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('Permanently delete this report?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
                                 </li>
                                 {% empty %}
                                 <li class="list-group-item text-center py-4 text-muted">
