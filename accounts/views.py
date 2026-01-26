@@ -474,37 +474,44 @@ def article_detail(request, pk):
     return render(request, 'accounts/article_detail.html', {'article': article})
 
 @login_required
-def export_committee_members_csv(request, committee_id):
-    # 1. Fetch the committee and check permissions
-    committee = get_object_or_404(Committee, id=committee_id)
+def export_members_csv(request, committee_id=None):  # Add =None here
     is_exco_trustee = request.user.roles.filter(name__in=["Exco", "Trustee"]).exists()
-    is_director = (committee.director == request.user)
-
-    if not (is_exco_trustee or is_director):
-        messages.error(request, "Access restricted.")
-        return redirect('committee_dashboard', pk=committee_id)
-
-    # 2. Setup Response
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="{committee.name}_Members.csv"'
-
-    writer = csv.writer(response)
-    writer.writerow(['Username', 'Email', 'Tier', 'Date Joined'])
+    
+    # 1. Logic for Committee Export
+    if committee_id:
+        committee = get_object_or_404(Committee, id=committee_id)
+        is_director = (committee.director == request.user)
+        
+        if not (is_exco_trustee or is_director):
+            messages.error(request, "Access restricted.")
+            return redirect('profile')
+            
+        members = committee.members.all()
+        filename = f"{committee.name}_Members.csv"
+        
+    # 2. Logic for Full Academy Export (EXCO/Trustee only)
+    else:
+        if not is_exco_trustee:
+            messages.error(request, "Access restricted to EXCO.")
+            return redirect('profile')
+            
+        members = User.objects.all()
+        filename = "NAA_Full_Member_List.csv"
 
     # 3. Apply Filters
-    # Start with only members of this committee
-    members = committee.members.all() 
-
-    # RESTORED: Date Filter Logic
     start_date = request.GET.get('start')
     end_date = request.GET.get('end')
-
     if start_date:
         members = members.filter(date_joined__date__gte=start_date)
     if end_date:
         members = members.filter(date_joined__date__lte=end_date)
 
-    # 4. Write Data
+    # 4. Generate Response
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    writer = csv.writer(response)
+    writer.writerow(['Username', 'Email', 'Tier', 'Date Joined'])
+
     for m in members:
         writer.writerow([m.username, m.email, m.get_membership_tier_display(), m.date_joined])
 
