@@ -516,3 +516,25 @@ def export_members_csv(request, committee_id=None):  # Add =None here
         writer.writerow([m.username, m.email, m.get_membership_tier_display(), m.date_joined])
 
     return response
+
+@login_required
+def committee_workspace(request, pk):
+    committee = get_object_or_404(Committee, pk=pk)
+    
+    # Check if the user is actually a member of this committee
+    is_member = committee.members.filter(id=request.user.id).exists()
+    is_director = (committee.director == request.user)
+    is_exco = request.user.roles.filter(name__in=["Exco", "Trustee"]).exists()
+
+    if not (is_member or is_director or is_exco):
+        messages.error(request, "You are not assigned to this committee.")
+        return redirect('profile')
+
+    context = {
+        'committee': committee,
+        'members': committee.members.all(),
+        'reports': committee.reports.all(), # Reports shared with the team
+        'is_director': is_director,
+        'is_exco': is_exco,
+    }
+    return render(request, 'accounts/committee_workspace.html', context)
