@@ -53,6 +53,7 @@ urlpatterns = [
     path('submit-article/', views.submit_article, name='submit_article'),
     path('exco/export-members/', views.export_members_csv, name='export_members_csv'),
     path('committee/export/<int:committee_id>/', views.export_members_csv, name='export_committee_members_csv'),
+    path('committee/workspace/<int:pk>/', views.committee_workspace, name='committee_workspace'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

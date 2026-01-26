@@ -1,0 +1,72 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold" style="color: #2c4964;">{{ committee.name }} Workspace</h2>
+
+        {% if is_director or is_exco %}
+        <form method="get" action="{% url 'export_members_csv' committee.id %}" class="row g-2">
+            <div class="col-auto">
+                <input type="date" name="start" class="form-control form-control-sm" title="Start Date">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-sm btn-success">Export Team CSV</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white fw-bold">Teammates</div>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role in Committee</th>
+                                <th>Join Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in members %}
+                            <tr>
+                                <td>{{ m.get_full_name|default:m.username }}</td>
+                                <td>
+                                    {% if m == committee.director %}
+                                    <span class="badge bg-primary">Director</span>
+                                    {% else %}
+                                    <span class="badge bg-light text-dark">Member</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small text-muted">{{ m.date_joined|date:"M Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white fw-bold">Shared Reports</div>
+                <div class="list-group list-group-flush">
+                    {% for report in reports %}
+                    <a href="{{ report.file.url }}" class="list-group-item list-group-item-action py-3" target="_blank">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small fw-bold">{{ report.title }}</span>
+                            <i class="bi bi-file-earmark-pdf text-danger"></i>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <div class="p-4 text-center text-muted small">No shared files yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
