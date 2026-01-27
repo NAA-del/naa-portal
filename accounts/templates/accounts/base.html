@@ -17,192 +17,225 @@
     <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
     <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+
+    <style>
+    .hover-bg:hover {
+    background: rgba(13, 110, 253, 0.08);
+    }
+
+    .dropdown-menu {
+    animation: fadeUp .16s cubic-bezier(.2,.8,.2,1);
+    }
+
+    @keyframes fadeUp {
+    from {
+    opacity: 0;
+    transform: translateY(6px);
+    }
+    to {
+    opacity: 1;
+    transform: translateY(0);
+    }
+    }
+    </style>
 </head>
 
 <body class="index-page">
 
-<header id="header" class="header sticky-top">
-    <div class="branding d-flex align-items-center">
-        <div class="container position-relative d-flex align-items-center justify-content-between">
+    <header id="header" class="header sticky-top">
+        <div class="branding d-flex align-items-center">
+            <div class="container position-relative d-flex align-items-center justify-content-between">
 
-            <!-- LOGO -->
-            <a href="{% url 'home' %}" class="logo d-flex align-items-center me-auto">
-                <img src="{% static 'images/logo.png' %}" alt="NAA Logo"
-                    style="max-height: 64px; margin-right: 12px;" onerror="this.style.display='none'">
-            </a>
+                <!-- LOGO -->
+                <a href="{% url 'home' %}" class="logo d-flex align-items-center me-auto">
+                    <img src="{% static 'images/logo.png' %}" alt="NAA Logo"
+                        style="max-height: 64px; margin-right: 12px;" onerror="this.style.display='none'">
+                </a>
 
-            <!-- NAV -->
-            <nav id="navmenu" class="navmenu">
-                <ul>
-                    <li><a href="{% url 'home' %}#hero">Home</a></li>
-                    <li><a href="{% url 'about' %}">About</a></li>
+                <!-- NAV -->
+                <nav id="navmenu" class="navmenu">
+                    <ul>
+                        <li><a href="{% url 'home' %}#hero">Home</a></li>
+                        <li><a href="{% url 'about' %}">About</a></li>
 
-                    {% if user.is_authenticated %}
-                    <li class="dropdown">
+                        {% if user.is_authenticated %}
+                        <li class="dropdown">
 
-                        <a href="#" class="nav-link d-flex align-items-center gap-1" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle fs-5"></i>
-                            <i class="bi bi-chevron-down toggle-dropdown" style="font-size: 0.7rem;"></i>
-                        </a>
+                            <a href="#" class="nav-link d-flex align-items-center gap-1" data-bs-toggle="dropdown"
+                                style="cursor: pointer;">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                    style="width:48px;height:48px;font-weight:600;">
+                                    {{ user.first_name|default:user.username|slice:":1"|upper }}
+                                </div>
+                                <i class="bi bi-chevron-down toggle-dropdown" style="font-size: 0.7rem;"></i>
+                            </a>
 
-                        <!-- PROFILE HUB -->
-                        <ul class="dropdown-menu shadow-lg border-0 p-0 rounded-4 overflow-hidden"
-                            style="min-width: 320px;">
+                            <!-- PROFILE HUB -->
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 rounded-4 overflow-hidden"
+                                style="min-width: 320px;">
 
-                            <!-- USER HEADER -->
-                            <li class="px-3 py-3 border-bottom bg-light">
-                                <div class="d-flex align-items-center gap-3">
-                                    <i class="bi bi-person-circle fs-2 text-primary"></i>
-                                    <div class="lh-sm">
-                                        <div class="fw-semibold">
-                                            {{ user.get_full_name|default:user.username }}
+                                <!-- USER HEADER -->
+                                <li class="px-3 py-3 border-bottom bg-light">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <i class="bi bi-person-circle fs-2 text-primary"></i>
+                                        <div class="lh-sm">
+                                            <div class="fw-semibold">
+                                                {{ user.get_full_name|default:user.username }}
+                                            </div>
+                                            <small class="text-muted text-capitalize">
+                                                {{ user.membership_tier }} Member
+                                            </small>
                                         </div>
-                                        <small class="text-muted text-capitalize">
-                                            {{ user.membership_tier }} Member
-                                        </small>
                                     </div>
-                                </div>
-                            </li>
+                                </li>
 
-                            <!-- QUICK ACTIONS -->
-                            <li class="px-3 py-2">
-                                <div class="d-flex text-center gap-2">
+                                <!-- QUICK ACTIONS -->
+                                <li class="px-3 py-2">
+                                    <div class="d-flex text-center gap-2">
 
-                                    <a href="{% url 'profile' %}"
-                                        class="flex-fill py-2 rounded-3 small text-decoration-none hover-bg">
-                                        <i class="bi bi-person d-block fs-5 mb-1"></i>
-                                        Profile
+                                        <a href="{% url 'profile' %}"
+                                            class="flex-fill py-2 rounded-3 small text-decoration-none hover-bg">
+                                            <i class="bi bi-person d-block fs-5 mb-1"></i>
+                                            Profile
+                                        </a>
+
+                                        <a href="{% url 'resource_library' %}"
+                                            class="flex-fill py-2 rounded-3 small text-decoration-none hover-bg">
+                                            <i class="bi bi-book d-block fs-5 mb-1"></i>
+                                            Resources
+                                        </a>
+
+                                        {% if user.membership_tier == 'student' %}
+                                        <a href="{% url 'student_hub' %}"
+                                            class="flex-fill py-2 rounded-3 small text-decoration-none hover-bg">
+                                            <i class="bi bi-mortarboard d-block fs-5 mb-1"></i>
+                                            Student Hub
+                                        </a>
+                                        {% else %}
+                                        <a href="{% url 'cpd_tracker' %}"
+                                            class="flex-fill py-2 rounded-3 small text-decoration-none hover-bg">
+                                            <i class="bi bi-award d-block fs-5 mb-1"></i>
+                                            CPD
+                                        </a>
+                                        {% endif %}
+
+                                    </div>
+                                </li>
+
+                                <!-- COMMITTEES -->
+                                {% if user.committees.exists or user.directed_committees.exists %}
+                                <li>
+                                    <hr class="my-1">
+                                </li>
+                                <li class="px-3 py-1 text-muted small fw-semibold text-uppercase">
+                                    My Teams
+                                </li>
+
+                                {% for committee in user.committees.all %}
+                                <li>
+                                    <a href="{% url 'committee_workspace' committee.id %}"
+                                        class="dropdown-item small d-flex align-items-center gap-2">
+                                        <i class="bi bi-people text-primary"></i>
+                                        {{ committee.name }}
                                     </a>
+                                </li>
+                                {% endfor %}
 
-                                    <a href="{% url 'resource_library' %}"
-                                        class="flex-fill py-2 rounded-3 small text-decoration-none hover-bg">
-                                        <i class="bi bi-book d-block fs-5 mb-1"></i>
-                                        Resources
+                                {% for committee in user.directed_committees.all %}
+                                <li>
+                                    <a href="{% url 'committee_dashboard' committee.id %}"
+                                        class="dropdown-item small fw-semibold text-primary d-flex align-items-center gap-2">
+                                        <i class="bi bi-person-badge"></i>
+                                        Manage {{ committee.name }}
+                                        <span class="badge bg-primary ms-auto" style="font-size: 0.6rem;">Dir</span>
                                     </a>
+                                </li>
+                                {% endfor %}
+                                {% endif %}
 
-                                    {% if user.membership_tier == 'student' %}
-                                    <a href="{% url 'student_hub' %}"
-                                        class="flex-fill py-2 rounded-3 small text-decoration-none hover-bg">
-                                        <i class="bi bi-mortarboard d-block fs-5 mb-1"></i>
-                                        Student Hub
+                                <!-- LEADERSHIP -->
+                                {% if user.roles.exists %}
+                                <li>
+                                    <hr class="my-1">
+                                </li>
+                                <li class="px-3 py-1 text-muted small fw-semibold text-uppercase">
+                                    Leadership Tools
+                                </li>
+
+                                <li>
+                                    <a href="{% url 'exco_master_dashboard' %}"
+                                        class="dropdown-item small fw-semibold text-danger d-flex align-items-center gap-2">
+                                        <i class="bi bi-shield-lock"></i>
+                                        EXCO Dashboard
                                     </a>
-                                    {% else %}
-                                    <a href="{% url 'cpd_tracker' %}"
-                                        class="flex-fill py-2 rounded-3 small text-decoration-none hover-bg">
-                                        <i class="bi bi-award d-block fs-5 mb-1"></i>
-                                        CPD
+                                </li>
+                                {% endif %}
+
+                                <!-- FOOTER -->
+                                <li>
+                                    <hr class="my-1">
+                                </li>
+
+                                <li>
+                                    <a href="{% url 'logout' %}"
+                                        class="dropdown-item small text-muted d-flex align-items-center gap-2">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        Logout
                                     </a>
-                                    {% endif %}
+                                </li>
 
-                                </div>
-                            </li>
+                            </ul>
+                        </li>
 
-                            <!-- COMMITTEES -->
-                            {% if user.committees.exists or user.directed_committees.exists %}
-                            <li><hr class="my-1"></li>
-                            <li class="px-3 py-1 text-muted small fw-semibold text-uppercase">
-                                My Teams
-                            </li>
+                        {% else %}
+                        <li class="dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                Member Access
+                                <i class="bi bi-chevron-down toggle-dropdown"></i>
+                            </a>
+                            <ul class="shadow-sm dropdown-menu rounded-3">
+                                <li><a href="{% url 'login' %}" class="dropdown-item">Login</a></li>
+                                <li><a href="{% url 'register' %}" class="dropdown-item">Create Account</a></li>
+                            </ul>
+                        </li>
+                        {% endif %}
 
-                            {% for committee in user.committees.all %}
-                            <li>
-                                <a href="{% url 'committee_workspace' committee.id %}"
-                                    class="dropdown-item small d-flex align-items-center gap-2">
-                                    <i class="bi bi-people text-primary"></i>
-                                    {{ committee.name }}
-                                </a>
-                            </li>
-                            {% endfor %}
+                        <li><a href="{% url 'home' %}#contact">Contact</a></li>
+                    </ul>
 
-                            {% for committee in user.directed_committees.all %}
-                            <li>
-                                <a href="{% url 'committee_dashboard' committee.id %}"
-                                    class="dropdown-item small fw-semibold text-primary d-flex align-items-center gap-2">
-                                    <i class="bi bi-person-badge"></i>
-                                    Manage {{ committee.name }}
-                                    <span class="badge bg-primary ms-auto" style="font-size: 0.6rem;">Dir</span>
-                                </a>
-                            </li>
-                            {% endfor %}
-                            {% endif %}
+                    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                </nav>
 
-                            <!-- LEADERSHIP -->
-                            {% if user.roles.exists %}
-                            <li><hr class="my-1"></li>
-                            <li class="px-3 py-1 text-muted small fw-semibold text-uppercase">
-                                Leadership Tools
-                            </li>
-
-                            <li>
-                                <a href="{% url 'exco_master_dashboard' %}"
-                                    class="dropdown-item small fw-semibold text-danger d-flex align-items-center gap-2">
-                                    <i class="bi bi-shield-lock"></i>
-                                    EXCO Dashboard
-                                </a>
-                            </li>
-                            {% endif %}
-
-                            <!-- FOOTER -->
-                            <li><hr class="my-1"></li>
-
-                            <li>
-                                <a href="{% url 'logout' %}"
-                                    class="dropdown-item small text-muted d-flex align-items-center gap-2">
-                                    <i class="bi bi-box-arrow-right"></i>
-                                    Logout
-                                </a>
-                            </li>
-
-                        </ul>
-                    </li>
-
-                    {% else %}
-                    <li class="dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            Member Access
-                            <i class="bi bi-chevron-down toggle-dropdown"></i>
-                        </a>
-                        <ul class="shadow-sm dropdown-menu rounded-3">
-                            <li><a href="{% url 'login' %}" class="dropdown-item">Login</a></li>
-                            <li><a href="{% url 'register' %}" class="dropdown-item">Create Account</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
-
-                    <li><a href="{% url 'home' %}#contact">Contact</a></li>
-                </ul>
-
-                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-            </nav>
-
+            </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<main class="main">
-    <div class="container mt-3">
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <main class="main">
+        <div class="container mt-3">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+                role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
         </div>
-        {% endfor %}
-        {% endif %}
-    </div>
-    {% block content %}{% endblock %}
-</main>
+        {% block content %}{% endblock %}
+    </main>
 
-<footer id="footer" class="footer light-background mt-5" style="padding: 30px 0; text-align: center;">
-    <div class="container">
-        <p>&copy; 2026 <strong>Nigerian Academy of Audiology</strong>. All Rights Reserved.</p>
-    </div>
-</footer>
+    <footer id="footer" class="footer light-background mt-5" style="padding: 30px 0; text-align: center;">
+        <div class="container">
+            <p>&copy; 2026 <strong>Nigerian Academy of Audiology</strong>. All Rights Reserved.</p>
+        </div>
+    </footer>
 
-<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
-<script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
-<script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
-<script src="{% static 'assets/js/main.js' %}"></script>
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+    <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
 </body>
+
 </html>
