@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from .models import (
     User,
     Announcement,
-    Leader,
+    Executive,
     AboutPage,
     Resource,
     StudentProfile,
