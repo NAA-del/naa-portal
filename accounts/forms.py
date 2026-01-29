@@ -85,3 +85,12 @@ class ArticleSubmissionForm(forms.ModelForm):
         widgets = {
             'content': CKEditor5Widget(config_name='default'),
         }
+        
+class UserUpdateForm(forms.ModelForm):
+    # We add these two lines to make sure they show up on the profile page
+    first_name = forms.CharField(max_length=30, required=False)
+    last_name = forms.CharField(max_length=30, required=False)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'profile_picture'] # Add them to the fields list
