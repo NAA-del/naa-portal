@@ -153,15 +153,6 @@ class Announcement(models.Model):
     def __str__(self):
         return self.title
 
-
-class Leader(models.Model):
-    name = models.CharField(max_length=100)
-    position = models.CharField(max_length=100)
-    image = CloudinaryField('image')
-
-    def __str__(self):
-        return f"{self.name} - {self.position}"
-
 class StudentProfile(models.Model):
     UNIVERSITY_CHOICES = [
         ('UNIMED', 'University of Medical Sciences, Ondo (UNIMED)'),

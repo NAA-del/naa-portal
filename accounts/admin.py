@@ -244,9 +244,14 @@ class CommitteeAnnouncementAdmin(admin.ModelAdmin):
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'created_at', 'is_public')
     prepopulated_fields = {'slug': ('title',)} # Automatically creates URLs from titles
+    
+@admin.register(Executive)
+class ExecutiveAdmin(admin.ModelAdmin):
+    list_display = ('position', 'user', 'term_start_date', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('position', 'user__username', 'user__email')
 
 # ================= OTHER MODELS =================
-admin.site.register(Leader)
 admin.site.register(AboutPage)
 admin.site.register(StudentProfile)
 admin.site.register(StudentAnnouncement)
