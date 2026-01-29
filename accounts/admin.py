@@ -248,8 +248,9 @@ class ArticleAdmin(admin.ModelAdmin):
 @admin.register(Executive)
 class ExecutiveAdmin(admin.ModelAdmin):
     list_display = ('position', 'user', 'term_start_date', 'is_active')
-    list_filter = ('is_active',)
-    search_fields = ('position', 'user__username', 'user__email')
+    list_filter = ('is_active', 'term_start_date')
+    search_fields = ('position', 'user__username', 'user__email', 'bio')
+    list_editable = ('rank', 'is_active')
 
 # ================= OTHER MODELS =================
 admin.site.register(AboutPage)

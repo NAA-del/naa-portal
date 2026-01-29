@@ -323,10 +323,11 @@ class MemberListAPI(APIView):
 @login_required
 def exco_master_dashboard(request):
     # Security: Only allow users with the 'EXCO' role
-    is_exco = Executive.objects.filter(user=request.user, is_active=True).exists()
-    is_trustee = request.user.roles.filter(name="Trustee").exists()
-
-    if not (is_exco or is_trustee):
+    
+    has_leadership_role = request.user.roles.filter(name__in=["EXCO", "Trustee"]).exists()
+    is_official_executive = hasattr(request.user, 'executive_profile') and request.user.executive_profile.is_active
+    
+    if not (has_leadership_role or is_official_executive):
         messages.error(request, "Access restricted to Academy Leadership.")
         return redirect('profile')
 

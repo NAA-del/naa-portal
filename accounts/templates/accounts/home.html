@@ -84,6 +84,11 @@
           <div class="member-info text-center">
             <h4>{{ leader.user.get_full_name|default:leader.user.username }}</h4>
             <span class="d-block fw-bold text-primary">{{ leader.position }}</span>
+
+            {% if leader.bio %}
+            <p class="small text-muted mt-2 italic">"{{ leader.bio|truncatechars:100 }}"</p>
+            {% endif %}
+            
             <small class="text-muted">Serving since: {{ leader.term_start_date|date:"M Y" }}</small>
           </div>
         </div>

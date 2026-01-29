@@ -55,6 +55,11 @@ class Executive(models.Model):
     
     # Information fields
     position = models.CharField(max_length=100, help_text="e.g., National President")
+    bio = models.TextField(
+        blank=True, 
+        null=True, 
+        help_text="A short introductory text about the officer (shows on Home Page)."
+    )
     rank = models.PositiveIntegerField(default=1, help_text="Used to order them (1 for President, 2 for VP, etc.)")
     
     # The 'When': Tracking the starting date

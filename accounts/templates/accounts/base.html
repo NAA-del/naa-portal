@@ -594,7 +594,7 @@
                             {% endif %}
 
                             <!-- Leadership -->
-                            {% if user.roles.exists %}
+                            {% if user.roles.exists or user.executive_profile %}
                             <li class="dropdown-section">
                                 <div class="section-title">Leadership</div>
                                 <a href="{% url 'exco_master_dashboard' %}" class="dropdown-item">
