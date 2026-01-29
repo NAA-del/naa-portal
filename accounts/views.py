@@ -326,6 +326,7 @@ def exco_master_dashboard(request):
     
     has_leadership_role = request.user.roles.filter(name__in=["EXCO", "Trustee"]).exists()
     is_official_executive = hasattr(request.user, 'executive_profile') and request.user.executive_profile.is_active
+    is_trustee = request.user.roles.filter(name="Trustee").exists()
     
     if not (has_leadership_role or is_official_executive):
         messages.error(request, "Access restricted to Academy Leadership.")
