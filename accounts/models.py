@@ -44,6 +44,28 @@ class User(AbstractUser):
             pass
             
         super().save(*args, **kwargs)
+        
+class Executive(models.Model):
+    # Relational Foundation: Links to a real User account
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='executive_profile'
+    )
+    
+    # Information fields
+    position = models.CharField(max_length=100, help_text="e.g., National President")
+    rank = models.PositiveIntegerField(default=1, help_text="Used to order them (1 for President, 2 for VP, etc.)")
+    
+    # The 'When': Tracking the starting date
+    term_start_date = models.DateField()
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['rank'] # Ensures they appear in the correct order of authority
+
+    def __str__(self):
+        return f"{self.position} - {self.user.get_full_name() or self.user.username}"
 
 def send_verification_email(user):
     

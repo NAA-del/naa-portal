@@ -5,6 +5,38 @@
     <h2 class="fw-bold" style="color: #2c4964;">NAA Executive Command Center</h2>
     <hr>
 
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white fw-bold">
+                    <i class="bi bi-shield-shaded me-2"></i>Current National Officers
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Position</th>
+                                <th>Officer Name</th>
+                                <th>Term Started</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for officer in leadership_roster %}
+                            <tr>
+                                <td class="fw-bold">{{ officer.position }}</td>
+                                <td>{{ officer.user.get_full_name|default:officer.user.username }}</td>
+                                <td>{{ officer.term_start_date|date:"M d, Y" }}</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-4 mb-4">
         <div class="col-md-4">
             <div class="card shadow-sm border-0 p-3 bg-primary text-white">
@@ -87,7 +119,8 @@
                                 <td>{{ member.username }}</td>
                                 <td>{{ member.get_membership_tier_display }}</td>
                                 <td>
-                                    <a href="{% url 'exco_verify_member' member.id %}" class="btn btn-sm btn-success">Approve Now</a>
+                                    <a href="{% url 'exco_verify_member' member.id %}"
+                                        class="btn btn-sm btn-success">Approve Now</a>
                                 </td>
                             </tr>
                             {% empty %}
@@ -135,7 +168,8 @@
             {% if is_trustee %}
             <div class="alert alert-warning shadow-sm border-start border-4 border-warning">
                 <h4 class="fw-bold"><i class="bi bi-shield-lock me-2"></i>Trustee Audit View</h4>
-                <p class="mb-0">You have oversight of all Academy activities, including verification logs and financial reports.</p>
+                <p class="mb-0">You have oversight of all Academy activities, including verification logs and financial
+                    reports.</p>
             </div>
             {% endif %}
         </div>

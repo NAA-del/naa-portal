@@ -71,19 +71,20 @@
 
   <div class="container">
     <div class="row gy-4">
-      {% for leader in leaders %}
+      {% for leader in executives %}
       <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
         <div class="team-member">
           <div class="member-img">
-            {% if leader.image %}
-            <img src="{{ leader.image.url }}" class="img-fluid" alt="{{ leader.name }}">
+            {% if leader.user.profile_picture %}
+            <img src="{{ leader.user.profile_picture.url }}" class="img-fluid" alt="{{ leader.user.username }}">
             {% else %}
-            <img src="{% static 'assets/img/doctors/doctors-1.jpg' %}" class="img-fluid" alt="Default">
+            <img src="{% static 'assets/img/default-avatar.jpg' %}" class="img-fluid" alt="Default">
             {% endif %}
           </div>
           <div class="member-info text-center">
-            <h4>{{ leader.name }}</h4>
-            <span>{{ leader.position }}</span>
+            <h4>{{ leader.user.get_full_name|default:leader.user.username }}</h4>
+            <span class="d-block fw-bold text-primary">{{ leader.position }}</span>
+            <small class="text-muted">Serving since: {{ leader.term_start_date|date:"M Y" }}</small>
           </div>
         </div>
       </div>

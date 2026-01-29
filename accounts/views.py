@@ -10,6 +10,7 @@ from django.conf import settings
 from django.http import FileResponse, Http404, HttpResponse
 from datetime import datetime
 from django.core.mail import send_mail
+from django.db.models import Count
     
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -17,7 +18,7 @@ from .serializers import MemberSerializer, CommitteeReportSerializer
 
 # 1. IMPORT ALL MODELS
 from .models import (
-    User, AboutPage, Announcement, Leader, 
+    User, AboutPage, Announcement, Executive, 
     Resource, StudentProfile, StudentAnnouncement, CPDRecord, Notification, Article, Committee, CommitteeReport,
     CommitteeAnnouncement
 )
@@ -91,12 +92,12 @@ def home(request):
     ).order_by('-featured', '-date_posted')
     articles = Article.objects.filter(status='published', is_public=True).order_by('-created_at')[:3]
 
-    leaders = Leader.objects.all()
+    executives = Executive.objects.filter(is_active=True).order_by('rank')
 
     return render(request, 'accounts/home.html', {
         'announcements': announcements,
         'articles': articles,
-        'leaders': leaders,
+        'executives': executives,
     })
 
 def about(request):
@@ -262,10 +263,13 @@ def student_hub(request):
     announcements = announcements.filter(
         target_university__in=['All', student_profile.university]
     )
+    
+    stats = StudentProfile.objects.values('university').annotate(total=Count('id'))
 
     return render(request, 'accounts/student_hub.html', {
         'announcements': announcements,
-        'resources': resources,  # Now the template can see the files!
+        'resources': resources,# Now the template can see the files!
+        'stats': stats,
     })
 
 @login_required
@@ -319,7 +323,7 @@ class MemberListAPI(APIView):
 @login_required
 def exco_master_dashboard(request):
     # Security: Only allow users with the 'EXCO' role
-    is_exco = request.user.roles.filter(name="EXCO").exists()
+    is_exco = Executive.objects.filter(user=request.user, is_active=True).exists()
     is_trustee = request.user.roles.filter(name="Trustee").exists()
 
     if not (is_exco or is_trustee):
@@ -330,6 +334,7 @@ def exco_master_dashboard(request):
     
     total_members = User.objects.count()
     verified_members = User.objects.filter(is_verified=True).count()
+    leadership_roster = Executive.objects.filter(is_active=True).order_by('rank')
     
     # Filter out staff/admins from pending counts to keep it focused on members
     pending_members_queryset = User.objects.filter(is_verified=False, is_staff=False)
@@ -341,6 +346,7 @@ def exco_master_dashboard(request):
 
     context = {
         'total_members': total_members,
+        'leadership_roster': leadership_roster,
         'is_trustee': is_trustee,
         'verified_members': verified_members,
         'pending_count': pending_verifications,
@@ -352,8 +358,8 @@ def exco_master_dashboard(request):
 
 @login_required
 def exco_verify_member(request, user_id):
-    # Security: Ensure ONLY EXCO can do this
-    if not request.user.roles.filter(name="EXCO").exists():
+    
+    if not Executive.objects.filter(user=request.user, is_active=True).exists():
         messages.error(request, "Unauthorized access.")
         return redirect('profile')
         
@@ -470,8 +476,15 @@ def submit_article(request):
     return render(request, 'accounts/submit_article.html', {'form': form})
 
 def article_detail(request, pk):
-    # This specifically looks for an Article, not an Announcement
-    article = get_object_or_404(Article, pk=pk, status='published')
+    article = get_object_or_404(Article, pk=pk)
+    
+    # If the article is NOT published, only the Author or an EXCO member can see it
+    if article.status != 'published':
+        is_exco = request.user.is_authenticated and request.user.roles.filter(name="EXCO").exists()
+        if not (request.user == article.author or is_exco):
+            messages.error(request, "This article is pending review and is not yet public.")
+            return redirect('home')
+
     return render(request, 'accounts/article_detail.html', {'article': article})
 
 @login_required
