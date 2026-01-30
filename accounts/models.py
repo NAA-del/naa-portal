@@ -108,6 +108,9 @@ def send_custom_template_email(user, email_update_obj):
     """
     if not email_update_obj.sendgrid_template_id or not user.email:
         return False
+    
+    exec_record = user.executive_set.first() 
+    position_title = exec_record.position if exec_record else "Member"
 
     message = Mail(
         from_email=settings.DEFAULT_FROM_EMAIL,
@@ -117,7 +120,9 @@ def send_custom_template_email(user, email_update_obj):
     message.dynamic_template_data = {
         'subject': email_update_obj.subject,
         'username': user.username,
-        'body_text': email_update_obj.message,
+        'first_name': user.first_name or user.username,
+        'position': position_title,
+        'custom_message': email_update_obj.message,
     }
 
     try:

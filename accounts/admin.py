@@ -40,8 +40,12 @@ def send_update_email(modeladmin, request, queryset):
     for user in queryset:
         # Only send to verified users with email addresses
         if user.email and user.is_verified:
+            exec_profile = Executive.objects.filter(user=user).first()
+            context = {
+                'position': exec_profile.position if exec_profile else "Member",
+            }
             # We call the helper function here!
-            success = send_custom_template_email(user, email_update)
+            success = send_custom_template_email(user, email_update, context=context)
             if success:
                 sent_count += 1
 
