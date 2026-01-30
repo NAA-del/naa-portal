@@ -7,25 +7,30 @@
 {% block content %}
 <div class="container mt-5 pt-5 mb-5">
 
-    {% if not u_form.first_name.value or not u_form.last_name.value %}
+    {% if not user.first_name or not user.last_name %}
     <div class="alert alert-warning border-0 shadow-sm mb-4" style="border-radius: 12px;">
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="small mb-1 fw-bold">First Name</label>
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>Action Required:</strong> Please update your <b>First Name</b> and <b>Last Name</b> in the form below to
+        complete your profile.
+    </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">First Name</label>
                 {{ u_form.first_name }}
             </div>
 
-            <div class="col-md-6">
-                <label class="small mb-1 fw-bold">Last Name</label>
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Last Name</label>
                 {{ u_form.last_name }}
             </div>
         </div>
 
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <strong>Almost there!</strong> Please provide your <b>First Name</b> and <b>Last Name</b> below so we can verify
-        your identity and school chapter.
-    </div>
-    {% endif %}
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+    </form>
 
     <div class="row">
 
@@ -94,7 +99,8 @@
                     <a href="{% url 'mark_notification_read' notification.pk %}" class="btn-close"
                         aria-label="Close"></a>
                 </div>
-                <small class="text-muted d-block mt-2 ps-5">Received {{ notification.created_at|timesince }} ago</small>
+                <small class="text-muted d-block mt-2 ps-5">Received {{ notification.created_at|timesince }}
+                    ago</small>
             </div>
             {% endif %}
             {% endfor %}
