@@ -93,4 +93,4 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'profile_picture'] # Add them to the fields list
+        fields = ['first_name', 'last_name',] # Add them to the fields list
