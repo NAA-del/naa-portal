@@ -52,6 +52,7 @@ class EmailUpdateAdmin(admin.ModelAdmin):
     list_display = ('title', 'subject', 'created_at', 'is_active')
     list_filter = ('is_active', 'created_at')
     search_fields = ('title', 'subject', 'message')
+    list_editable = ('is_active',)
 
 @admin.register(User)
 class NAAUserAdmin(BaseUserAdmin):
