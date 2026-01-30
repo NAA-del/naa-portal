@@ -26,7 +26,7 @@ from .models import (
 # 2. IMPORT ALL FORMS
 from .forms import (
     NAAUserCreationForm, StudentProfileForm, ProfilePictureForm, CPDSubmissionForm, CommitteeReportForm,
-    CommitteeAnnouncementForm, ArticleSubmissionForm
+    CommitteeAnnouncementForm, ArticleSubmissionForm, UserUpdateForm
 )
 
 # --- Authentication Views ---
@@ -123,13 +123,19 @@ def profile(request):
             p_form.save()
             messages.success(request, "Profile picture updated!")
             return redirect('profile')
+        
+    elif request.method == 'POST' and ('first_name' in request.POST or 'last_name' in request.POST):
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        if u_form.is_valid():
+            u_form.save()
+            messages.success(request, "Name details updated!")
+            return redirect('profile')
+        
     else:
         p_form = ProfilePictureForm(instance=request.user)
-
-    # 2. Handle Student Profile Update (Only for students)
-
-    # FIX: Use a direct database query to find the profile.
-    # This guarantees we find it if it exists, regardless of related_name.
+        u_form = UserUpdateForm(instance=request.user)
+    
+    # handel
     student_profile = StudentProfile.objects.filter(user=request.user).first()
 
     if request.user.membership_tier == 'student':
@@ -154,6 +160,7 @@ def profile(request):
     context = {
         'user': request.user,
         'p_form': p_form,
+        'u_form': u_form,
         's_form': s_form,
         'student_profile': student_profile
     }
