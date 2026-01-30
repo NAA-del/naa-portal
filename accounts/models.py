@@ -102,35 +102,41 @@ def send_verification_email(user):
     except Exception as e:
         logger.error(f"SendGrid Error: {e}")
 
-def send_custom_template_email(user, email_update_obj):
-    """
-    Takes a user and an EmailUpdate object and sends it via SendGrid
-    """
+def send_custom_template_email(user, email_update_obj, context=None):
+
     if not email_update_obj.sendgrid_template_id or not user.email:
         return False
-    
-    exec_record = user.executive_set.first() 
-    position_title = exec_record.position if exec_record else "Member"
 
+    # 1. Start with the basic data every email needs
+    dynamic_data = {
+        'subject': email_update_obj.subject,
+        'username': user.username,
+        'first_name': user.first_name or user.username,
+        'custom_message': email_update_obj.message,  # Matches your {{body_text}}
+    }
+
+    # 2. IMPORTANT: If the Admin sent a 'context' (like position), 
+    # we 'open the bag' and add those details to our dynamic_data.
+    if context:
+        dynamic_data.update(context)
+
+    # 3. Create the Mail object
     message = Mail(
         from_email=settings.DEFAULT_FROM_EMAIL,
         to_emails=user.email
     )
     message.template_id = email_update_obj.sendgrid_template_id
-    message.dynamic_template_data = {
-        'subject': email_update_obj.subject,
-        'username': user.username,
-        'first_name': user.first_name or user.username,
-        'position': position_title,
-        'custom_message': email_update_obj.message,
-    }
+    
+    # 4. Hand the final package to SendGrid
+    message.dynamic_template_data = dynamic_data
 
     try:
         sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
-        sg.send(message)
+        response = sg.send(message)
+        print(f"DEBUG: Email sent to {user.email}. Status: {response.status_code}")
         return True
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Debug Sendgrid Error for {user.email}: {e}")
         return False
 
 class EmailUpdate(models.Model):
