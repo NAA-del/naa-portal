@@ -11,7 +11,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
+
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default-key')
 
 # Set DEBUG to False by default on Render, True locally
@@ -100,7 +101,7 @@ USE_TZ = True
 # --- STATIC FILES (CSS, JS, Medicio Assets) ---
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "static" / "assets",
+    BASE_DIR / 'static',
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
