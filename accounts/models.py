@@ -20,21 +20,35 @@ logger = logging.getLogger('accounts')
 # ============================================================================
 
 class Role(models.Model):
+    """
+    User roles with standardized names for consistent permission checking.
+    """
+    
+    # Define allowed role names as constants
+    EXCO = 'exco'
+    TRUSTEE = 'trustee'
+    COMMITTEE_DIRECTOR = 'committee_director'
+    
+    ROLE_CHOICES = [
+        (EXCO, 'Executive Member'),
+        (TRUSTEE, 'Board of Trustees'),
+        (COMMITTEE_DIRECTOR, 'Committee Director'),
+    ]
     
     name = models.CharField(
         max_length=50,
+        choices=ROLE_CHOICES,
         unique=True,
         db_index=True,
-        help_text="Type the role name here (e.g., Student Member, Executive)"
+        help_text="Role type - standardized values only"
     )
-
     permissions_level = models.IntegerField(
         default=1,
         help_text="Higher number = more authority (1-10)"
     )
 
     def __str__(self):
-        return self.name
+        return self.get_name_display()
     
     class Meta:
         ordering = ['-permissions_level']
