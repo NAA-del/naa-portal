@@ -239,12 +239,6 @@ class CommitteeReportAdmin(admin.ModelAdmin):
     list_display = ('title', 'committee', 'submitted_by', 'uploaded_at')
     list_filter = ('committee', 'uploaded_at')
 
-@admin.register(CommitteeAnnouncement)
-class CommitteeAnnouncementAdmin(admin.ModelAdmin):
-    list_display = ('title', 'committee', 'author', 'date_posted')
-    list_filter = ('committee', 'date_posted')
-    search_fields = ('title', 'content')
-    
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'created_at', 'is_public')
@@ -257,7 +251,25 @@ class ExecutiveAdmin(admin.ModelAdmin):
     search_fields = ('position', 'user__username', 'bio')
     list_editable = ('rank', 'is_active')
 
+@admin.register(StudentAnnouncement)
+class StudentAnnouncementAdmin(admin.ModelAdmin):
+    list_display = ('title', 'target_university', 'author', 'is_published', 'date_posted')
+    list_filter = ('target_university', 'is_published', 'date_posted')
+    search_fields = ('title', 'content')
+    list_editable = ('is_published',)
+    
+    def save_model(self, request, obj, form, change):
+        if not obj.author:
+            obj.author = request.user
+        super().save_model(request, obj, form, change)
+
+
+@admin.register(CommitteeAnnouncement)
+class CommitteeAnnouncementAdmin(admin.ModelAdmin):
+    list_display = ('title', 'committee', 'author', 'is_published', 'date_posted')
+    list_filter = ('committee', 'is_published', 'date_posted')
+    search_fields = ('title', 'content')
+    list_editable = ('is_published',)
 # ================= OTHER MODELS =================
 admin.site.register(AboutPage)
 admin.site.register(StudentProfile)
-admin.site.register(StudentAnnouncement)

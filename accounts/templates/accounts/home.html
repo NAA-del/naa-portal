@@ -61,6 +61,57 @@
       {% endfor %}
     </div>
   </div>
+
+  {% if announcements.has_other_pages %}
+  <nav aria-label="Announcements pagination">
+    <ul class="pagination justify-content-center">
+
+      {% if announcements.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1">&laquo; First</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ announcements.previous_page_number }}">Previous</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">&laquo; First</span>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Previous</span>
+      </li>
+      {% endif %}
+
+      {% for num in announcements.paginator.page_range %}
+      {% if announcements.number == num %}
+      <li class="page-item active">
+        <span class="page-link">{{ num }}</span>
+      </li>
+      {% elif num > announcements.number|add:'-3' and num < announcements.number|add:'3' %} <li class="page-item">
+        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if announcements.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ announcements.next_page_number }}">Next</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ announcements.paginator.num_pages }}">Last &raquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Next</span>
+        </li>
+        <li class="page-item disabled">
+          <span class="page-link">Last &raquo;</span>
+        </li>
+        {% endif %}
+
+    </ul>
+  </nav>
+  {% endif %}
 </section>
 
 <section id="doctors" class="doctors section light-background">

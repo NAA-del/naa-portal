@@ -24,3 +24,5 @@ media/
 # OS / editor junk
 .DS_Store
 Thumbs.db
+logs/*.log
+*.BACKUP_*

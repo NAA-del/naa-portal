@@ -27,6 +27,31 @@
             style="right: -20px; bottom: -20px; font-size: 15rem; opacity: 0.1;"></i>
     </div>
 
+     
+    {% for announcement in student_announcements %}
+    <h3>{{ announcement.title }}</h3>
+    <div>{{ announcement.content|safe }}</div>
+    {% endfor %}
+
+    <!-- After -->
+    {% for announcement in student_announcements %}
+    <h3>{{ announcement.title }}</h3>
+
+    {% if announcement.summary %}
+    <p class="text-muted">{{ announcement.summary }}</p>
+    {% endif %}
+
+    {% if announcement.image %}
+    <img src="{{ announcement.image.url }}" alt="{{ announcement.title }}">
+    {% endif %}
+
+    <div>{{ announcement.content|safe }}</div>
+
+    <small class="text-muted">
+        Posted by {{ announcement.author.username }} on {{ announcement.date_posted|date:"M d, Y" }}
+    </small>
+    {% endfor %}
+
     {% if not user.is_verified %}
     <div class="alert alert-warning border-0 shadow-sm mb-4 py-3">
         <i class="bi bi-info-circle-fill me-2"></i>
@@ -65,6 +90,8 @@
             </div>
         </div>
     </div>
+
+
 
     <!-- Recommended Resources - Expanded to Full Width -->
     <div class="row">
