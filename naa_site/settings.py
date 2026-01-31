@@ -99,7 +99,9 @@ USE_TZ = True
 
 # --- STATIC FILES (CSS, JS, Medicio Assets) ---
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
+    BASE_DIR / "static" / "assets",
+]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # High-performance static serving for Render
