@@ -5,44 +5,44 @@
 
 {% block content %}
 <div class="container mt-5 pt-5 mb-5">
-    
+
     <!-- HERO BANNER -->
     <div class="p-5 mb-5 rounded-4 shadow-sm position-relative overflow-hidden"
-         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 300px;">
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 300px;">
         <div class="position-relative" style="z-index: 2;">
             <h1 class="display-4 fw-bold mb-3">Student Community Hub</h1>
             <p class="fs-5 mb-4" style="max-width: 600px;">
-                The future of Audiology in Nigeria starts here. Connect, learn, and grow with fellow student audiologists.
+                The future of Audiology in Nigeria starts here. Connect, learn, and grow with fellow student
+                audiologists.
             </p>
-            
+
             <div class="d-flex gap-3 flex-wrap">
-                <a href="{% url 'resource_library' %}?cat=academic" 
-                   class="btn btn-light btn-lg px-4 shadow-sm" 
-                   style="border-radius: 50px;">
+                <a href="{% url 'resource_library' %}?cat=academic" class="btn btn-light btn-lg px-4 shadow-sm"
+                    style="border-radius: 50px;">
                     <i class="bi bi-book-half me-2"></i> Study Materials
                 </a>
-                <a href="#chapters" 
-                   class="btn btn-outline-light btn-lg px-4" 
-                   style="border-radius: 50px;">
+                <a href="#chapters" class="btn btn-outline-light btn-lg px-4" style="border-radius: 50px;">
                     <i class="bi bi-geo-alt me-2"></i> View Chapters
                 </a>
             </div>
         </div>
-        
+
         <!-- Decorative Icon -->
         <i class="bi bi-mortarboard position-absolute"
-           style="right: -40px; bottom: -40px; font-size: 18rem; opacity: 0.1; z-index: 1;"></i>
+            style="right: -40px; bottom: -40px; font-size: 18rem; opacity: 0.1; z-index: 1;"></i>
     </div>
 
     <!-- VERIFICATION STATUS BANNER -->
     {% if not user.is_verified %}
-    <div class="alert alert-warning border-0 shadow-sm mb-5" style="border-radius: 12px; border-left: 4px solid #ffc107 !important;">
+    <div class="alert alert-warning border-0 shadow-sm mb-5"
+        style="border-radius: 12px; border-left: 4px solid #ffc107 !important;">
         <div class="d-flex align-items-center">
             <i class="bi bi-info-circle-fill me-3" style="font-size: 2rem;"></i>
             <div>
                 <h6 class="fw-bold mb-1">Account Pending Verification</h6>
                 <p class="mb-0 small">
-                    You can browse chapter news and announcements, but some study materials may be restricted until your account is verified by an admin.
+                    You can browse chapter news and announcements, but some study materials may be restricted until your
+                    account is verified by an admin.
                 </p>
             </div>
         </div>
@@ -61,17 +61,16 @@
         <div class="row g-4">
             {% for announcement in student_announcements %}
             <div class="col-md-6">
-                <div class="card border-0 shadow-sm h-100 hover-card" style="border-radius: 12px; border-left: 4px solid #667eea !important;">
+                <div class="card border-0 shadow-sm h-100 hover-card"
+                    style="border-radius: 12px; border-left: 4px solid #667eea !important;">
                     <div class="card-body p-4">
                         {% if announcement.image %}
-                        <img src="{{ announcement.image.url }}" 
-                             class="rounded mb-3 w-100" 
-                             style="max-height: 200px; object-fit: cover;" 
-                             alt="{{ announcement.title }}">
+                        <img src="{{ announcement.image.url }}" class="rounded mb-3 w-100"
+                            style="max-height: 200px; object-fit: cover;" alt="{{ announcement.title }}">
                         {% endif %}
 
                         <h5 class="fw-bold mb-2">{{ announcement.title }}</h5>
-                        
+
                         {% if announcement.summary %}
                         <p class="text-muted mb-2">{{ announcement.summary }}</p>
                         {% endif %}
@@ -127,11 +126,12 @@
         <div class="row g-4">
             {% for stat in stats %}
             <div class="col-md-6 col-lg-3">
-                <div class="card border-0 shadow-sm text-center hover-card" style="border-radius: 12px; transition: transform 0.3s;">
+                <div class="card border-0 shadow-sm text-center hover-card"
+                    style="border-radius: 12px; transition: transform 0.3s;">
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center"
-                                 style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <i class="bi bi-mortarboard text-white" style="font-size: 2rem;"></i>
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                         <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
                             <span class="display-6 fw-bold text-primary mb-0">{{ stat.total }}</span>
                         </div>
-                        
+
                         <p class="text-muted small mb-0">
                             {{ stat.total|pluralize:"Member,Members" }}
                         </p>
@@ -175,9 +175,8 @@
             <h3 class="fw-bold mb-0" style="color: #2c4964;">
                 <i class="bi bi-book me-2"></i> Recent Study Materials
             </h3>
-            <a href="{% url 'resource_library' %}?cat=academic" 
-               class="btn btn-outline-primary btn-sm px-4" 
-               style="border-radius: 50px;">
+            <a href="{% url 'resource_library' %}?cat=academic" class="btn btn-outline-primary btn-sm px-4"
+                style="border-radius: 50px;">
                 View All Resources
             </a>
         </div>
@@ -196,17 +195,15 @@
                         </div>
 
                         <h6 class="fw-bold mb-2 flex-grow-1">{{ res.title }}</h6>
-                        
+
                         {% if res.description %}
                         <p class="text-muted small mb-3">
                             {{ res.description|truncatewords:10 }}
                         </p>
                         {% endif %}
 
-                        <a href="{{ res.file.url }}" 
-                           class="btn btn-primary w-100 mt-auto" 
-                           style="border-radius: 50px;"
-                           download>
+                        <a href="{{ res.file.url }}" class="btn btn-primary w-100 mt-auto" style="border-radius: 50px;"
+                            download>
                             <i class="bi bi-download me-2"></i> Download
                         </a>
                     </div>
@@ -228,15 +225,15 @@
     </div>
 
     <!-- CALL TO ACTION -->
-    <div class="card border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+    <div class="card border-0 shadow-sm"
+        style="border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
         <div class="card-body p-5 text-center">
             <h4 class="fw-bold mb-3">Need Help or Have Questions?</h4>
             <p class="mb-4" style="max-width: 600px; margin: 0 auto;">
                 Connect with your chapter representatives or reach out to the NAA student affairs committee for support.
             </p>
-            <a href="{% url 'home' %}#contact" 
-               class="btn btn-light btn-lg px-5" 
-               style="border-radius: 50px;">
+            <a href="mailto:nigerianacademyofaudiology@gmail.com" class="btn btn-light btn-lg px-5"
+                style="border-radius: 50px;">
                 <i class="bi bi-envelope me-2"></i> Contact Us
             </a>
         </div>
