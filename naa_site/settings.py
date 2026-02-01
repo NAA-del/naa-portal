@@ -275,9 +275,9 @@ if not DEBUG:
 # SESSION CONFIGURATION
 # ============================================================================
 
-SESSION_COOKIE_AGE = 3600  # 1 hour
+SESSION_COOKIE_AGE = 604800  # 7 days in seconds
 SESSION_SAVE_EVERY_REQUEST = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_NAME = 'naa_sessionid'
 
 # ============================================================================
