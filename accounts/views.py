@@ -384,11 +384,11 @@ def resource_library(request):
     if current_rank >= 4:
         allowed_levels.append("fellow")
 
-    # Query resources
+    # Fetch resources within allowed levels
     resources = (
         Resource.objects.filter(access_level__in=allowed_levels)
         .select_related("uploaded_by")
-        .only("id", "title", "category", "file", "description", "uploaded_at")
+        .only("id", "title", "category", "file", "description", "uploaded_at", "uploaded_by")
     )
 
     # Restrict to verified members if required
