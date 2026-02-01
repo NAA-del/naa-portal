@@ -775,28 +775,45 @@ class AboutPage(models.Model):
 def send_verification_email(user):
     """
     Send verification email to newly verified user.
-    
-    Args:
-        user: User instance
+    Uses dynamic site URL from settings.
     """
     email_template = EmailUpdate.objects.filter(
         title__icontains="Verification"
     ).first()
 
     if not email_template or not email_template.sendgrid_template_id:
-        logger.warning(f"No SendGrid template found for verification email")
+        logger.warning(f"No SendGrid Template found for verification.")
         return
 
+    # Get site URL from settings (works in both dev and production)
+    from django.contrib.sites.models import Site
+    
+    try:
+        current_site = Site.objects.get_current()
+        site_url = f"https://{current_site.domain}"
+    except:
+        # Fallback to environment variable or default
+        site_url = getattr(
+            settings, 
+            'SITE_URL', 
+            'https://naa-portal.onrender.com'
+        )
+    
     message = Mail(
         from_email=settings.DEFAULT_FROM_EMAIL,
         to_emails=user.email
     )
     
     message.template_id = email_template.sendgrid_template_id
+
+    # Add dynamic URLs to template data
     message.dynamic_template_data = {
         'subject': email_template.subject,
         'username': user.username,
         'body_text': email_template.message,
+        'login_url': f"{site_url}/login/",
+        'profile_url': f"{site_url}/profile/",
+        'site_url': site_url,
     }
 
     try:
@@ -804,12 +821,12 @@ def send_verification_email(user):
         sg.send(message)
         logger.info(f"Verification email sent to {user.email}")
     except Exception as e:
-        logger.error(f"SendGrid error: {e}")
+        logger.error(f"SendGrid Error: {e}")
 
 
 def send_custom_template_email(user, email_update_obj, context=None):
     """
-    Send custom email template to user with optional context.
+    Send custom email template to user with dynamic site URLs.
     
     Args:
         user: User instance
@@ -822,17 +839,34 @@ def send_custom_template_email(user, email_update_obj, context=None):
     if not email_update_obj.sendgrid_template_id or not user.email:
         return False
 
+    # Get site URL dynamically
+    from django.contrib.sites.models import Site
+    
+    try:
+        current_site = Site.objects.get_current()
+        site_url = f"https://{current_site.domain}"
+    except:
+        site_url = getattr(
+            settings,
+            'SITE_URL',
+            'https://naa-portal.onrender.com'
+        )
+
     message = Mail(
         from_email=settings.DEFAULT_FROM_EMAIL,
         to_emails=user.email
     )
     message.template_id = email_update_obj.sendgrid_template_id
     
-    # Build template data
+    # Build template data with dynamic URLs
     template_data = {
         'subject': email_update_obj.subject,
         'username': user.username,
         'body_text': email_update_obj.message,
+        'login_url': f"{site_url}/login/",
+        'profile_url': f"{site_url}/profile/",
+        'home_url': site_url,
+        'site_url': site_url,
     }
     
     # Merge additional context if provided
@@ -844,7 +878,7 @@ def send_custom_template_email(user, email_update_obj, context=None):
     try:
         sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
         sg.send(message)
-        logger.info(f"Email sent to {user.email}")
+        logger.info(f"Custom email sent to {user.email}")
         return True
     except Exception as e:
         logger.error(f"Email send error: {e}")

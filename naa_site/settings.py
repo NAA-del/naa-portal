@@ -20,6 +20,9 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['naa-portal.onrender.com', 'localhost', '127.0.0.1']
 
+# Site URL for emails and redirects
+SITE_URL = os.environ.get('SITE_URL', 'https://naa-portal.onrender.com')
+
 # --- CLOUDINARY CONFIGURATION (BEST PRACTICE) ---
 # Uses the single CLOUDINARY_URL environment variable from your dashboard
 CLOUDINARY_STORAGE = {
@@ -33,6 +36,7 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'cloudinary',
     'rest_framework',
+    'django.contrib.sites',
     'django_ckeditor_5',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
 
     
 ]
@@ -321,3 +326,5 @@ LOGGING = {
 ADMINS = [
     ('NAA Admin', os.environ.get('ADMIN_EMAIL', 'nigerianacademyofaudiology@gmail.com')),
 ]
+
+SITE_ID = 1

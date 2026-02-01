@@ -59,7 +59,9 @@ urlpatterns = [
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-
 # This line is the "magic" that makes images show up on your computer
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
+# Global Error Handlers (Place these at the bottom)
+handler429 = 'accounts.views.rate_limited'

@@ -266,10 +266,23 @@ class ArticleSubmissionForm(forms.ModelForm):
         }
         
 class UserUpdateForm(forms.ModelForm):
-    # We add these two lines to make sure they show up on the profile page
-    first_name = forms.CharField(max_length=30, required=False)
-    last_name = forms.CharField(max_length=30, required=False)
+    first_name = forms.CharField(
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your first name'
+        })
+    )
+    last_name = forms.CharField(
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your last name'
+        })
+    )
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name',] # Add them to the fields list
+        fields = ['first_name', 'last_name']
