@@ -6,282 +6,397 @@
 
 {% block content %}
 <div class="container mt-5 pt-5 mb-5">
-
+    
+    <!-- NAME UPDATE ALERT (if missing) -->
     {% if not user.first_name or not user.last_name %}
-    <div class="alert alert-warning border-0 shadow-sm mb-4" style="border-radius: 12px;">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <strong>Action Required:</strong> Please update your <b>First Name</b> and <b>Last Name</b> in the form below to
-        complete your profile.
-    </div>
-
-    {% if not user.first_name or not user.last_name %}
-    <div class="alert alert-warning border-0 shadow-sm mb-4" style="border-radius: 12px;">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <strong>Action Required:</strong> Please update your <b>First Name</b> and <b>Last Name</b> to complete your
-        profile.
-    </div>
-
-    <form method="post">
-        {% csrf_token %}
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label class="form-label small fw-bold">First Name</label>
-                {{ u_form.first_name }}
-                {% if u_form.first_name.errors %}
-                <div class="text-danger small mt-1">{{ u_form.first_name.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label small fw-bold">Last Name</label>
-                {{ u_form.last_name }}
-                {% if u_form.last_name.errors %}
-                <div class="text-danger small mt-1">{{ u_form.last_name.errors }}</div>
-                {% endif %}
+    <div class="alert alert-warning border-0 shadow-sm mb-4" style="border-radius: 12px; border-left: 4px solid #ffc107 !important;">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill me-3" style="font-size: 1.5rem;"></i>
+            <div>
+                <strong>Action Required:</strong> Please update your <strong>First Name</strong> and <strong>Last Name</strong> below to complete your profile.
             </div>
         </div>
+    </div>
 
-        {% if user.first_name or user.last_name %}
-        <div class="alert alert-info mt-3 mb-0 py-2 px-3 small border-0">
-            <i class="bi bi-info-circle me-2"></i>
-            Currently saved: <strong>{{ user.first_name|default:"[Missing]" }} {{ user.last_name|default:"[Missing]"
-                }}</strong>
-        </div>
-        {% endif %}
+    <!-- NAME UPDATE FORM -->
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-3">
+                <i class="bi bi-person-badge me-2"></i> Update Your Name
+            </h5>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">First Name <span class="text-danger">*</span></label>
+                        {{ u_form.first_name }}
+                        {% if u_form.first_name.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ u_form.first_name.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
 
-        <div class="mt-3">
-            <button type="submit" name="update_info" class="btn btn-primary">
-                <i class="bi bi-check-circle me-2"></i> Update Name
-            </button>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Last Name <span class="text-danger">*</span></label>
+                        {{ u_form.last_name }}
+                        {% if u_form.last_name.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ u_form.last_name.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if user.first_name or user.last_name %}
+                <div class="alert alert-info mt-3 mb-0 py-2 px-3 small border-0" style="background-color: #e7f3ff;">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Currently saved: <strong>{{ user.first_name|default:"[Missing]" }} {{ user.last_name|default:"[Missing]" }}</strong>
+                </div>
+                {% endif %}
+
+                <div class="mt-3">
+                    <button type="submit" name="update_info" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-2"></i> Update Name
+                    </button>
+                </div>
+            </form>
         </div>
-    </form>
-    {% else %}
-    <div class="alert alert-success border-0 shadow-sm">
-        <i class="bi bi-person-check-fill me-2"></i>
-        Your profile is complete, <strong>{{ user.first_name }}</strong>!
+    </div>
+    {% endif %}
+
+    <!-- SUCCESS MESSAGE (if complete) -->
+    {% if user.first_name and user.last_name %}
+    <div class="alert alert-success border-0 shadow-sm mb-4" style="border-radius: 12px;">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        Welcome, <strong>{{ user.first_name }} {{ user.last_name }}</strong>! Your profile is complete.
     </div>
     {% endif %}
 
     <div class="row">
+        <!-- LEFT COLUMN: Profile Picture & Status -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
+                <div class="card-body text-center p-4">
+                    
+                    <!-- PROFILE IMAGE -->
+                    {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" 
+                         class="rounded-circle shadow mb-3"
+                         style="border: 4px solid #3fbbc0; object-fit: cover; width: 180px; height: 180px;"
+                         alt="{{ user.username }}">
+                    {% else %}
+                    <div class="rounded-circle shadow mb-3 mx-auto d-flex align-items-center justify-content-center"
+                         style="border: 4px solid #3fbbc0; width: 180px; height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <span class="text-white" style="font-size: 4rem; font-weight: 700;">
+                            {{ user.first_name|default:user.username|slice:":1"|upper }}
+                        </span>
+                    </div>
+                    {% endif %}
 
-        <!-- LEFT COLUMN -->
-        <div class="col-md-4 text-center">
+                    <!-- USERNAME & NAME -->
+                    <h4 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h4>
+                    {% if user.get_full_name %}
+                    <p class="text-muted small mb-2">@{{ user.username }}</p>
+                    {% endif %}
 
-            <!-- PROFILE IMAGE -->
-            {% if user.profile_picture %}
-            <img src="{{ user.profile_picture.url }}" class="rounded-circle shadow-sm mb-3"
-                style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250">
-            {% else %}
-            <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="rounded-circle shadow-sm mb-3"
-                style="border: 3px solid #3fbbc0; object-fit: cover;" width="250" height="250">
-            {% endif %}
+                    <!-- MEMBERSHIP BADGE -->
+                    <span class="badge bg-info text-dark mb-3 px-3 py-2">
+                        {{ user.get_membership_tier_display }}
+                    </span>
 
-            <!-- USERNAME -->
-            <h4 class="fw-bold">{{ user.username }}</h4>
+                    <hr class="my-3">
 
-            <!-- MEMBERSHIP BADGE -->
-            <span class="badge bg-info text-dark mb-2">{{ user.get_membership_tier_display }}</span>
+                    <!-- VERIFICATION STATUS -->
+                    {% if user.is_verified %}
+                    <div class="alert alert-success border-0 py-2 mb-3">
+                        <i class="bi bi-patch-check-fill me-2"></i>
+                        <strong>Verified Member</strong>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning border-0 py-2 mb-3">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Pending Verification</strong>
+                    </div>
+                    {% endif %}
 
-            <hr class="mx-auto" style="width: 80%;">
+                    <!-- PROFILE PICTURE UPLOAD -->
+                    {% if not user.profile_picture %}
+                    <div class="border-top pt-3">
+                        <h6 class="fw-bold small mb-3">Upload Profile Photo</h6>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                {{ p_form.profile_picture }}
+                            </div>
+                            <button type="submit" name="upload_photo" class="btn btn-sm btn-primary w-100">
+                                <i class="bi bi-upload me-2"></i> Upload Photo
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
 
-            <!-- VERIFICATION STATUS -->
-            {% if user.is_verified %}
-            <p class="text-success fw-bold small">
-                <i class="bi bi-patch-check-fill"></i> Verified NAA Member
-            </p>
-            {% else %}
-            <p class="text-warning fw-bold small">
-                <i class="bi bi-exclamation-triangle"></i> Status: Pending Verification
-            </p>
-            {% endif %}
-
-            <!-- UPLOAD FORM (ONLY IF NO PROFILE PICTURE) -->
-            {% if not user.profile_picture %}
-            <div class="card shadow-sm p-3 border-0 mt-3 mx-auto" style="max-width: 220px;">
-                <h6 class="fw-bold small">Update Profile Photo</h6>
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="small mb-2">{{ p_form.profile_picture }}</div>
-                    <button type="submit" name="upload_photo" class="btn btn-sm btn-primary w-100">
-                        <i class="bi bi-upload"></i> Upload
-                    </button>
-                </form>
+                </div>
             </div>
-            {% endif %}
 
+            <!-- MEMBERSHIP PRIVILEGES -->
+            <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-star me-2"></i> Membership Privileges
+                    </h6>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Access to National Clinical Guidelines
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Digital Membership Certificate
+                        </li>
+                        {% if user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Voting Rights at AGM
+                        </li>
+                        {% endif %}
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Networking Events Access
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
-        <!-- RIGHT COLUMN -->
+        <!-- RIGHT COLUMN: Profile Info & Actions -->
         <div class="col-md-8">
 
+            <!-- NOTIFICATIONS -->
             {% for notification in user.notifications.all %}
             {% if not notification.is_read %}
-            <div class="alert alert-info border-0 shadow-sm mb-4 py-3"
-                style="border-left: 5px solid #3fbbc0 !important; background-color: #f0fbfc;">
+            <div class="alert alert-info border-0 shadow-sm mb-4" 
+                 style="border-left: 4px solid #3fbbc0 !important; border-radius: 12px;">
                 <div class="d-flex justify-content-between align-items-start">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-megaphone-fill text-info me-3" style="font-size: 1.5rem;"></i>
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-megaphone-fill me-3 mt-1" style="font-size: 1.5rem; color: #3fbbc0;"></i>
                         <div>
-                            <h5 class="fw-bold mb-1" style="color: #2c4964;">{{ notification.title }}</h5>
-                            <p class="mb-0 text-dark">{{ notification.message }}</p>
+                            <h6 class="fw-bold mb-1">{{ notification.title }}</h6>
+                            <p class="mb-0 small">{{ notification.message|safe }}</p>
+                            <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
                         </div>
                     </div>
-                    <a href="{% url 'mark_notification_read' notification.pk %}" class="btn-close"
-                        aria-label="Close"></a>
+                    <a href="{% url 'mark_notification_read' notification.pk %}" 
+                       class="btn-close" 
+                       aria-label="Close"></a>
                 </div>
-                <small class="text-muted d-block mt-2 ps-5">Received {{ notification.created_at|timesince }}
-                    ago</small>
             </div>
             {% endif %}
             {% endfor %}
 
-            <div class="card p-4 shadow-sm mb-4 border-0">
-                <h3 style="color:#2c4964;">Member Profile</h3>
-                <hr>
-                <div class="row">
-                    <div class="col-6">
-                        <p><strong>Name:</strong> {{ user.username }}</p>
-                    </div>
-                    <div class="col-6">
-                        <p><strong>Email:</strong> {{ user.email }}</p>
+            <!-- PROFILE INFORMATION CARD -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-person-circle me-2"></i> Profile Information
+                    </h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="small text-muted mb-1">Full Name</label>
+                            <p class="fw-bold mb-0">
+                                {{ user.get_full_name|default:user.username }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-muted mb-1">Username</label>
+                            <p class="fw-bold mb-0">@{{ user.username }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-muted mb-1">Email</label>
+                            <p class="fw-bold mb-0">{{ user.email }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-muted mb-1">Membership Tier</label>
+                            <p class="fw-bold mb-0">{{ user.get_membership_tier_display }}</p>
+                        </div>
+                        {% if user.date_verified %}
+                        <div class="col-md-6">
+                            <label class="small text-muted mb-1">Member Since</label>
+                            <p class="fw-bold mb-0">{{ user.date_verified|date:"F Y" }}</p>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-                <p><strong>NAA Membership Tier:</strong> {{ user.get_membership_tier_display }}</p>
             </div>
 
             <!-- DASHBOARD BUTTONS -->
-            <div class="row g-3 mt-4"> {% if user.is_verified %}
-                <div class="col-12 col-md-6">
-                    <a href="{% url 'member_id' %}" class="btn btn-dark w-100 py-2 shadow-sm">
-                        <i class="bi bi-card-heading me-2"></i> View Digital ID
-                    </a>
-                </div>
+            {% if user.is_verified %}
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-grid me-2"></i> Quick Actions
+                    </h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="{% url 'member_id' %}" 
+                               class="btn btn-dark w-100 py-3 shadow-sm" 
+                               style="border-radius: 10px;">
+                                <i class="bi bi-card-heading me-2"></i> View Digital ID
+                            </a>
+                        </div>
 
-                {% if user.membership_tier == 'student' %}
-                <div class="col-12">
-                    <a href="{% url 'student_hub' %}" class="btn btn-success w-100 py-2 shadow-sm">
-                        <i class="bi bi-people-fill me-2"></i> Student Community Hub
-                    </a>
-                </div>
-                {% elif user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
-                <div class="col-12 col-md-6">
-                    <a href="{% url 'cpd_tracker' %}" class="btn btn-primary w-100 py-2 shadow-sm">
-                        <i class="bi bi-award me-2"></i> CPD Portfolio (Mandatory)
-                    </a>
-                </div>
-                {% endif %}
+                        {% if user.membership_tier == 'student' %}
+                        <div class="col-md-6">
+                            <a href="{% url 'student_hub' %}" 
+                               class="btn btn-success w-100 py-3 shadow-sm" 
+                               style="border-radius: 10px;">
+                                <i class="bi bi-people-fill me-2"></i> Student Hub
+                            </a>
+                        </div>
+                        {% elif user.membership_tier == 'full' or user.membership_tier == 'fellow' %}
+                        <div class="col-md-6">
+                            <a href="{% url 'cpd_tracker' %}" 
+                               class="btn btn-primary w-100 py-3 shadow-sm" 
+                               style="border-radius: 10px;">
+                                <i class="bi bi-award me-2"></i> CPD Portfolio
+                            </a>
+                        </div>
+                        {% endif %}
 
-                <div class="col-12">
-                    <a href="{% url 'submit_article' %}" class="btn btn-outline-primary w-100 py-2 shadow-sm">
-                        <i class="bi bi-pencil-square me-2"></i> Submit Article to Journal
-                    </a>
+                        <div class="col-md-6">
+                            <a href="{% url 'submit_article' %}" 
+                               class="btn btn-outline-primary w-100 py-3 shadow-sm" 
+                               style="border-radius: 10px;">
+                                <i class="bi bi-pencil-square me-2"></i> Submit Article
+                            </a>
+                        </div>
+
+                        <div class="col-md-6">
+                            <a href="{% url 'resource_library' %}" 
+                               class="btn btn-outline-secondary w-100 py-3 shadow-sm" 
+                               style="border-radius: 10px;">
+                                <i class="bi bi-book me-2"></i> Resource Library
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                {% endif %}
             </div>
+            {% else %}
+            <div class="alert alert-info border-0 shadow-sm mb-4" style="border-radius: 12px;">
+                <h6 class="fw-bold mb-2">
+                    <i class="bi bi-info-circle me-2"></i> Awaiting Verification
+                </h6>
+                <p class="mb-0 small">
+                    Your account is pending admin verification. You'll receive an email once approved and gain access to all member features.
+                </p>
+            </div>
+            {% endif %}
 
             <!-- STUDENT ACADEMIC SECTION -->
             {% if user.membership_tier == 'student' %}
-            <div class="card p-4 shadow-sm mb-4 border-0">
-                <h4 style="color:#2c4964;font-weight:700;">
-                    <i class="bi bi-mortarboard me-2"></i> Academic Details
-                </h4>
-                <hr>
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-mortarboard me-2"></i> Academic Details
+                    </h5>
 
-                {% if student_profile %}
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="p-3 bg-light rounded text-center h-100 border">
-                            <small class="text-muted d-block mb-1">University</small>
-                            <span class="fw-bold text-primary">{{ student_profile.get_university_display }}</span>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-3 bg-light rounded text-center h-100 border">
-                            <small class="text-muted d-block mb-1">Matric Number</small>
-                            <span class="fw-bold">{{ student_profile.matric_number }}</span>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-3 bg-light rounded text-center h-100 border">
-                            <small class="text-muted d-block mb-1">Current Level</small>
-                            <span class="fw-bold">{{ student_profile.level }} Level</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="alert alert-info mt-3 mb-0 py-2 small border-0">
-                    <i class="bi bi-lock-fill me-2"></i> Academic details are verified.
-                </div>
-
-                {% else %}
-                <p class="text-primary mb-3 small">Please link your university to unlock the Student Hub.</p>
-                <form method="post">
-                    {% csrf_token %}
+                    {% if student_profile %}
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="small fw-bold">Select University</label>
-                            {{ s_form.university }}
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded text-center border">
+                                <small class="text-muted d-block mb-1">University</small>
+                                <span class="fw-bold text-primary">
+                                    {{ student_profile.get_university_display }}
+                                </span>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="small fw-bold">Matric Number</label>
-                            {{ s_form.matric_number }}
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded text-center border">
+                                <small class="text-muted d-block mb-1">Matric Number</small>
+                                <span class="fw-bold">{{ student_profile.matric_number }}</span>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="small fw-bold">Current Level</label>
-                            {{ s_form.level }}
-                        </div>
-                        <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-primary w-100">
-                                Submit Academic Details
-                            </button>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded text-center border">
+                                <small class="text-muted d-block mb-1">Current Level</small>
+                                <span class="fw-bold">{{ student_profile.level }}L</span>
+                            </div>
                         </div>
                     </div>
-                </form>
-                {% endif %}
-            </div>
-            {% endif %}
 
-            {% if user.committees.exists %}
-            <div class="card shadow-sm p-4 border-0 mb-4" style="border-left: 5px solid #3fbbc0 !important;">
-                <h4 style="color:#2c4964; font-weight:700;">
-                    <i class="bi bi-megaphone me-2"></i> Committee Updates
-                </h4>
-                <hr>
+                    <div class="alert alert-success border-0 mt-3 mb-0 py-2 small">
+                        <i class="bi bi-check-circle me-2"></i> Academic details verified
+                    </div>
 
-                {% for committee in user.committees.all %}
-                <h6 class="fw-bold text-primary">{{ committee.name }}</h6>
-
-                {% for announcement in committee.announcements.all|dictsortreversed:"date_posted"|slice:":3" %}
-                <div class="mb-3 border-bottom pb-2">
-                    <p class="mb-1 fw-bold">{{ announcement.title }}</p>
-                    <p class="small text-muted mb-1">{{ announcement.content|truncatewords:20 }}</p>
-                    <small class="text-info">{{ announcement.date_posted|date:"M d, Y" }}</small>
+                    {% else %}
+                    <div class="alert alert-warning border-0 mb-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Link your university</strong> to unlock the Student Hub and academic resources.
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Select University</label>
+                                {{ s_form.university }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Matric Number</label>
+                                {{ s_form.matric_number }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Current Level</label>
+                                {{ s_form.level }}
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100 py-2">
+                                    <i class="bi bi-check-circle me-2"></i> Submit Academic Details
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endif %}
                 </div>
-                {% empty %}
-                <p class="small text-muted">No recent announcements from this committee.</p>
-                {% endfor %}
-                {% endfor %}
             </div>
             {% endif %}
 
-            <!-- RIGHTS SECTION -->
-            <div class="card shadow-sm p-4 border-0">
-                <h4 style="color:#2c4964;font-size:1.1rem;font-weight:700;">Membership Privileges</h4>
-                <ul class="list-group list-group-flush small">
-                    <li class="list-group-item">
-                        <i class="bi bi-check2 text-primary me-2"></i>
-                        Access to National Clinical Guidelines
-                    </li>
-                    <li class="list-group-item">
-                        <i class="bi bi-check2 text-primary me-2"></i>
-                        Voting Rights at AGM (Tiers 3 & 4)
-                    </li>
-                    <li class="list-group-item">
-                        <i class="bi bi-check2 text-primary me-2"></i>
-                        Digital Membership Certificate
-                    </li>
-                </ul>
+            <!-- COMMITTEE UPDATES -->
+            {% if user.committees.exists %}
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; border-left: 4px solid #3fbbc0 !important;">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-megaphone me-2"></i> Committee Updates
+                    </h5>
+
+                    {% for committee in user.committees.all %}
+                    <div class="mb-3">
+                        <h6 class="fw-bold text-primary mb-2">{{ committee.name }}</h6>
+                        
+                        {% for announcement in committee.announcements.all|dictsortreversed:"date_posted"|slice:":3" %}
+                        <div class="border-bottom pb-2 mb-2">
+                            <p class="fw-bold small mb-1">{{ announcement.title }}</p>
+                            <p class="text-muted small mb-1">
+                                {{ announcement.content|striptags|truncatewords:15 }}
+                            </p>
+                            <small class="text-info">{{ announcement.date_posted|date:"M d, Y" }}</small>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted small mb-0">No recent announcements from this committee.</p>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                    <a href="{% url 'committee_workspace' user.committees.first.id %}" 
+                       class="btn btn-sm btn-outline-primary w-100 mt-2">
+                        <i class="bi bi-arrow-right me-2"></i> View All Committee Updates
+                    </a>
+                </div>
             </div>
+            {% endif %}
 
         </div>
     </div>

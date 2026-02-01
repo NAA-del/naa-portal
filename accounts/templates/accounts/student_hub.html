@@ -5,140 +5,277 @@
 
 {% block content %}
 <div class="container mt-5 pt-5 mb-5">
-    <!-- Hero Banner -->
-    <div class="p-5 mb-4 rounded-4 shadow-sm position-relative overflow-hidden"
-        style="background: linear-gradient(45deg, #2c4964, #3fbbc0); color: white;">
+    
+    <!-- HERO BANNER -->
+    <div class="p-5 mb-5 rounded-4 shadow-sm position-relative overflow-hidden"
+         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 300px;">
         <div class="position-relative" style="z-index: 2;">
-            <h1 class="display-5 fw-bold">Student Community</h1>
-            <p class="fs-5">The future of Audiology in Nigeria starts here.</p>
-            <hr class="my-4 opacity-25">
-            <div class="d-flex gap-3">
-                <a href="{% url 'resource_library' %}?cat=academic"
-                    class="btn btn-light btn-lg px-4 rounded-pill text-primary">
-                    <i class="bi bi-book-half me-2"></i>Study Materials
+            <h1 class="display-4 fw-bold mb-3">Student Community Hub</h1>
+            <p class="fs-5 mb-4" style="max-width: 600px;">
+                The future of Audiology in Nigeria starts here. Connect, learn, and grow with fellow student audiologists.
+            </p>
+            
+            <div class="d-flex gap-3 flex-wrap">
+                <a href="{% url 'resource_library' %}?cat=academic" 
+                   class="btn btn-light btn-lg px-4 shadow-sm" 
+                   style="border-radius: 50px;">
+                    <i class="bi bi-book-half me-2"></i> Study Materials
                 </a>
-                <a href="#chapters" class="btn btn-outline-light btn-lg px-4 rounded-pill">
-                    <i class="bi bi-geo-alt me-2"></i>Chapters
+                <a href="#chapters" 
+                   class="btn btn-outline-light btn-lg px-4" 
+                   style="border-radius: 50px;">
+                    <i class="bi bi-geo-alt me-2"></i> View Chapters
                 </a>
             </div>
         </div>
-        <!-- Decorative SVG background icon -->
+        
+        <!-- Decorative Icon -->
         <i class="bi bi-mortarboard position-absolute"
-            style="right: -20px; bottom: -20px; font-size: 15rem; opacity: 0.1;"></i>
+           style="right: -40px; bottom: -40px; font-size: 18rem; opacity: 0.1; z-index: 1;"></i>
     </div>
 
-     
-    {% for announcement in student_announcements %}
-    <h3>{{ announcement.title }}</h3>
-    <div>{{ announcement.content|safe }}</div>
-    {% endfor %}
-
-    <!-- After -->
-    {% for announcement in student_announcements %}
-    <h3>{{ announcement.title }}</h3>
-
-    {% if announcement.summary %}
-    <p class="text-muted">{{ announcement.summary }}</p>
-    {% endif %}
-
-    {% if announcement.image %}
-    <img src="{{ announcement.image.url }}" alt="{{ announcement.title }}">
-    {% endif %}
-
-    <div>{{ announcement.content|safe }}</div>
-
-    <small class="text-muted">
-        Posted by {{ announcement.author.username }} on {{ announcement.date_posted|date:"M d, Y" }}
-    </small>
-    {% endfor %}
-
+    <!-- VERIFICATION STATUS BANNER -->
     {% if not user.is_verified %}
-    <div class="alert alert-warning border-0 shadow-sm mb-4 py-3">
-        <i class="bi bi-info-circle-fill me-2"></i>
-        <strong>Status: Pending Verification.</strong> You can access chapter news, but study materials may be limited
-        until verified.
+    <div class="alert alert-warning border-0 shadow-sm mb-5" style="border-radius: 12px; border-left: 4px solid #ffc107 !important;">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-info-circle-fill me-3" style="font-size: 2rem;"></i>
+            <div>
+                <h6 class="fw-bold mb-1">Account Pending Verification</h6>
+                <p class="mb-0 small">
+                    You can browse chapter news and announcements, but some study materials may be restricted until your account is verified by an admin.
+                </p>
+            </div>
+        </div>
     </div>
     {% endif %}
 
-    <!-- University Chapters Grid -->
-    <div class="row g-4 mb-5" id="chapters">
-        <div class="mb-5">
-            <h5 class="fw-bold mb-3" style="color: #2c4964;">University Chapters</h5>
+    <!-- STUDENT ANNOUNCEMENTS -->
+    {% if student_announcements %}
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0" style="color: #2c4964;">
+                <i class="bi bi-megaphone me-2"></i> Latest Announcements
+            </h3>
+        </div>
 
-            <div class="d-flex overflow-auto pb-2 gap-3" style="scrollbar-width: none; -ms-overflow-style: none;">
-                {% for stat in stats %}
-                <div class="flex-shrink-0" style="width: 140px;">
-                    <div class="card border-0 shadow-sm text-center py-3 px-2"
-                        style="border-radius: 15px; background: #f8fafc;">
-                        <div class="mb-1">
-                            <i class="bi bi-mortarboard text-primary" style="font-size: 1.2rem;"></i>
+        <div class="row g-4">
+            {% for announcement in student_announcements %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100 hover-card" style="border-radius: 12px; border-left: 4px solid #667eea !important;">
+                    <div class="card-body p-4">
+                        {% if announcement.image %}
+                        <img src="{{ announcement.image.url }}" 
+                             class="rounded mb-3 w-100" 
+                             style="max-height: 200px; object-fit: cover;" 
+                             alt="{{ announcement.title }}">
+                        {% endif %}
+
+                        <h5 class="fw-bold mb-2">{{ announcement.title }}</h5>
+                        
+                        {% if announcement.summary %}
+                        <p class="text-muted mb-2">{{ announcement.summary }}</p>
+                        {% endif %}
+
+                        <div class="small mb-3">
+                            {{ announcement.content|striptags|truncatewords:30 }}
                         </div>
 
-                        <h6 class="fw-bold mb-0 small text-uppercase">
-                            {{ stat.university }}
-                        </h6>
-
-                        <div class="d-flex align-items-center justify-content-center gap-1">
-                            <span class="fw-bold text-primary h5 mb-0">{{ stat.total }}</span>
-                            <small class="text-muted" style="font-size: 0.7rem;">Members</small>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="bi bi-person-circle me-1"></i>
+                                {{ announcement.author.get_full_name|default:announcement.author.username }}
+                            </small>
+                            <small class="text-muted">
+                                <i class="bi bi-calendar3 me-1"></i>
+                                {{ announcement.date_posted|date:"M d, Y" }}
+                            </small>
                         </div>
+
+                        {% if announcement.target_university != 'All' %}
+                        <div class="mt-2">
+                            <span class="badge bg-info-subtle text-info">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                {{ announcement.target_university }} Only
+                            </span>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-                {% empty %}
-                <p class="text-muted small">No chapters registered yet.</p>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
     </div>
+    {% else %}
+    <div class="alert alert-info border-0 shadow-sm mb-5" style="border-radius: 12px;">
+        <div class="text-center py-4">
+            <i class="bi bi-megaphone" style="font-size: 3rem; color: #667eea;"></i>
+            <h5 class="mt-3 mb-2">No Announcements Yet</h5>
+            <p class="text-muted mb-0">Check back soon for updates and news from the student community.</p>
+        </div>
+    </div>
+    {% endif %}
 
+    <!-- UNIVERSITY CHAPTERS -->
+    <div class="mb-5" id="chapters">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0" style="color: #2c4964;">
+                <i class="bi bi-geo-alt me-2"></i> University Chapters
+            </h3>
+        </div>
 
-
-    <!-- Recommended Resources - Expanded to Full Width -->
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold mb-0" style="color: #2c4964;">Recent Study Materials</h4>
-                <a href="{% url 'resource_library' %}?cat=academic"
-                    class="btn btn-outline-primary btn-sm rounded-pill px-3">View All Resources</a>
-            </div>
-            <div class="row g-4">
-                {% for res in resources %}
-                <div class="col-md-4 col-lg-3">
-                    <div class="card h-100 border-0 shadow-sm hover-up">
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="badge bg-info-subtle text-info small">PDF</span>
-                                <small class="text-muted">{{ res.uploaded_at|date:"M Y" }}</small>
+        {% if stats %}
+        <div class="row g-4">
+            {% for stat in stats %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm text-center hover-card" style="border-radius: 12px; transition: transform 0.3s;">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center"
+                                 style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="bi bi-mortarboard text-white" style="font-size: 2rem;"></i>
                             </div>
-                            <h6 class="fw-bold flex-grow-1">{{ res.title }}</h6>
-                            <p class="small text-muted mb-3">{{ res.description|truncatewords:8 }}</p>
-                            <a href="{{ res.file.url }}" class="btn btn-sm btn-primary w-100 rounded-pill mt-auto">
-                                <i class="bi bi-download me-1"></i> Download
-                            </a>
                         </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="col-12">
-                    <div class="bg-light rounded p-5 text-center border">
-                        <i class="bi bi-cloud-upload fs-1 text-muted"></i>
-                        <p class="mt-2 text-muted">No study materials have been uploaded to the student category yet.
+
+                        <h5 class="fw-bold mb-1 text-uppercase">
+                            {{ stat.university }}
+                        </h5>
+
+                        <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                            <span class="display-6 fw-bold text-primary mb-0">{{ stat.total }}</span>
+                        </div>
+                        
+                        <p class="text-muted small mb-0">
+                            {{ stat.total|pluralize:"Member,Members" }}
                         </p>
+
+                        {% if stat.university != 'All' %}
+                        <div class="mt-3">
+                            <span class="badge bg-light text-dark border">Chapter Active</span>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info border-0 shadow-sm" style="border-radius: 12px;">
+            <div class="text-center py-4">
+                <i class="bi bi-geo-alt" style="font-size: 3rem; color: #667eea;"></i>
+                <h5 class="mt-3 mb-2">No Chapters Registered Yet</h5>
+                <p class="text-muted mb-0">Be the first to join from your university!</p>
             </div>
         </div>
+        {% endif %}
     </div>
+
+    <!-- STUDY MATERIALS -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0" style="color: #2c4964;">
+                <i class="bi bi-book me-2"></i> Recent Study Materials
+            </h3>
+            <a href="{% url 'resource_library' %}?cat=academic" 
+               class="btn btn-outline-primary btn-sm px-4" 
+               style="border-radius: 50px;">
+                View All Resources
+            </a>
+        </div>
+
+        {% if resources %}
+        <div class="row g-4">
+            {% for res in resources %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 hover-card" style="border-radius: 12px;">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="bi bi-file-earmark-pdf me-1"></i> PDF
+                            </span>
+                            <small class="text-muted">{{ res.uploaded_at|date:"M Y" }}</small>
+                        </div>
+
+                        <h6 class="fw-bold mb-2 flex-grow-1">{{ res.title }}</h6>
+                        
+                        {% if res.description %}
+                        <p class="text-muted small mb-3">
+                            {{ res.description|truncatewords:10 }}
+                        </p>
+                        {% endif %}
+
+                        <a href="{{ res.file.url }}" 
+                           class="btn btn-primary w-100 mt-auto" 
+                           style="border-radius: 50px;"
+                           download>
+                            <i class="bi bi-download me-2"></i> Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-cloud-upload" style="font-size: 4rem; color: #667eea;"></i>
+                <h5 class="mt-3 mb-2">No Study Materials Available</h5>
+                <p class="text-muted mb-0">
+                    Study materials will be uploaded soon. Check back regularly for updates!
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- CALL TO ACTION -->
+    <div class="card border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <div class="card-body p-5 text-center">
+            <h4 class="fw-bold mb-3">Need Help or Have Questions?</h4>
+            <p class="mb-4" style="max-width: 600px; margin: 0 auto;">
+                Connect with your chapter representatives or reach out to the NAA student affairs committee for support.
+            </p>
+            <a href="{% url 'home' %}#contact" 
+               class="btn btn-light btn-lg px-5" 
+               style="border-radius: 50px;">
+                <i class="bi bi-envelope me-2"></i> Contact Us
+            </a>
+        </div>
+    </div>
+
 </div>
 
 <style>
-    .hover-up {
-        transition: transform 0.2s ease-in-out;
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .hover-up:hover {
-        transform: translateY(-5px);
+    .hover-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Custom scrollbar for horizontal scroll */
+    .overflow-auto::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .overflow-auto::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .overflow-auto::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .overflow-auto::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 </style>
 {% endblock %}
