@@ -55,6 +55,7 @@ from .forms import (
     CommitteeAnnouncementForm,
     ArticleSubmissionForm,
     UserUpdateForm,
+    ContactForm,
 )
 from .serializers import MemberSerializer, CommitteeReportSerializer
 
@@ -232,6 +233,38 @@ def article_detail(request, pk):
     article = get_object_or_404(Article, pk=pk, status="published")
     return render(request, "accounts/article_detail.html", {"article": article})
 
+
+
+def contact_us(request):
+    """Public contact form for general inquiries."""
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            phone_number = form.cleaned_data.get('phone_number', 'N/A')
+
+            full_message = f"Name: {name}\nEmail: {email}\nPhone: {phone_number}\n\nMessage:\n{message}"
+
+            try:
+                send_mail(
+                    subject=f"NAA Contact Form: {subject}",
+                    message=full_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.DEFAULT_FROM_EMAIL], # Send to admin email
+                    fail_silently=False,
+                )
+                messages.success(request, 'Your message has been sent successfully!')
+                return redirect('contact')
+            except Exception as e:
+                logger.error(f"Contact form email send error: {e}")
+                messages.error(request, 'There was an error sending your message. Please try again later.')
+    else:
+        form = ContactForm()
+
+    return render(request, 'accounts/contact.html', {'form': form})
 
 # ============================================================================
 # AUTHENTICATED USER VIEWS
