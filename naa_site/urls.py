@@ -66,3 +66,7 @@ if settings.DEBUG:
     
 # Global Error Handlers (Place these at the bottom)
 handler429 = 'accounts.views.rate_limited'
+handler400 = 'naa_site.views.custom_bad_request'
+handler403 = 'naa_site.views.custom_permission_denied'
+handler404 = 'naa_site.views.custom_page_not_found'
+handler500 = 'naa_site.views.custom_server_error'
