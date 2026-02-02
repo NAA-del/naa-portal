@@ -1,328 +1,761 @@
+# 🎓 Nigerian Academy of Audiology (NAA) Portal
 
----
+[![Django](https://img.shields.io/badge/Django-6.0-green.svg)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Production-success.svg)](https://naa-portal.onrender.com)
 
-# Nigerian Academy of Audiology (NAA) Portal
-
-**Version:** January 2026
-**Status:** Active Development / Production Deployment
-**Maintainer:** Nigerian Academy of Audiology
+**Version:** February 2026  
+**Status:** Active Production  
+**Maintainer:** Nigerian Academy of Audiology  
+**Live URL:** [naa-portal.onrender.com](https://naa-portal.onrender.com)
 
 ---
 
 ## 📌 Overview
 
-The **Nigerian Academy of Audiology (NAA) Portal** is a comprehensive, cloud-based professional ecosystem designed to serve Audiologists, students, and affiliates across Nigeria.
+The **Nigerian Academy of Audiology (NAA) Portal** is a comprehensive, cloud-based professional ecosystem designed to serve audiologists, students, and affiliated professionals across Nigeria.
 
-The platform functions as:
+### What is the NAA Portal?
 
-* A **professional membership management system**
-* A **CPD (Continuing Professional Development) portfolio tracker**
-* A **tier-gated resource and document library**
-* A **student academic and community hub**
-* A **public-facing authority website for Audiology education and advocacy**
+A unified digital platform that serves as:
 
-Built with scalability, governance, and professional branding in mind, the portal establishes the NAA as a centralized digital authority for Audiology practice in Nigeria.
+- 🏛️ **Professional Membership Management System** - Multi-tier member registration and identity management
+- 📚 **CPD Portfolio Tracker** - Continuing Professional Development point tracking and certification
+- 📖 **Tier-Gated Resource Library** - Secure document repository with role-based access control
+- 🎓 **Student Academic Hub** - National student community with university chapters
+- 🌐 **Public Audiology Authority** - SEO-optimized content platform for advocacy and education
+- 👥 **Committee Management System** - Organize and coordinate NAA committees
+- 📰 **Announcement & Communication Center** - Multi-channel notification system
+
+Built with **scalability**, **governance**, and **professional branding** in mind, the portal establishes NAA as the centralized digital authority for audiology practice in Nigeria.
 
 ---
 
 ## 🌍 Live Deployment
 
-**Live Demo (Render):**
-The NAA Portal is deployed on Render for development and staging purposes.
+**Production URL:** [https://naa-portal.onrender.com](https://naa-portal.onrender.com)
 
-> ⚠️ *Note: Render free-tier limitations apply (cold starts).*
+**Hosting:** Render.com  
+**Database:** PostgreSQL  
+**Media Storage:** Cloudinary  
+**Email Service:** SendGrid
+
+> ⚠️ **Note:** Free tier may experience cold starts (30-60 seconds) after inactivity.
 
 ---
 
-## 🚀 Core Features
+## ✨ Core Features
 
-### 1. Tiered Membership & Digital Identity System
+### 1. 🎫 Tiered Membership & Digital Identity
 
-The portal implements a role-based identity system where **UI design, access control, and privileges are determined by membership tier**.
+**Four-Tier Membership System:**
 
-**Membership Tiers:**
-
-* **Fellow (FNAA)** – Executive-level members
-  *Gold & Navy themed interface*
-* **Full Member** – Licensed clinical practitioners
-  *Professional Navy theme*
-* **Associate Member** – Allied or affiliated professionals
-  *Silver theme*
-* **Student Member** – University chapter members
-  *Teal academic-focused theme*
+| Tier | Description | Access Level | Theme |
+|------|-------------|--------------|-------|
+| **Fellow (FNAA)** | Executive-level members | Full + Leadership | Gold & Navy |
+| **Full Member** | Licensed clinical practitioners | Professional + CPD | Navy Blue |
+| **Associate** | Allied or affiliated professionals | Professional | Silver |
+| **Student** | University chapter members | Academic | Teal |
 
 **Identity Features:**
+- ✅ Automatic tier recognition system-wide
+- ✅ Membership-specific dashboards
+- ✅ Digital ID card (unlocked after admin verification)
+- ✅ AI-powered profile image processing (Cloudinary facial detection)
+- ✅ Verification badge display
 
-* Automatic tier recognition system-wide
-* Membership-specific dashboards
-* Secure digital ID card unlocking after verification
-* AI-powered face-centering for profile images using **Cloudinary Facial Detection**
+### 2. 📚 Tier-Gated Resource Library
 
----
-
-### 2. Tier-Gated Resource Library
-
-A centralized document and knowledge repository with strict professional access control.
+**Smart Access Control:**
+- Members access resources at their tier + all lower tiers
+- Automatic filtering based on authentication and membership level
+- Secure file hosting via Cloudinary
+- Categories: Academic, Clinical Guidelines, Research, Policy Documents
 
 **Access Levels:**
+```
+Public → Student → Associate → Full → Fellow
+  └── Everyone can see
+           └── Students and above
+                    └── Associates and above
+                             └── Full members and above
+                                      └── Fellows only
+```
 
-* Public
-* Student
-* Associate
-* Full
-* Fellow
+### 3. 📊 CPD Portfolio & Point Tracker
 
-**Behavior:**
+**Complete CPD Management:**
+- 📝 Log conferences, workshops, research publications, training programs
+- 📄 Secure certificate uploads (PDF validation)
+- 🎯 Automatic point calculation (30-point annual target)
+- ✅ Admin verification workflow
+- 📈 Progress tracking with visual indicators
+- 📊 Annual statistics and reporting
 
-* Members can access resources **at their tier and all tiers below**
-* Sensitive documents remain hidden until admin verification
-* Automatic filtering based on user role (no manual sorting required)
+**CPD Categories:**
+- Conferences & Workshops
+- Research & Publications
+- Clinical Training
+- Online Courses
+- Peer Review Activities
 
----
+### 4. 🎓 Student Community Hub
 
-### 3. CPD Portfolio & Point Tracker
+**National Student Network:**
+- 🏫 University-based student statistics
+- 📢 Institution-specific announcements (All universities + targeted)
+- 📚 Academic resource sharing
+- 📈 Inter-school collaboration and visibility
+- 🔗 Direct access to study materials and academic support
 
-A complete Continuing Professional Development (CPD) management system.
+**Supported Universities:**
+- University of Medical Sciences, Ondo (UNIMED)
+- Federal University of Health Sciences, Ila-Orangun (FUHSI)
+- Federal University of Health Sciences, Azare (FUHSA)
+- Federal University Dutsin-Ma, Katsina (FUDMA)
 
-**Features:**
+### 5. 👥 Committee Management System
 
-* Logging of conferences, workshops, research, and trainings
-* Secure certificate uploads (Cloudinary-backed)
-* Annual CPD point calculation (e.g., 30-point yearly target)
-* Admin verification workflow
-* Bulk approval actions for efficiency
+**Organizational Structure:**
+- Committee creation and member assignment
+- Director-level access control
+- Committee-specific announcements
+- Member workspace for collaboration
+- Committee-scoped resources and documents
 
----
+**Built-in Committees:**
+- Scientific Research Committee
+- Education & Training Committee
+- Public Relations Committee
+- Finance Committee
+- Ethics & Professional Standards
 
-### 4. Student Community Hub
+### 6. 🎨 Custom Academy CMS (Django Admin)
 
-A national-scale academic network for Audiology students.
+**Fully Branded Admin Interface:**
+- 🏢 Complete NAA branding (colors, logo, nomenclature)
+- ⚡ Bulk verification for members and CPD records
+- 📤 Resource upload with access-level assignment
+- 📊 Engagement tracking (last login monitoring)
+- 🔍 Advanced search and filtering
+- 📧 Integrated email template management
 
-**Capabilities:**
+### 7. 📰 Public Content Platform
 
-* University-based student statistics
-* Institution-specific announcements
-* Academic resource sharing
-* Inter-school collaboration and visibility
-
----
-
-### 5. Custom Academy CMS (Admin Interface)
-
-The Django Admin interface has been fully rebranded and extended.
-
-**Enhancements:**
-
-* Complete replacement of default Django branding with NAA identity
-* Bulk verification of members and CPD records
-* Resource upload interface with access-level assignment
-* Engagement tracking via last-login monitoring
-
----
-
-### 6. Public Authority & Content Platform (SEO-Focused)
-
-The portal also functions as a **public Audiology authority website**.
-
-**Key Components:**
-
-* Custom-built Articles CMS
-* Draft → Review → Publish editorial workflow
-* CKEditor 5 with extended toolbar for professional writing
-* Search-engine optimized public content
-* Verified Members can submit journal-grade articles
+**SEO-Optimized Authority Website:**
+- 📝 Professional article publishing system
+- 🔄 Draft → Review → Publish workflow
+- ✍️ CKEditor 5 with extended toolbar
+- 🖼️ Image management via Cloudinary
+- 🔍 Search engine optimization
+- 📊 Author attribution for verified members
 
 ---
 
 ## 🛠 Technology Stack
 
-### Backend
+### Backend Framework
+```
+Django 6.0
+├── Django REST Framework (API endpoints)
+├── Django Sites Framework (multi-domain support)
+├── Custom User Model (extended authentication)
+└── Role-based permissions system
+```
 
-* **Django 6.0**
-* Django REST Framework
-* PostgreSQL (Production)
-* SQLite (Local Development)
+### Database
+```
+Production:  PostgreSQL (Render managed)
+Development: SQLite3
+Features:    Connection pooling, health checks
+```
 
-### Frontend / UI
-
-* Bootstrap 5
-* Medicio Professional Theme
-* FontAwesome
-* Bootstrap Icons
+### Frontend & UI
+```
+Theme:       Medicio Professional (Bootstrap 5)
+Icons:       Bootstrap Icons + Font Awesome
+JavaScript:  Vanilla JS + AOS (Animate On Scroll)
+Editor:      CKEditor 5 (rich text editing)
+```
 
 ### Storage & Media
+```
+Provider:    Cloudinary
+Features:    - AI facial detection for profile images
+             - Automatic image optimization
+             - Secure file storage
+             - Video support (future)
+```
 
-* Cloudinary (media storage & AI image processing)
+### Email & Communication
+```
+Provider:    SendGrid
+Features:    - Transactional emails
+             - Template management
+             - Delivery tracking
+             - Domain authentication (DKIM/SPF)
+```
 
-### Deployment & Infrastructure
+### Deployment Infrastructure
+```
+Platform:    Render.com
+Web Server:  Gunicorn (WSGI)
+Static:      WhiteNoise (compression + caching)
+Build:       Automated via build.sh
+SSL:         Automatic via Render
+```
 
-* Render
-* Gunicorn (WSGI server)
-* WhiteNoise (static file serving)
-* Automated `build.sh` pipeline
+### Security & Performance
+```
+Security:    - HTTPS enforcement
+             - HSTS headers
+             - Secure cookies
+             - CSRF protection
+             - Rate limiting (django-ratelimit)
+             - File upload validation
+
+Performance: - Database query optimization (select_related, prefetch_related)
+             - Static file compression (WhiteNoise)
+             - Image CDN (Cloudinary)
+             - Browser caching headers
+```
 
 ---
 
 ## 📁 Project Structure
 
-```text
+```
 naa-portal/
 │
-├── accounts/          # Core business logic (models, views, forms)
-├── naa_site/          # Project settings and configuration
-├── templates/         # UI templates
-├── static/            # Logos, PDFs, theme assets
-├── staticfiles/       # Collected static files (production)
+├── accounts/                   # Main Django app
+│   ├── migrations/            # Database migrations
+│   ├── templates/             # HTML templates
+│   │   └── accounts/
+│   │       ├── base.html      # Base template with navigation
+│   │       ├── home.html      # Homepage
+│   │       ├── profile.html   # Member profile
+│   │       ├── student_hub.html
+│   │       ├── cpd_tracker.html
+│   │       └── ...
+│   ├── models.py              # Data models (User, Committee, Announcement, etc.)
+│   ├── views.py               # View functions and logic
+│   ├── forms.py               # Form classes
+│   ├── admin.py               # Admin interface customization
+│   ├── urls.py                # App-specific URL routing
+│   ├── decorators.py          # Custom permission decorators
+│   └── validators.py          # File upload validators
 │
-├── build.sh           # Render deployment automation
-├── manage.py
-├── requirements.txt
-└── README.md
+├── naa_site/                  # Project configuration
+│   ├── settings.py           # Django settings
+│   ├── urls.py               # Main URL routing
+│   ├── wsgi.py               # WSGI configuration
+│   └── asgi.py               # ASGI configuration (future)
+│
+├── static/                    # Static assets (development)
+│   ├── assets/               # Medicio theme files
+│   │   ├── css/
+│   │   ├── js/
+│   │   ├── img/
+│   │   └── vendor/
+│   ├── images/               # NAA branding
+│   │   └── logo.png
+│   └── docs/                 # Public documents
+│       └── constitution.pdf
+│
+├── staticfiles/              # Collected static files (production)
+├── media/                    # User uploads (local development)
+├── logs/                     # Application logs
+│   ├── naa_portal.log
+│   └── security.log
+│
+├── build.sh                  # Render deployment script
+├── requirements.txt          # Python dependencies
+├── manage.py                 # Django management script
+├── .gitignore
+├── STYLE_GUIDE.md           # Code standards (create this)
+└── README.md                # This file
 ```
 
 ---
 
-## 📦 Dependencies
+## 📦 Key Dependencies
 
-All dependencies are listed in `requirements.txt`.
+### Core Framework
+```python
+Django==6.0                          # Web framework
+djangorestframework==3.16.1          # API framework
+psycopg2-binary==2.9.11             # PostgreSQL adapter
+gunicorn==23.0.0                    # WSGI HTTP server
+```
 
-Key packages include:
+### Storage & Media
+```python
+cloudinary==1.44.1                   # Cloud storage
+django-cloudinary-storage==0.3.0     # Django integration
+pillow==12.0.0                       # Image processing
+```
 
-* Django 6.0
-* django-ckeditor-5
-* django-cloudinary-storage
-* djangorestframework
-* gunicorn
-* psycopg2-binary
-* whitenoise
-* SendGrid integration
-* Cryptography & security libraries
+### Content & Forms
+```python
+django-ckeditor-5==0.2.19           # Rich text editor
+django-ratelimit==4.1.0             # Rate limiting
+```
+
+### Email & Communication
+```python
+django-sendgrid-v5==1.3.1           # SendGrid integration
+sendgrid==6.12.5                    # SendGrid SDK
+```
+
+### Deployment & Performance
+```python
+dj-database-url==3.1.0              # Database URL parsing
+whitenoise==6.11.0                  # Static file serving
+cryptography==46.0.3                # Encryption utilities
+```
+
+**Full list:** See `requirements.txt`
 
 ---
 
-## 🔧 Local Installation & Setup
+## 🚀 Installation & Setup
+
+### Prerequisites
+- Python 3.13+
+- pip (Python package manager)
+- PostgreSQL (production) or SQLite (development)
+- Git
 
 ### 1. Clone Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/NAA-del/naa-portal.git
 cd naa-portal
 ```
 
-### 2. Install Dependencies
+### 2. Create Virtual Environment
+
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate it
+# Windows:
+venv\Scripts\activate
+
+# Mac/Linux:
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Database Setup
+### 4. Environment Variables
+
+Create a `.env` file in project root:
 
 ```bash
-python manage.py makemigrations
-python manage.py migrate
+# Core Settings
+SECRET_KEY=your-secret-key-here
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Database (optional for local SQLite)
+DATABASE_URL=sqlite:///db.sqlite3
+
+# Cloudinary (required for media uploads)
+CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name
+
+# SendGrid (required for emails)
+SENDGRID_API_KEY=SG.your-api-key-here
+DEFAULT_FROM_EMAIL=nigerianacademyofaudiology@gmail.com
+
+# Site Configuration
+SITE_URL=http://localhost:8000
+ADMIN_EMAIL=admin@example.com
 ```
 
-### 4. Create Admin User
+### 5. Database Setup
 
 ```bash
+# Create migrations
+python manage.py makemigrations
+
+# Apply migrations
+python manage.py migrate
+
+# Create superuser
 python manage.py createsuperuser
 ```
 
-### 5. Run Development Server
+### 6. Create Required Groups
+
+```bash
+python manage.py shell
+```
+
+```python
+from django.contrib.auth.models import Group
+
+# Create role groups
+Group.objects.get_or_create(name='exco')
+Group.objects.get_or_create(name='trustee')
+Group.objects.get_or_create(name='committee_director')
+
+exit()
+```
+
+### 7. Collect Static Files
+
+```bash
+python manage.py collectstatic
+```
+
+### 8. Run Development Server
 
 ```bash
 python manage.py runserver
 ```
 
+Visit: [http://localhost:8000](http://localhost:8000)
+
 ---
 
-## 🔐 Environment Variables
+## 🔐 Environment Variables (Production)
 
-Set the following environment variables via a `.env` file or hosting dashboard:
+Set these in your Render dashboard:
 
-```text
-SECRET_KEY
-CLOUDINARY_URL
-DATABASE_URL
-EMAIL_USER
-EMAIL_PASSWORD
+### Required Variables
+```bash
+SECRET_KEY=strong-random-secret-key-generate-new
+DEBUG=False
+DATABASE_URL=postgres://user:pass@host:port/db  # Auto-set by Render
+CLOUDINARY_URL=cloudinary://key:secret@cloud
+SENDGRID_API_KEY=SG.xxx
+```
+
+### Recommended Variables
+```bash
+SITE_URL=https://naa-portal.onrender.com
+DEFAULT_FROM_EMAIL=nigerianacademyofaudiology@gmail.com
+ADMIN_EMAIL=nigerianacademyofaudiology@gmail.com
+ALLOWED_HOSTS=naa-portal.onrender.com,localhost,127.0.0.1
 ```
 
 ---
 
-## ☁ Deployment (Render)
+## ☁️ Deployment (Render)
 
-**Build Command**
+### Render Configuration
 
+**Build Command:**
 ```bash
 ./build.sh
 ```
 
-**Start Command**
-
+**Start Command:**
 ```bash
-python manage.py migrate --no-input && gunicorn naa_site.wsgi:application
+gunicorn naa_site.wsgi:application
 ```
 
-**Notes:**
+### build.sh Script
 
-* WhiteNoise handles static file serving
-* PostgreSQL is required in production
-* Render free tier may sleep after inactivity
+```bash
+#!/usr/bin/env bash
+set -o errexit
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Collect static files
+python manage.py collectstatic --no-input --clear
+
+# Run database migrations
+python manage.py migrate --no-input
+```
+
+### Deployment Checklist
+
+- [ ] All environment variables set in Render
+- [ ] `DEBUG=False` in production
+- [ ] Database migrations tested locally
+- [ ] Static files collected successfully
+- [ ] Cloudinary URL configured
+- [ ] SendGrid API key active
+- [ ] Custom domain configured (if applicable)
+- [ ] SSL certificate active
+- [ ] Admin superuser created
 
 ---
 
-## 🧑‍💼 Administrative Workflow
+## 🧑‍💼 Administrative Workflows
 
-### Member Verification
+### Member Verification Process
 
-1. Review registration
-2. Toggle `is_verified`
-3. Member gains full access and digital ID
+1. **Review Registration**
+   - Login to Django Admin
+   - Navigate to Users
+   - Filter by `is_verified=False`
+
+2. **Verify Member**
+   - Review member details
+   - Toggle `is_verified` to True
+   - Save
+
+3. **Outcome**
+   - Member receives verification email
+   - Digital ID becomes accessible
+   - Full resource access granted
 
 ### Resource Management
 
-1. Upload document
-2. Assign access level
-3. Resource becomes visible only to permitted tiers
+1. **Upload Document**
+   - Admin → Resources → Add Resource
+   - Upload file (PDF/DOCX/Image)
+   - Set category and description
 
-### CPD Oversight
+2. **Set Access Level**
+   - Choose: Public, Student, Associate, Full, or Fellow
+   - Resource becomes visible only to permitted tiers
 
-1. Review uploaded certificates
-2. Bulk verify records
-3. CPD points are automatically added
+3. **Organize**
+   - Add to category
+   - Tag with keywords
+   - Set featured status (optional)
+
+### CPD Record Management
+
+1. **Review Submissions**
+   - Admin → CPD Records
+   - Filter by `verified=False`
+
+2. **Bulk Verification**
+   - Select multiple records
+   - Actions → "Approve selected CPD records"
+   - Points automatically added to member profiles
+
+3. **Reject/Request Revision**
+   - Add admin comment
+   - Notify member via email
+
+### Committee Administration
+
+1. **Create Committee**
+   - Admin → Committees → Add Committee
+   - Set name, description, director
+
+2. **Add Members**
+   - Select committee
+   - Add members via ManyToMany field
+
+3. **Post Announcements**
+   - Admin → Committee Announcements
+   - Choose committee
+   - Write announcement
+   - Members see it in their dashboard
 
 ---
 
-## 📅 Recent Updates (January 25, 2026)
+## 📅 Recent Updates
 
-### Platform Expansion
+### February 2026
+- ✅ Fixed static files configuration for Django 6.0
+- ✅ Updated session management (7-day sessions)
+- ✅ Improved template consistency (Medicio theme)
+- ✅ Enhanced contact page UI/UX
+- ✅ Added comprehensive code style guide
+- ✅ Fixed rate limiting issues
 
-* Transitioned into a public Audiology authority hub
-* Introduced SEO-friendly professional article system
+### January 2026
+- ✅ Platform expansion to public authority hub
+- ✅ SEO-friendly article publishing system
+- ✅ Migrated "EXCO" role to proper Admin system
+- ✅ Added last-login engagement tracking
+- ✅ Fixed production migration errors
+- ✅ Enabled verified member article submissions
+- ✅ Integrated Cloudinary for article images
 
-### Governance Improvements
+### December 2025
+- ✅ Initial launch of member portal
+- ✅ CPD tracking system implementation
+- ✅ Student hub with university chapters
+- ✅ Tier-gated resource library
+- ✅ Digital ID card system
 
-* Migrated “EXCO” role to **Admin**
-* Added last-login engagement tracking
-* Fixed dashboard logic issues
+---
 
-### Member Contributions
+## 🔒 Security Features
 
-* Enabled verified member article submissions
-* Integrated Cloudinary-backed article images
+### Authentication & Authorization
+- ✅ Custom user model with extended fields
+- ✅ Role-based access control (RBAC)
+- ✅ Email verification system
+- ✅ Secure password hashing (Django defaults)
+- ✅ Session management with secure cookies
 
-### Stability & Hardening
+### Data Protection
+- ✅ HTTPS enforcement (production)
+- ✅ HSTS headers (1-year)
+- ✅ Secure cookie flags (HttpOnly, Secure, SameSite)
+- ✅ CSRF protection
+- ✅ XSS prevention headers
+- ✅ Clickjacking protection (X-Frame-Options)
 
-* Fixed production migration errors
-* Resolved missing templates
-* Improved URL routing for article content
+### File Upload Security
+- ✅ File type validation (MIME type + magic bytes)
+- ✅ File size limits (5MB images, 10MB PDFs)
+- ✅ Filename sanitization
+- ✅ Path traversal prevention
+- ✅ Malware signature detection
+
+### Rate Limiting
+- ✅ Login attempts: 5 per minute
+- ✅ Registration: 10 per hour
+- ✅ API endpoints: 100 requests/hour (authenticated)
+- ✅ Anonymous API: 10 requests/hour
+
+---
+
+## 🧪 Testing
+
+### Run Tests
+
+```bash
+# Run all tests
+python manage.py test
+
+# Run specific app tests
+python manage.py test accounts
+
+# Run with coverage
+coverage run --source='.' manage.py test
+coverage report
+```
+
+### Manual Testing Checklist
+
+**Authentication:**
+- [ ] Registration works
+- [ ] Login/logout works
+- [ ] Password reset works
+- [ ] Email verification works
+
+**Member Features:**
+- [ ] Profile updates correctly
+- [ ] Digital ID displays
+- [ ] CPD submission works
+- [ ] Resource access based on tier
+
+**Admin Features:**
+- [ ] Member verification works
+- [ ] Bulk CPD approval works
+- [ ] Resource upload works
+- [ ] Committee management works
+
+---
+
+## 📊 Database Models
+
+### Core Models
+
+```python
+User              # Extended Django User
+Executive         # Leadership profiles
+StudentProfile    # Student academic details
+Committee         # NAA committees
+Announcement      # National announcements
+StudentAnnouncement  # Student-specific
+CommitteeAnnouncement  # Committee-specific
+Resource          # Document library
+CPDRecord         # CPD tracking
+Article           # Content platform
+Notification      # In-app notifications
+EmailUpdate       # Email templates
+```
+
+---
+
+## 🤝 Contributing
+
+This is a proprietary project for the Nigerian Academy of Audiology. 
+
+For NAA members interested in contributing:
+1. Contact the NAA Technology Committee
+2. Request developer access
+3. Follow the STYLE_GUIDE.md conventions
+4. Submit pull requests for review
+
+---
+
+## 📞 Support & Contact
+
+**Nigerian Academy of Audiology**
+
+- 📧 Email: nigerianacademyofaudiology@gmail.com
+- 🌐 Website: [naa-portal.onrender.com](https://naa-portal.onrender.com)
+- 📍 Location: Lagos, Nigeria
+
+**For Technical Issues:**
+- Open an issue on GitHub (if authorized)
+- Email technical support
+- Contact the NAA Technology Committee
 
 ---
 
 ## 📜 License & Ownership
 
-© 2026 **Nigerian Academy of Audiology**
-All rights reserved.
+**© 2026 Nigerian Academy of Audiology**  
+**All Rights Reserved**
 
-This software is proprietary and intended for official Academy use unless otherwise authorized.
+This software is proprietary and intended exclusively for official Nigerian Academy of Audiology operations. Unauthorized use, reproduction, or distribution is strictly prohibited.
+
+The NAA Portal is protected under Nigerian intellectual property laws and international copyright agreements.
+
+---
+
+## 🙏 Acknowledgments
+
+**Built with:**
+- Django Web Framework
+- Medicio Bootstrap Theme
+- Cloudinary Cloud Storage
+- SendGrid Email Service
+- Render Cloud Platform
+
+**Special Thanks:**
+- NAA Executive Committee
+- NAA Technology Committee
+- Student Chapter Representatives
+- All NAA Members for their support
+
+---
+
+## 📈 Future Roadmap
+
+### Q1 2026
+- [ ] Mobile app (React Native)
+- [ ] Payment integration for membership dues
+- [ ] Advanced analytics dashboard
+- [ ] Automated email campaigns
+
+### Q2 2026
+- [ ] Member directory with search
+- [ ] Event management system
+- [ ] Webinar hosting integration
+- [ ] Member-to-member messaging
+
+### Q3 2026
+- [ ] Research collaboration platform
+- [ ] Job board for audiologists
+- [ ] Continuing education courses
+- [ ] Professional certification tracking
+
+---
+
+**Built with ❤️ for the Nigerian Academy of Audiology**
+
+**Last Updated:** February 2, 2026
