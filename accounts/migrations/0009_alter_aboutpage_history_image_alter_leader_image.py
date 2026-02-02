@@ -7,18 +7,22 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0008_alter_user_profile_picture'),
+        ("accounts", "0008_alter_user_profile_picture"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='aboutpage',
-            name='history_image',
-            field=cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='history image'),
+            model_name="aboutpage",
+            name="history_image",
+            field=cloudinary.models.CloudinaryField(
+                blank=True, max_length=255, null=True, verbose_name="history image"
+            ),
         ),
         migrations.AlterField(
-            model_name='leader',
-            name='image',
-            field=cloudinary.models.CloudinaryField(max_length=255, verbose_name='image'),
+            model_name="leader",
+            name="image",
+            field=cloudinary.models.CloudinaryField(
+                max_length=255, verbose_name="image"
+            ),
         ),
     ]

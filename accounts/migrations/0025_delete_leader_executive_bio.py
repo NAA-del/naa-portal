@@ -6,16 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0024_executive'),
+        ("accounts", "0024_executive"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='Leader',
+            name="Leader",
         ),
         migrations.AddField(
-            model_name='executive',
-            name='bio',
-            field=models.TextField(blank=True, help_text='A short introductory text about the officer (shows on Home Page).', null=True),
+            model_name="executive",
+            name="bio",
+            field=models.TextField(
+                blank=True,
+                help_text="A short introductory text about the officer (shows on Home Page).",
+                null=True,
+            ),
         ),
     ]

@@ -6,41 +6,65 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0009_alter_aboutpage_history_image_alter_leader_image'),
+        ("accounts", "0009_alter_aboutpage_history_image_alter_leader_image"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='resource',
-            options={'ordering': ['-uploaded_at']},
+            name="resource",
+            options={"ordering": ["-uploaded_at"]},
         ),
         migrations.RemoveField(
-            model_name='resource',
-            name='is_public',
+            model_name="resource",
+            name="is_public",
         ),
         migrations.AddField(
-            model_name='resource',
-            name='access_level',
-            field=models.CharField(choices=[('public', 'General/Public'), ('student', 'Student Only'), ('associate', 'Associate & Above'), ('full', 'Full Members & Above'), ('fellow', 'Fellows Only')], default='public', max_length=20),
+            model_name="resource",
+            name="access_level",
+            field=models.CharField(
+                choices=[
+                    ("public", "General/Public"),
+                    ("student", "Student Only"),
+                    ("associate", "Associate & Above"),
+                    ("full", "Full Members & Above"),
+                    ("fellow", "Fellows Only"),
+                ],
+                default="public",
+                max_length=20,
+            ),
         ),
         migrations.AddField(
-            model_name='resource',
-            name='description',
+            model_name="resource",
+            name="description",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='resource',
-            name='category',
-            field=models.CharField(choices=[('guideline', 'Clinical Guideline'), ('academic', 'Study Material'), ('research', 'Research Paper'), ('governance', 'Academy Document'), ('legal', 'Legal/Ethics'), ('general', 'General Information')], default='general', max_length=20),
+            model_name="resource",
+            name="category",
+            field=models.CharField(
+                choices=[
+                    ("guideline", "Clinical Guideline"),
+                    ("academic", "Study Material"),
+                    ("research", "Research Paper"),
+                    ("governance", "Academy Document"),
+                    ("legal", "Legal/Ethics"),
+                    ("general", "General Information"),
+                ],
+                default="general",
+                max_length=20,
+            ),
         ),
         migrations.AlterField(
-            model_name='resource',
-            name='is_verified_only',
-            field=models.BooleanField(default=True, help_text='If checked, only verified members can download this.'),
+            model_name="resource",
+            name="is_verified_only",
+            field=models.BooleanField(
+                default=True,
+                help_text="If checked, only verified members can download this.",
+            ),
         ),
         migrations.AlterField(
-            model_name='resource',
-            name='title',
+            model_name="resource",
+            name="title",
             field=models.CharField(max_length=255),
         ),
     ]

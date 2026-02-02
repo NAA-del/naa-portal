@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0014_alter_studentannouncement_target_university'),
+        ("accounts", "0014_alter_studentannouncement_target_university"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='sendgrid_template_id',
-            field=models.CharField(blank=True, help_text='d-55d095291d714497a445e6f9768ffd31', max_length=100, null=True),
+            model_name="user",
+            name="sendgrid_template_id",
+            field=models.CharField(
+                blank=True,
+                help_text="d-55d095291d714497a445e6f9768ffd31",
+                max_length=100,
+                null=True,
+            ),
         ),
     ]

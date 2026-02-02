@@ -9,38 +9,47 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0018_notification'),
+        ("accounts", "0018_notification"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='announcement',
-            name='author',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL),
+            model_name="announcement",
+            name="author",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='announcement',
-            name='featured',
+            model_name="announcement",
+            name="featured",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='announcement',
-            name='image',
-            field=cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='image'),
+            model_name="announcement",
+            name="image",
+            field=cloudinary.models.CloudinaryField(
+                blank=True, max_length=255, null=True, verbose_name="image"
+            ),
         ),
         migrations.AddField(
-            model_name='announcement',
-            name='is_published',
+            model_name="announcement",
+            name="is_published",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='announcement',
-            name='summary',
-            field=models.TextField(blank=True, help_text='Short preview shown on home page'),
+            model_name="announcement",
+            name="summary",
+            field=models.TextField(
+                blank=True, help_text="Short preview shown on home page"
+            ),
         ),
         migrations.AddField(
-            model_name='announcement',
-            name='updated_at',
+            model_name="announcement",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
     ]

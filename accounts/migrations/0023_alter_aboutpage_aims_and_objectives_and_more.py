@@ -10,57 +10,88 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0022_committeeannouncement_committeereport'),
+        ("accounts", "0022_committeeannouncement_committeereport"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='aboutpage',
-            name='aims_and_objectives',
+            model_name="aboutpage",
+            name="aims_and_objectives",
             field=django_ckeditor_5.fields.CKEditor5Field(),
         ),
         migrations.AlterField(
-            model_name='aboutpage',
-            name='history_text',
+            model_name="aboutpage",
+            name="history_text",
             field=django_ckeditor_5.fields.CKEditor5Field(),
         ),
         migrations.AlterField(
-            model_name='aboutpage',
-            name='mission',
+            model_name="aboutpage",
+            name="mission",
             field=django_ckeditor_5.fields.CKEditor5Field(),
         ),
         migrations.AlterField(
-            model_name='aboutpage',
-            name='vision',
+            model_name="aboutpage",
+            name="vision",
             field=django_ckeditor_5.fields.CKEditor5Field(),
         ),
         migrations.AlterField(
-            model_name='committeeannouncement',
-            name='content',
+            model_name="committeeannouncement",
+            name="content",
             field=django_ckeditor_5.fields.CKEditor5Field(),
         ),
         migrations.AlterField(
-            model_name='notification',
-            name='message',
+            model_name="notification",
+            name="message",
             field=django_ckeditor_5.fields.CKEditor5Field(),
         ),
         migrations.AlterField(
-            model_name='studentannouncement',
-            name='content',
+            model_name="studentannouncement",
+            name="content",
             field=django_ckeditor_5.fields.CKEditor5Field(),
         ),
         migrations.CreateModel(
-            name='Article',
+            name="Article",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('slug', models.SlugField(blank=True, unique=True)),
-                ('content', django_ckeditor_5.fields.CKEditor5Field()),
-                ('image', cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='image')),
-                ('status', models.CharField(choices=[('draft', 'Draft/Pending Review'), ('published', 'Published'), ('archived', 'Archived')], default='draft', max_length=20)),
-                ('is_public', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("slug", models.SlugField(blank=True, unique=True)),
+                ("content", django_ckeditor_5.fields.CKEditor5Field()),
+                (
+                    "image",
+                    cloudinary.models.CloudinaryField(
+                        blank=True, max_length=255, null=True, verbose_name="image"
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("draft", "Draft/Pending Review"),
+                            ("published", "Published"),
+                            ("archived", "Archived"),
+                        ],
+                        default="draft",
+                        max_length=20,
+                    ),
+                ),
+                ("is_public", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0016_remove_user_sendgrid_template_id_and_more'),
+        ("accounts", "0016_remove_user_sendgrid_template_id_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='date_verified',
+            model_name="user",
+            name="date_verified",
             field=models.DateTimeField(blank=True, editable=False, null=True),
         ),
     ]

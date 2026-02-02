@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0005_cpdrecord'),
+        ("accounts", "0005_cpdrecord"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='aboutpage',
-            name='aims_and_objectives',
+            model_name="aboutpage",
+            name="aims_and_objectives",
             field=models.TextField(),
         ),
         migrations.AlterField(
-            model_name='aboutpage',
-            name='history_text',
+            model_name="aboutpage",
+            name="history_text",
             field=models.TextField(),
         ),
         migrations.AlterField(
-            model_name='resource',
-            name='is_public',
+            model_name="resource",
+            name="is_public",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='resource',
-            name='is_verified_only',
+            model_name="resource",
+            name="is_verified_only",
             field=models.BooleanField(default=True),
         ),
     ]

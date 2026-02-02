@@ -6,17 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0015_user_sendgrid_template_id'),
+        ("accounts", "0015_user_sendgrid_template_id"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='user',
-            name='sendgrid_template_id',
+            model_name="user",
+            name="sendgrid_template_id",
         ),
         migrations.AddField(
-            model_name='emailupdate',
-            name='sendgrid_template_id',
-            field=models.CharField(blank=True, help_text='d-55d095291d714497a445e6f9768ffd31', max_length=100, null=True),
+            model_name="emailupdate",
+            name="sendgrid_template_id",
+            field=models.CharField(
+                blank=True,
+                help_text="d-55d095291d714497a445e6f9768ffd31",
+                max_length=100,
+                null=True,
+            ),
         ),
     ]

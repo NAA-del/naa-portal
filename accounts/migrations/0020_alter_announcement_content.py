@@ -7,13 +7,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0019_announcement_author_announcement_featured_and_more'),
+        ("accounts", "0019_announcement_author_announcement_featured_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='announcement',
-            name='content',
+            model_name="announcement",
+            name="content",
             field=django_ckeditor_5.fields.CKEditor5Field(),
         ),
     ]

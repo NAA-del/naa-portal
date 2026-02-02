@@ -102,42 +102,44 @@ def login_view(request):
     return render(request, "accounts/login.html", {"form": form})
 
 
-@ratelimit(key='ip', rate='10/h', method='POST', block=True)
+@ratelimit(key="ip", rate="10/h", method="POST", block=True)
 def register(request):
     """
     User registration with rate limiting (max 10 registrations per hour).
     """
     if request.user.is_authenticated:
-        return redirect('home')
+        return redirect("home")
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = NAAUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = True
             user.save()
-            
+
             login(request, user)
-            
+
             logger.info(f"New user registered: {user.username} ({user.email})")
-            
+
             messages.success(
                 request,
                 "Registration successful! Welcome to NAA. "
-                "Your account is pending verification by admin."
+                "Your account is pending verification by admin.",
             )
-            
-            if user.membership_tier == 'student':
+
+            if user.membership_tier == "student":
                 messages.info(request, "Please complete your student profile.")
-                return redirect('profile')
-            
-            return redirect('home')
+                return redirect("profile")
+
+            return redirect("home")
         else:
-            messages.error(request, "Registration failed. Please correct the errors below.")
+            messages.error(
+                request, "Registration failed. Please correct the errors below."
+            )
     else:
         form = NAAUserCreationForm()
-    
-    return render(request, 'accounts/register.html', {'form': form})
+
+    return render(request, "accounts/register.html", {"form": form})
 
 
 def logout_view(request):
@@ -183,7 +185,7 @@ def home(request):
         .select_related("author")
         .order_by("-created_at")[:3]
     )
-    
+
     # Cache executives (they rarely change)
     executives = cache.get("naa_executives")
     if not executives:
@@ -234,17 +236,16 @@ def article_detail(request, pk):
     return render(request, "accounts/article_detail.html", {"article": article})
 
 
-
 def contact_us(request):
     """Public contact form for general inquiries."""
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            name = form.cleaned_data['name']
-            email = form.cleaned_data['email']
-            subject = form.cleaned_data['subject']
-            message = form.cleaned_data['message']
-            phone_number = form.cleaned_data.get('phone_number', 'N/A')
+            name = form.cleaned_data["name"]
+            email = form.cleaned_data["email"]
+            subject = form.cleaned_data["subject"]
+            message = form.cleaned_data["message"]
+            phone_number = form.cleaned_data.get("phone_number", "N/A")
 
             full_message = f"Name: {name}\nEmail: {email}\nPhone: {phone_number}\n\nMessage:\n{message}"
 
@@ -253,18 +254,22 @@ def contact_us(request):
                     subject=f"NAA Contact Form: {subject}",
                     message=full_message,
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[settings.DEFAULT_FROM_EMAIL], # Send to admin email
+                    recipient_list=[settings.DEFAULT_FROM_EMAIL],  # Send to admin email
                     fail_silently=False,
                 )
-                messages.success(request, 'Your message has been sent successfully!')
-                return redirect('contact')
+                messages.success(request, "Your message has been sent successfully!")
+                return redirect("contact")
             except Exception as e:
                 logger.error(f"Contact form email send error: {e}")
-                messages.error(request, 'There was an error sending your message. Please try again later.')
+                messages.error(
+                    request,
+                    "There was an error sending your message. Please try again later.",
+                )
     else:
         form = ContactForm()
 
-    return render(request, 'accounts/contact.html', {'form': form})
+    return render(request, "accounts/contact.html", {"form": form})
+
 
 # ============================================================================
 # AUTHENTICATED USER VIEWS
@@ -274,56 +279,60 @@ def contact_us(request):
 @login_required
 def profile(request):
     """User profile page with multiple forms"""
-    
+
     # Initialize all forms first
     p_form = ProfilePictureForm(instance=request.user)
     u_form = UserUpdateForm(instance=request.user)
-    
+
     # Handle Profile Picture Update
-    if request.method == 'POST' and 'profile_picture' in request.FILES:
+    if request.method == "POST" and "profile_picture" in request.FILES:
         p_form = ProfilePictureForm(request.POST, request.FILES, instance=request.user)
         if p_form.is_valid():
             p_form.save()
             messages.success(request, "Profile picture updated!")
-            return redirect('profile')
-    
+            return redirect("profile")
+
     # Handle Name Update
-    elif request.method == 'POST' and 'update_info' in request.POST:
+    elif request.method == "POST" and "update_info" in request.POST:
         u_form = UserUpdateForm(request.POST, instance=request.user)
         if u_form.is_valid():
             u_form.save()
             messages.success(request, "Name updated successfully!")
-            return redirect('profile')
-    
+            return redirect("profile")
+
     # Handle Student Profile
     student_profile = StudentProfile.objects.filter(user=request.user).first()
     s_form = None
-    
-    if request.user.membership_tier == 'student':
-        if request.method == 'POST' and 'matric_number' in request.POST:
+
+    if request.user.membership_tier == "student":
+        if request.method == "POST" and "matric_number" in request.POST:
             if student_profile:
                 s_form = StudentProfileForm(request.POST, instance=student_profile)
             else:
                 s_form = StudentProfileForm(request.POST)
-            
+
             if s_form.is_valid():
                 student_obj = s_form.save(commit=False)
                 student_obj.user = request.user
                 student_obj.save()
                 messages.success(request, "Student details updated!")
-                return redirect('profile')
+                return redirect("profile")
         else:
-            s_form = StudentProfileForm(instance=student_profile) if student_profile else StudentProfileForm()
-    
+            s_form = (
+                StudentProfileForm(instance=student_profile)
+                if student_profile
+                else StudentProfileForm()
+            )
+
     context = {
-        'user': request.user,
-        'p_form': p_form,
-        'u_form': u_form,
-        's_form': s_form,
-        'student_profile': student_profile,
+        "user": request.user,
+        "p_form": p_form,
+        "u_form": u_form,
+        "s_form": s_form,
+        "student_profile": student_profile,
     }
-    
-    return render(request, 'accounts/profile.html', context)
+
+    return render(request, "accounts/profile.html", context)
 
 
 @login_required
@@ -421,7 +430,15 @@ def resource_library(request):
     resources = (
         Resource.objects.filter(access_level__in=allowed_levels)
         .select_related("uploaded_by")
-        .only("id", "title", "category", "file", "description", "uploaded_at", "uploaded_by")
+        .only(
+            "id",
+            "title",
+            "category",
+            "file",
+            "description",
+            "uploaded_at",
+            "uploaded_by",
+        )
     )
 
     # Restrict to verified members if required
@@ -942,15 +959,15 @@ class ExcoReportFetchAPI(APIView):
         serializer = CommitteeReportSerializer(reports, many=True)
         return Response(serializer.data)
 
+
 # ============================================================================
 # RATE LIMIT HANDLER
 # ============================================================================
 
+
 def rate_limited(request, exception):
     """Custom handler for rate-limited requests"""
     return HttpResponse(
-        "You've made too many registration attempts. "
-        "Please try again in an hour.",
-        status=429
+        "You've made too many registration attempts. " "Please try again in an hour.",
+        status=429,
     )
-

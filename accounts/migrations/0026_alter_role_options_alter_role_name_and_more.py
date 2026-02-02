@@ -6,22 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0025_delete_leader_executive_bio'),
+        ("accounts", "0025_delete_leader_executive_bio"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='role',
-            options={'ordering': ['-permissions_level']},
+            name="role",
+            options={"ordering": ["-permissions_level"]},
         ),
         migrations.AlterField(
-            model_name='role',
-            name='name',
-            field=models.CharField(choices=[('exco', 'Executive Committee Member'), ('trustee', 'Board of Trustees Member'), ('committee_director', 'Committee Director')], help_text='Role type - cannot be changed after creation', max_length=50, unique=True),
+            model_name="role",
+            name="name",
+            field=models.CharField(
+                choices=[
+                    ("exco", "Executive Committee Member"),
+                    ("trustee", "Board of Trustees Member"),
+                    ("committee_director", "Committee Director"),
+                ],
+                help_text="Role type - cannot be changed after creation",
+                max_length=50,
+                unique=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='role',
-            name='permissions_level',
-            field=models.IntegerField(default=1, help_text='Higher number = more authority'),
+            model_name="role",
+            name="permissions_level",
+            field=models.IntegerField(
+                default=1, help_text="Higher number = more authority"
+            ),
         ),
     ]

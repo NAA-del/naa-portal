@@ -6,18 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0031_alter_article_options_alter_committee_options_and_more'),
+        ("accounts", "0031_alter_article_options_alter_committee_options_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='committee',
-            name='created_at',
+            model_name="committee",
+            name="created_at",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='role',
-            name='name',
-            field=models.CharField(db_index=True, help_text='Type the role name here (e.g., Student Member, Executive)', max_length=50, unique=True),
+            model_name="role",
+            name="name",
+            field=models.CharField(
+                db_index=True,
+                help_text="Type the role name here (e.g., Student Member, Executive)",
+                max_length=50,
+                unique=True,
+            ),
         ),
     ]

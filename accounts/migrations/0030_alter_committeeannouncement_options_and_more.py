@@ -9,129 +9,195 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0029_alter_announcement_options_alter_article_options_and_more'),
+        ("accounts", "0029_alter_announcement_options_alter_article_options_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='committeeannouncement',
-            options={'ordering': ['-date_posted'], 'verbose_name': 'Committee Announcement', 'verbose_name_plural': 'Committee Announcements'},
+            name="committeeannouncement",
+            options={
+                "ordering": ["-date_posted"],
+                "verbose_name": "Committee Announcement",
+                "verbose_name_plural": "Committee Announcements",
+            },
         ),
         migrations.AlterModelOptions(
-            name='studentannouncement',
-            options={'ordering': ['-date_posted'], 'verbose_name': 'Student Announcement', 'verbose_name_plural': 'Student Announcements'},
+            name="studentannouncement",
+            options={
+                "ordering": ["-date_posted"],
+                "verbose_name": "Student Announcement",
+                "verbose_name_plural": "Student Announcements",
+            },
         ),
         migrations.AddField(
-            model_name='committeeannouncement',
-            name='featured',
-            field=models.BooleanField(default=False, help_text='Featured announcements appear first'),
+            model_name="committeeannouncement",
+            name="featured",
+            field=models.BooleanField(
+                default=False, help_text="Featured announcements appear first"
+            ),
         ),
         migrations.AddField(
-            model_name='committeeannouncement',
-            name='image',
-            field=cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='image'),
+            model_name="committeeannouncement",
+            name="image",
+            field=cloudinary.models.CloudinaryField(
+                blank=True, max_length=255, null=True, verbose_name="image"
+            ),
         ),
         migrations.AddField(
-            model_name='committeeannouncement',
-            name='is_published',
-            field=models.BooleanField(default=True, help_text='Uncheck to hide this announcement'),
+            model_name="committeeannouncement",
+            name="is_published",
+            field=models.BooleanField(
+                default=True, help_text="Uncheck to hide this announcement"
+            ),
         ),
         migrations.AddField(
-            model_name='committeeannouncement',
-            name='summary',
-            field=models.TextField(blank=True, help_text='Short preview (optional)'),
+            model_name="committeeannouncement",
+            name="summary",
+            field=models.TextField(blank=True, help_text="Short preview (optional)"),
         ),
         migrations.AddField(
-            model_name='committeeannouncement',
-            name='updated_at',
+            model_name="committeeannouncement",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='studentannouncement',
-            name='author',
-            field=models.ForeignKey(blank=True, help_text='Who created this announcement', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL),
+            model_name="studentannouncement",
+            name="author",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Who created this announcement",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='studentannouncement',
-            name='featured',
-            field=models.BooleanField(default=False, help_text='Featured announcements appear first'),
+            model_name="studentannouncement",
+            name="featured",
+            field=models.BooleanField(
+                default=False, help_text="Featured announcements appear first"
+            ),
         ),
         migrations.AddField(
-            model_name='studentannouncement',
-            name='image',
-            field=cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='image'),
+            model_name="studentannouncement",
+            name="image",
+            field=cloudinary.models.CloudinaryField(
+                blank=True, max_length=255, null=True, verbose_name="image"
+            ),
         ),
         migrations.AddField(
-            model_name='studentannouncement',
-            name='is_published',
-            field=models.BooleanField(default=True, help_text='Uncheck to hide this announcement'),
+            model_name="studentannouncement",
+            name="is_published",
+            field=models.BooleanField(
+                default=True, help_text="Uncheck to hide this announcement"
+            ),
         ),
         migrations.AddField(
-            model_name='studentannouncement',
-            name='summary',
-            field=models.TextField(blank=True, help_text='Short preview (optional)'),
+            model_name="studentannouncement",
+            name="summary",
+            field=models.TextField(blank=True, help_text="Short preview (optional)"),
         ),
         migrations.AddField(
-            model_name='studentannouncement',
-            name='updated_at',
+            model_name="studentannouncement",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AlterField(
-            model_name='announcement',
-            name='author',
-            field=models.ForeignKey(blank=True, help_text='Who created this announcement', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL),
+            model_name="announcement",
+            name="author",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Who created this announcement",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='announcement',
-            name='featured',
-            field=models.BooleanField(default=False, help_text='Featured announcements appear first'),
+            model_name="announcement",
+            name="featured",
+            field=models.BooleanField(
+                default=False, help_text="Featured announcements appear first"
+            ),
         ),
         migrations.AlterField(
-            model_name='announcement',
-            name='image',
-            field=cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='image'),
+            model_name="announcement",
+            name="image",
+            field=cloudinary.models.CloudinaryField(
+                blank=True, max_length=255, null=True, verbose_name="image"
+            ),
         ),
         migrations.AlterField(
-            model_name='announcement',
-            name='is_published',
-            field=models.BooleanField(default=True, help_text='Uncheck to hide this announcement'),
+            model_name="announcement",
+            name="is_published",
+            field=models.BooleanField(
+                default=True, help_text="Uncheck to hide this announcement"
+            ),
         ),
         migrations.AlterField(
-            model_name='announcement',
-            name='summary',
-            field=models.TextField(blank=True, help_text='Short preview (optional)'),
+            model_name="announcement",
+            name="summary",
+            field=models.TextField(blank=True, help_text="Short preview (optional)"),
         ),
         migrations.AlterField(
-            model_name='announcement',
-            name='title',
+            model_name="announcement",
+            name="title",
             field=models.CharField(max_length=255),
         ),
         migrations.AlterField(
-            model_name='committeeannouncement',
-            name='author',
-            field=models.ForeignKey(blank=True, help_text='Who created this announcement', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL),
+            model_name="committeeannouncement",
+            name="author",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Who created this announcement",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='committeeannouncement',
-            name='committee',
-            field=models.ForeignKey(help_text='Which committee this announcement is for', on_delete=django.db.models.deletion.CASCADE, related_name='announcements', to='accounts.committee'),
+            model_name="committeeannouncement",
+            name="committee",
+            field=models.ForeignKey(
+                help_text="Which committee this announcement is for",
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="announcements",
+                to="accounts.committee",
+            ),
         ),
         migrations.AlterField(
-            model_name='studentannouncement',
-            name='target_university',
-            field=models.CharField(choices=[('All', 'All Universities'), ('UNIMED', 'University of Medical Sciences, Ondo'), ('FUHSI', 'Federal University of Health Sciences, Ila-Orangun'), ('FUHSA', 'Federal University of Health Sciences, Azare'), ('FUDMA', 'Federal University Dutsin-Ma, Katsina')], default='All', help_text='Which university should see this announcement', max_length=20),
+            model_name="studentannouncement",
+            name="target_university",
+            field=models.CharField(
+                choices=[
+                    ("All", "All Universities"),
+                    ("UNIMED", "University of Medical Sciences, Ondo"),
+                    ("FUHSI", "Federal University of Health Sciences, Ila-Orangun"),
+                    ("FUHSA", "Federal University of Health Sciences, Azare"),
+                    ("FUDMA", "Federal University Dutsin-Ma, Katsina"),
+                ],
+                default="All",
+                help_text="Which university should see this announcement",
+                max_length=20,
+            ),
         ),
         migrations.AlterField(
-            model_name='studentannouncement',
-            name='title',
+            model_name="studentannouncement",
+            name="title",
             field=models.CharField(max_length=255),
         ),
         migrations.AddIndex(
-            model_name='committeeannouncement',
-            index=models.Index(fields=['committee', '-date_posted'], name='accounts_co_committ_9e1f5e_idx'),
+            model_name="committeeannouncement",
+            index=models.Index(
+                fields=["committee", "-date_posted"],
+                name="accounts_co_committ_9e1f5e_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='studentannouncement',
-            index=models.Index(fields=['target_university', '-date_posted'], name='accounts_st_target__d80c59_idx'),
+            model_name="studentannouncement",
+            index=models.Index(
+                fields=["target_university", "-date_posted"],
+                name="accounts_st_target__d80c59_idx",
+            ),
         ),
     ]

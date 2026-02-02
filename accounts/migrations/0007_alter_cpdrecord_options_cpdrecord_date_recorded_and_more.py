@@ -7,38 +7,53 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0006_alter_aboutpage_aims_and_objectives_and_more'),
+        ("accounts", "0006_alter_aboutpage_aims_and_objectives_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='cpdrecord',
-            options={'verbose_name': 'CPD Record', 'verbose_name_plural': 'CPD Records'},
+            name="cpdrecord",
+            options={
+                "verbose_name": "CPD Record",
+                "verbose_name_plural": "CPD Records",
+            },
         ),
         migrations.AddField(
-            model_name='cpdrecord',
-            name='date_recorded',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="cpdrecord",
+            name="date_recorded",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='cpdrecord',
-            name='is_verified',
-            field=models.BooleanField(default=False, help_text='Admin will check this after reviewing the certificate'),
+            model_name="cpdrecord",
+            name="is_verified",
+            field=models.BooleanField(
+                default=False,
+                help_text="Admin will check this after reviewing the certificate",
+            ),
         ),
         migrations.AlterField(
-            model_name='cpdrecord',
-            name='activity_name',
-            field=models.CharField(help_text='e.g., NAA Annual Conference 2026', max_length=255),
+            model_name="cpdrecord",
+            name="activity_name",
+            field=models.CharField(
+                help_text="e.g., NAA Annual Conference 2026", max_length=255
+            ),
         ),
         migrations.AlterField(
-            model_name='cpdrecord',
-            name='certificate',
-            field=models.FileField(blank=True, help_text='Upload PDF or Image proof of participation', null=True, upload_to='cpd_certificates/'),
+            model_name="cpdrecord",
+            name="certificate",
+            field=models.FileField(
+                blank=True,
+                help_text="Upload PDF or Image proof of participation",
+                null=True,
+                upload_to="cpd_certificates/",
+            ),
         ),
         migrations.AlterField(
-            model_name='cpdrecord',
-            name='points',
+            model_name="cpdrecord",
+            name="points",
             field=models.PositiveIntegerField(default=5),
         ),
     ]

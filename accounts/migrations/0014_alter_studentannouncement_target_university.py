@@ -6,13 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0013_emailupdate'),
+        ("accounts", "0013_emailupdate"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='studentannouncement',
-            name='target_university',
-            field=models.CharField(choices=[('All', 'All Universities'), ('UNIMED', 'UNIMED'), ('FUHSI', 'FUHSI'), ('FUHSA', 'FUHSA'), ('FUDMA', 'FUDMA')], default='All', max_length=20),
+            model_name="studentannouncement",
+            name="target_university",
+            field=models.CharField(
+                choices=[
+                    ("All", "All Universities"),
+                    ("UNIMED", "UNIMED"),
+                    ("FUHSI", "FUHSI"),
+                    ("FUHSA", "FUHSA"),
+                    ("FUDMA", "FUDMA"),
+                ],
+                default="All",
+                max_length=20,
+            ),
         ),
     ]
