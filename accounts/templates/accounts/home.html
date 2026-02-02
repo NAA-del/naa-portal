@@ -117,27 +117,27 @@
 <section id="doctors" class="doctors section light-background">
   <div class="container section-title">
     <h2>Governing Council</h2>
-    <p>The leadership of the Academy (Section 8 of the Constitution)</p>
+    <p>The Executiveship of the Academy (Section 8 of the Constitution)</p>
   </div>
 
   <div class="container">
     <div class="row gy-4">
-      {% for leader in executives %}
+      {% for Executive in executives %}
       <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
         <div class="team-member">
           <div class="member-img">
-            {% if leader.user.profile_picture %}
-            <img src="{{ leader.user.profile_picture.url }}" class="img-fluid" alt="{{ leader.user.username }}">
+            {% if executive.user.profile_picture %}
+            <img src="{{ executive.user.profile_picture.url }}" class="img-fluid" alt="{{ executive.user.get_display_name }}">
             {% else %}
             <img src="{% static 'assets/img/default-avatar.jpg' %}" class="img-fluid" alt="Default">
             {% endif %}
           </div>
           <div class="member-info text-center">
-            <h4>{{ leader.user.get_full_name|default:leader.user.username }}</h4>
-            <span class="d-block fw-bold text-primary">{{ leader.position }}</span>
+            <h4>{{ executive.user.get_full_name|default:executive.user.get_display_name }}</h4>
+            <span class="d-block fw-bold text-primary">{{ Executive.position }}</span>
 
-            {% if leader.bio %}
-            <p class="small text-muted mt-2 italic">"{{ leader.bio|truncatechars:100 }}"</p>
+            {% if Executive.bio %}
+            <p class="small text-muted mt-2 italic">"{{ Executive.bio|truncatechars:100 }}"</p>
             {% endif %}
 
           </div>

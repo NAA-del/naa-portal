@@ -135,7 +135,7 @@
             border-radius: 2px;
         }
 
-        /* ========== USER PROFILE BUTTON ========== */
+        /* ========== MEMBER PROFILE BUTTON ========== */
         .profile-trigger {
             display: flex;
             align-items: center;
@@ -526,9 +526,9 @@
                     <li class="dropdown">
                         <div class="profile-trigger" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="profile-avatar">
-                                {{ user.first_name|default:user.username|slice:":1"|upper }}
+                                {{ user.first_name|default:user.get_display_name|slice:":1"|upper }}
                             </div>
-                            <span class="profile-name">{{ user.first_name|default:user.username }}</span>
+                            <span class="profile-name">{{ user.first_name|default:user.get_display_name }}</span>
                             <i class="bi bi-chevron-down chevron-icon"></i>
                         </div>
 
@@ -537,11 +537,11 @@
                             <li class="dropdown-header">
                                 <div class="dropdown-user-info">
                                     <div class="dropdown-avatar">
-                                        {{ user.first_name|default:user.username|slice:":1"|upper }}
+                                        {{ user.first_name|default:user.get_display_name|slice:":1"|upper }}
                                     </div>
                                     <div>
                                         <div class="dropdown-user-name">
-                                            {{ user.get_full_name|default:user.username }}
+                                            {{ user.get_full_name|default:user.get_display_name }}
                                         </div>
                                         <div class="dropdown-user-role">
                                             {{ user.membership_tier }} Member
@@ -593,10 +593,10 @@
                             </li>
                             {% endif %}
 
-                            <!-- Leadership -->
+                            <!-- Executiveship -->
                             {% if user.roles.exists or user.executive_profile %}
                             <li class="dropdown-section">
-                                <div class="section-title">Leadership</div>
+                                <div class="section-title">Executiveship</div>
                                 <a href="{% url 'exco_master_dashboard' %}" class="dropdown-item">
                                     <i class="bi bi-shield-lock"></i>
                                     EXCO Dashboard
@@ -651,11 +651,11 @@
                 <div class="dropdown-header" style="border-radius: 12px; margin-bottom: 1.5rem;">
                     <div class="dropdown-user-info">
                         <div class="dropdown-avatar">
-                            {{ user.first_name|default:user.username|slice:":1"|upper }}
+                            {{ user.first_name|default:user.get_display_name|slice:":1"|upper }}
                         </div>
                         <div>
                             <div class="dropdown-user-name">
-                                {{ user.get_full_name|default:user.username }}
+                                {{ user.get_full_name|default:user.get_display_name }}
                             </div>
                             <div class="dropdown-user-role">
                                 {{ user.membership_tier }} Member
@@ -736,10 +736,10 @@
                 </div>
                 {% endif %}
 
-                <!-- Leadership Section -->
+                <!-- Executiveship Section -->
                 {% if user.roles.exists %}
                 <div class="dropdown-section" style="margin-bottom: 1rem;">
-                    <div class="section-title">Leadership</div>
+                    <div class="section-title">Executiveship</div>
                     <a href="{% url 'exco_master_dashboard' %}" class="dropdown-item">
                         <i class="bi bi-shield-lock"></i>
                         EXCO Dashboard
