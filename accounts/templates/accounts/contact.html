@@ -1,71 +1,319 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
 
-{% block title %}Contact Us{% endblock %}
+{% block title %}Contact Us - NAA{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg border-0 rounded-lg">
-                <div class="card-header bg-primary text-white text-center">
-                    <h3 class="fw-light my-4">Contact Us</h3>
-                </div>
+<div class="container mt-5 pt-5 mb-5">
+    
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold mb-3" style="color: #2c4964;">Get in Touch</h1>
+        <p class="lead text-muted" style="max-width: 600px; margin: 0 auto;">
+            Have questions about NAA activities? 
+            We're here to help. Send us a message and we'll respond within 24-48 hours.
+        </p>
+    </div>
+
+    <div class="row g-4">
+        
+        <!-- LEFT COLUMN: Contact Information -->
+        <div class="col-lg-4">
+            
+            <!-- Contact Info Card -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
                 <div class="card-body p-4">
-                    <p class="text-center mb-4">Have a question or need to get in touch? Fill out the form below and we'll get back to you as soon as possible.</p>
+                    <h5 class="fw-bold mb-4" style="color: #2c4964;">
+                        <i class="bi bi-info-circle me-2"></i> Contact Information
+                    </h5>
                     
-                    {% include 'accounts/partials/messages.html' %}
+                    <!-- Email -->
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                 style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="bi bi-envelope-fill text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="fw-bold mb-1">Email</h6>
+                            <a href="mailto:nigerianacademyofaudiology@gmail.com" 
+                               class="text-decoration-none small">
+                                nigerianacademyofaudiology@gmail.com
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Phone (if you have one) -->
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                 style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="bi bi-telephone-fill text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="fw-bold mb-1">Phone</h6>
+                            <p class="text-muted small mb-0">+234 (0) XXX XXX XXXX</p>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="d-flex align-items-start">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                 style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="bi bi-geo-alt-fill text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="fw-bold mb-1">Office</h6>
+                            <p class="text-muted small mb-0">
+                                Lagos, Nigeria
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links Card -->
+            <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3" style="color: #2c4964;">
+                        <i class="bi bi-question-circle me-2"></i> Need Quick Answers?
+                    </h6>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'about' %}" 
+                           class="btn btn-outline-primary btn-sm text-start">
+                            <i class="bi bi-info-circle me-2"></i> About NAA
+                        </a>
+                        <a href="{% url 'resource_library' %}" 
+                           class="btn btn-outline-primary btn-sm text-start">
+                            <i class="bi bi-book me-2"></i> Resource Library
+                        </a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" 
+                           class="btn btn-outline-primary btn-sm text-start">
+                            <i class="bi bi-person me-2"></i> My Profile
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Contact Form -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                <div class="card-body p-4 p-md-5">
+                    
+                    <h4 class="fw-bold mb-4" style="color: #2c4964;">
+                        <i class="bi bi-envelope me-2"></i> Send Us a Message
+                    </h4>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" 
+                         role="alert"
+                         style="border-radius: 10px;">
+                        <div class="d-flex align-items-center">
+                            {% if message.tags == 'success' %}
+                            <i class="bi bi-check-circle-fill me-2" style="font-size: 1.25rem;"></i>
+                            {% elif message.tags == 'error' or message.tags == 'danger' %}
+                            <i class="bi bi-exclamation-circle-fill me-2" style="font-size: 1.25rem;"></i>
+                            {% else %}
+                            <i class="bi bi-info-circle-fill me-2" style="font-size: 1.25rem;"></i>
+                            {% endif %}
+                            <div>{{ message }}</div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
 
                     <form method="post" novalidate>
                         {% csrf_token %}
 
-                        <div class="mb-3">
-                            <label for="{{ form.name.id_for_label }}" class="form-label">Your Name <span class="text-danger">*</span></label>
-                            {{ form.name }}
-                            {% if form.name.errors %}
-                                <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
-                            {% endif %}
+                        <div class="row g-3">
+                            
+                            <!-- Name Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">
+                                    Your Name <span class="text-danger">*</span>
+                                </label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.name.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Email Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">
+                                    Email Address <span class="text-danger">*</span>
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.email.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Phone Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.phone_number.id_for_label }}" class="form-label fw-bold">
+                                    Phone Number <span class="text-muted small">(Optional)</span>
+                                </label>
+                                {{ form.phone_number }}
+                                {% if form.phone_number.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.phone_number.errors.0 }}
+                                </div>
+                                {% endif %}
+                                <small class="text-muted">We'll only call if absolutely necessary</small>
+                            </div>
+
+                            <!-- Subject Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.subject.id_for_label }}" class="form-label fw-bold">
+                                    Subject <span class="text-danger">*</span>
+                                </label>
+                                {{ form.subject }}
+                                {% if form.subject.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.subject.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Message Field -->
+                            <div class="col-12">
+                                <label for="{{ form.message.id_for_label }}" class="form-label fw-bold">
+                                    Your Message <span class="text-danger">*</span>
+                                </label>
+                                {{ form.message }}
+                                {% if form.message.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.message.errors.0 }}
+                                </div>
+                                {% endif %}
+                                <small class="text-muted">
+                                    Please provide as much detail as possible to help us assist you better.
+                                </small>
+                            </div>
+
                         </div>
 
-                        <div class="mb-3">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">Your Email <span class="text-danger">*</span></label>
-                            {{ form.email }}
-                            {% if form.email.errors %}
-                                <div class="invalid-feedback d-block">{{ form.email.errors }}</div>
-                            {% endif %}
+                        <!-- Privacy Notice -->
+                        <div class="alert alert-light border mt-4 mb-4" style="border-radius: 10px;">
+                            <small class="text-muted">
+                                <i class="bi bi-shield-check me-2"></i>
+                                <strong>Privacy Notice:</strong> Your information will only be used to respond to your inquiry 
+                                and will not be shared with third parties.
+                            </small>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number (Optional)</label>
-                            {{ form.phone_number }}
-                            {% if form.phone_number.errors %}
-                                <div class="invalid-feedback d-block">{{ form.phone_number.errors }}</div>
-                            {% endif %}
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="reset" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-x-circle me-2"></i> Clear Form
+                            </button>
+                            <button type="submit" class="btn btn-primary px-5">
+                                <i class="bi bi-send me-2"></i> Send Message
+                            </button>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="{{ form.subject.id_for_label }}" class="form-label">Subject <span class="text-danger">*</span></label>
-                            {{ form.subject }}
-                            {% if form.subject.errors %}
-                                <div class="invalid-feedback d-block">{{ form.subject.errors }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="{{ form.message.id_for_label }}" class="form-label">Message <span class="text-danger">*</span></label>
-                            {{ form.message }}
-                            {% if form.message.errors %}
-                                <div class="invalid-feedback d-block">{{ form.message.errors }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-block">Send Message</button>
-                        </div>
                     </form>
+
+                </div>
+            </div>
+
+            <!-- FAQ Hint -->
+            <div class="alert alert-info border-0 shadow-sm mt-4" style="border-radius: 12px;">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-lightbulb-fill me-3 mt-1" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h6 class="fw-bold mb-1">Tip: Check Our Resources First</h6>
+                        <p class="mb-0 small">
+                            Many common questions are answered in our 
+                            <a href="{% url 'resource_library' %}" class="alert-link">Resource Library</a> 
+                            or <a href="{% url 'about' %}" class="alert-link">About Page</a>. 
+                            You might find your answer faster there!
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
+
     </div>
+
+    <!-- Response Time Notice -->
+    <div class="text-center mt-5 pt-4 border-top">
+        <p class="text-muted small mb-0">
+            <i class="bi bi-clock me-2"></i>
+            We typically respond to inquiries within <strong>24-48 hours</strong> during business days.
+            For urgent matters, please call our office directly.
+        </p>
+    </div>
+
 </div>
+
+<style>
+    /* Form styling */
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1.5px solid #e2e8f0;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    /* Button hover effects */
+    .btn {
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Card hover effect */
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* Link styling */
+    a {
+        transition: color 0.2s ease;
+    }
+</style>
 {% endblock %}
