@@ -16,6 +16,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Sum, Q
 from django.utils import timezone
 from django_ratelimit.decorators import ratelimit
+from django.views.decorators.csrf import csrf_protect
 from collections import defaultdict
 
 from rest_framework.views import APIView
@@ -69,6 +70,7 @@ logger = logging.getLogger("accounts")
 
 
 @ratelimit(key="ip", rate="5/m", method="POST", block=True)
+@csrf_protect
 def login_view(request):
     """
     User login with rate limiting (max 5 attempts per minute).
@@ -103,6 +105,7 @@ def login_view(request):
 
 
 @ratelimit(key="ip", rate="10/h", method="POST", block=True)
+@csrf_protect
 def register(request):
     """
     User registration with rate limiting (max 10 registrations per hour).
@@ -236,6 +239,7 @@ def article_detail(request, pk):
     return render(request, "accounts/article_detail.html", {"article": article})
 
 
+@csrf_protect
 def contact_us(request):
     """Public contact form for general inquiries."""
     if request.method == "POST":
@@ -276,6 +280,7 @@ def contact_us(request):
 # ============================================================================
 
 
+@csrf_protect
 @login_required
 def profile(request):
     """User profile page with multiple forms"""
@@ -459,6 +464,7 @@ def resource_library(request):
     )
 
 
+@csrf_protect
 @login_required
 @verified_member_required
 def cpd_tracker(request):
@@ -574,6 +580,7 @@ def student_hub(request):
 # ============================================================================
 
 
+@csrf_protect
 @login_required
 @committee_director_required
 def committee_dashboard(request, pk):
