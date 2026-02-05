@@ -34,7 +34,7 @@
             <div class="col-lg-6">
                 <h2 style="color: #2c4964; font-weight: 700;">Our History</h2>
                 <div style="width: 50px; height: 3px; background: #3fbbc0; margin-bottom: 20px;"></div>
-                <p style="line-height: 1.8; color: #555;">{{ about.history_text|linebreaks }}</p>
+                <p style="line-height: 1.8; color: #555;">{{ about.history_text|safe|linebreaks }}</p>
             </div>
             <div class="col-lg-6">
                 {% if about.history_image %}
