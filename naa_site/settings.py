@@ -58,9 +58,8 @@ INSTALLED_APPS = [
 # ============================================================================
 
 MIDDLEWARE = [
+    'csp.middleware.CSPMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    
-    # WhiteNoise MUST be right after SecurityMiddleware
     'whitenoise.middleware.WhiteNoiseMiddleware',
     
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -69,7 +68,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'csp.middleware.CSPMiddleware',
 ]
 
 # ============================================================================
@@ -273,31 +271,37 @@ if not DEBUG:
     X_FRAME_OPTIONS = 'DENY'
     
 
-# ============================================================================
+# ============================================================================ 
 # PRODUCTION SECURITY SETTINGS
 # ============================================================================
 
+# -------------------------
 # Content Security Policy
-    SECURE_CONTENT_SECURITY_POLICY = {
-        'default-src': ["'self'"],
-        'script-src': ["'self'"],
-        'style-src': ["'self'", "'unsafe-inline'"],  # unsafe-inline needed for Django admin
-        'img-src': ["'self'", 'data:', 'https:', 'res.cloudinary.com'],  # Your Cloudinary images
-        'font-src': ["'self'"],
-        'connect-src': ["'self'"],
-        'frame-ancestors': ["'none'"],
-        'base-uri': ["'self'"],
-        'form-action': ["'self'"],
-    }
-    
-    # Permissions Policy
-    SECURE_PERMISSIONS_POLICY = {
-        'geolocation': '()',
-        'microphone': '()',
-        'camera': '()',
-        'payment': '()',
-        'usb': '()',
-    }
+# -------------------------
+# Django-CSP uses specific CSP_* variables, not SECURE_CONTENT_SECURITY_POLICY
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")  # unsafe-inline needed for Django admin
+CSP_IMG_SRC = ("'self'", "data:", "https:", "res.cloudinary.com")  # Cloudinary images
+CSP_FONT_SRC = ("'self'",)
+CSP_CONNECT_SRC = ("'self'",)
+CSP_FRAME_ANCESTORS = ("'none'",)
+CSP_BASE_URI = ("'self'",)
+CSP_FORM_ACTION = ("'self'",)
+
+# -------------------------
+# Permissions Policy
+# -------------------------
+# Django 6.0 recognizes SECURE_PERMISSION_POLICY (singular)
+SECURE_PERMISSION_POLICY = {
+    "geolocation": "()",
+    "microphone": "()",
+    "camera": "()",
+    "payment": "()",
+    "usb": "()",
+    "fullscreen": "('self')",  # optional, allows fullscreen only from your domain
+}
+
 
 
 # ============================================================================
