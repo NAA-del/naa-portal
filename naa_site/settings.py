@@ -69,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 
 # ============================================================================
@@ -270,6 +271,34 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     X_FRAME_OPTIONS = 'DENY'
+    
+
+# ============================================================================
+# PRODUCTION SECURITY SETTINGS
+# ============================================================================
+
+# Content Security Policy
+    SECURE_CONTENT_SECURITY_POLICY = {
+        'default-src': ["'self'"],
+        'script-src': ["'self'"],
+        'style-src': ["'self'", "'unsafe-inline'"],  # unsafe-inline needed for Django admin
+        'img-src': ["'self'", 'data:', 'https:', 'res.cloudinary.com'],  # Your Cloudinary images
+        'font-src': ["'self'"],
+        'connect-src': ["'self'"],
+        'frame-ancestors': ["'none'"],
+        'base-uri': ["'self'"],
+        'form-action': ["'self'"],
+    }
+    
+    # Permissions Policy
+    SECURE_PERMISSIONS_POLICY = {
+        'geolocation': '()',
+        'microphone': '()',
+        'camera': '()',
+        'payment': '()',
+        'usb': '()',
+    }
+
 
 # ============================================================================
 # SESSION CONFIGURATION
@@ -439,3 +468,4 @@ if DEBUG:
     if static_dir.exists():
         print(f"Contents: {list(static_dir.iterdir())}")
     print(f"{'='*60}\n")
+    
