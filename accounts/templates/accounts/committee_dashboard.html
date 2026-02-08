@@ -124,13 +124,15 @@
                                 <h6 class="fw-bold mb-2 mb-md-0">Member Directory</h6>
 
                                 <form method="get" action="{% url 'export_committee_members_csv' committee.id %}" class="row g-2">
-                                    <div class="col-6 col-md-auto">
+                                    <div class="col-12 col-sm-6 col-md-auto">
+                                        <label for="start-date" class="form-label small mb-1 d-block d-md-none">Start Date</label>
                                         <input type="date" name="start" class="form-control form-control-sm" 
-                                               style="min-width: 120px; height: 35px;" title="Start Date">
+                                               style="min-width: 120px; height: 35px;" title="Start Date" aria-label="Start Date">
                                     </div>
-                                    <div class="col-6 col-md-auto">
+                                    <div class="col-12 col-sm-6 col-md-auto">
+                                        <label for="end-date" class="form-label small mb-1 d-block d-md-none">End Date</label>
                                         <input type="date" name="end" class="form-control form-control-sm" 
-                                               style="min-width: 120px; height: 35px;" title="End Date">
+                                               style="min-width: 120px; height: 35px;" title="End Date" aria-label="End Date">
                                     </div>
                                     <div class="col-12 col-md-auto">
                                         <button type="submit" class="btn btn-sm btn-outline-success w-100">
