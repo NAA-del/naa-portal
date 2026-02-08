@@ -123,25 +123,25 @@
         </div>
 
         {% if stats %}
-        <div class="row g-4">
+        <div class="row g-3 g-md-4">
             {% for stat in stats %}
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3">
                 <div class="card border-0 shadow-sm text-center hover-card"
                     style="border-radius: 12px; transition: transform 0.3s;">
-                    <div class="card-body p-4">
-                        <div class="mb-3">
-                            <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center"
-                                style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <i class="bi bi-mortarboard text-white" style="font-size: 2rem;"></i>
+                    <div class="card-body p-3 p-md-4">
+                        <div class="mb-2 mb-md-3">
+                            <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center chapter-icon"
+                                style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="bi bi-mortarboard text-white" style="font-size: 1.25rem;"></i>
                             </div>
                         </div>
 
-                        <h5 class="fw-bold mb-1 text-uppercase">
+                        <h5 class="fw-bold mb-1 text-uppercase chapter-title">
                             {{ stat.university }}
                         </h5>
 
                         <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
-                            <span class="display-6 fw-bold text-primary mb-0">{{ stat.total }}</span>
+                            <span class="chapter-count fw-bold text-primary mb-0">{{ stat.total }}</span>
                         </div>
 
                         <p class="text-muted small mb-0">
@@ -149,8 +149,8 @@
                         </p>
 
                         {% if stat.university != 'All' %}
-                        <div class="mt-3">
-                            <span class="badge bg-light text-dark border">Chapter Active</span>
+                        <div class="mt-2 mt-md-3">
+                            <span class="badge bg-light text-dark border small">Chapter Active</span>
                         </div>
                         {% endif %}
                     </div>
