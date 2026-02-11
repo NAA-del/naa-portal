@@ -387,14 +387,9 @@ def download_constitution(request):
         return redirect("home")
 
     logger.info(f"{request.user.username} downloaded {filename}")
-    fh = open(file_path, "rb")
-    try:
-        return FileResponse(
-            fh, as_attachment=True, filename=f"NAA_{filename}"
-        )
-    except Exception:
-        fh.close()
-        raise
+    return FileResponse(
+        open(file_path, "rb"), as_attachment=True, filename=f"NAA_{filename}"
+    )
 
 
 @login_required
