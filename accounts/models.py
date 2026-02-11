@@ -714,35 +714,30 @@ class AboutPage(models.Model):
 def send_verification_email(user):
     """
     Send verification email to newly verified user.
-    Uses dynamic site URL from settings.
+    Uses SITE_URL and reverse() for links (no hardcoded paths).
     """
+    from django.urls import reverse
+
     email_template = EmailUpdate.objects.filter(title__icontains="Verification").first()
 
     if not email_template or not email_template.sendgrid_template_id:
         logger.warning(f"No SendGrid Template found for verification.")
         return
 
-    # Get site URL from settings (works in both dev and production)
-    from django.contrib.sites.models import Site
-
-    try:
-        current_site = Site.objects.get_current()
-        site_url = f"https://{current_site.domain}"
-    except:
-        # Fallback to environment variable or default
-        site_url = getattr(settings, "SITE_URL", "https://naa-portal.onrender.com")
+    site_url = settings.SITE_URL.rstrip("/")
+    login_url = site_url + reverse("login")
+    profile_url = site_url + reverse("profile")
 
     message = Mail(from_email=settings.DEFAULT_FROM_EMAIL, to_emails=user.email)
 
     message.template_id = email_template.sendgrid_template_id
 
-    # Add dynamic URLs to template data
     message.dynamic_template_data = {
         "subject": email_template.subject,
         "username": user.username,
         "body_text": email_template.message,
-        "login_url": f"{site_url}/login/",
-        "profile_url": f"{site_url}/profile/",
+        "login_url": login_url,
+        "profile_url": profile_url,
         "site_url": site_url,
     }
 
@@ -757,6 +752,7 @@ def send_verification_email(user):
 def send_custom_template_email(user, email_update_obj, context=None):
     """
     Send custom email template to user with dynamic site URLs.
+    Uses settings.SITE_URL and reverse() for links (no hardcoded paths).
 
     Args:
         user: User instance
@@ -766,28 +762,24 @@ def send_custom_template_email(user, email_update_obj, context=None):
     Returns:
         bool: True if email sent successfully
     """
+    from django.urls import reverse
+
     if not email_update_obj.sendgrid_template_id or not user.email:
         return False
 
-    # Get site URL dynamically
-    from django.contrib.sites.models import Site
-
-    try:
-        current_site = Site.objects.get_current()
-        site_url = f"https://{current_site.domain}"
-    except:
-        site_url = getattr(settings, "SITE_URL", "https://naa-portal.onrender.com")
+    site_url = settings.SITE_URL.rstrip("/")
+    login_url = site_url + reverse("login")
+    profile_url = site_url + reverse("profile")
 
     message = Mail(from_email=settings.DEFAULT_FROM_EMAIL, to_emails=user.email)
     message.template_id = email_update_obj.sendgrid_template_id
 
-    # Build template data with dynamic URLs
     template_data = {
         "subject": email_update_obj.subject,
         "username": user.username,
         "body_text": email_update_obj.message,
-        "login_url": f"{site_url}/login/",
-        "profile_url": f"{site_url}/profile/",
+        "login_url": login_url,
+        "profile_url": profile_url,
         "home_url": site_url,
         "site_url": site_url,
     }

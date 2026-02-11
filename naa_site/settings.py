@@ -33,8 +33,11 @@ ALLOWED_HOSTS = [
     '.onrender.com',  # Allow all Render subdomains during deployment
 ]
 
-# Site URL for dynamic email links
-SITE_URL = os.environ.get('SITE_URL', 'https://naa-portal.onrender.com')
+# Site URL for dynamic email links (set in production)
+SITE_URL = os.environ.get("SITE_URL", "http://127.0.0.1:8000")
+
+# Directory for constitution/bylaws docs (used by download_constitution view)
+CONSTITUTION_DOCS_DIR = BASE_DIR / "static" / "docs"
 
 # ============================================================================
 # INSTALLED APPS
@@ -204,6 +207,8 @@ DEFAULT_FROM_EMAIL = os.environ.get(
     'DEFAULT_FROM_EMAIL',
     'nigerianacademyofaudiology@gmail.com'
 )
+# Admin inbox for contact form and submission notifications
+ADMIN_EMAILS = [DEFAULT_FROM_EMAIL]
 
 # ============================================================================
 # CKEDITOR CONFIGURATION

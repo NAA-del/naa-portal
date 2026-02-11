@@ -10,6 +10,19 @@ from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
 
+def _get_login_url(request):
+    """
+    Build login redirect URL with next= parameter.
+    Handles LOGIN_URL as either a named URL pattern or a raw path.
+    """
+    login_url = settings.LOGIN_URL
+    if login_url.startswith("/"):
+        path = login_url
+    else:
+        path = reverse(login_url)
+    return path + "?next=" + quote(request.get_full_path())
+
+
 def committee_director_required(view_func):
     """
     Decorator to ensure user is director of the committee they're accessing.
@@ -19,8 +32,7 @@ def committee_director_required(view_func):
     @wraps(view_func)
     def wrapper(request, pk, *args, **kwargs):
         if not request.user.is_authenticated:
-            login_url = reverse(settings.LOGIN_URL) + "?next=" + quote(request.get_full_path())
-            return redirect(login_url)
+            return redirect(_get_login_url(request))
         from .models import Committee
 
         try:
@@ -54,8 +66,7 @@ def committee_member_required(view_func):
     @wraps(view_func)
     def wrapper(request, pk, *args, **kwargs):
         if not request.user.is_authenticated:
-            login_url = reverse(settings.LOGIN_URL) + "?next=" + quote(request.get_full_path())
-            return redirect(login_url)
+            return redirect(_get_login_url(request))
         from .models import Committee
 
         try:
@@ -90,8 +101,7 @@ def exco_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            login_url = reverse(settings.LOGIN_URL) + "?next=" + quote(request.get_full_path())
-            return redirect(login_url)
+            return redirect(_get_login_url(request))
         if not request.user.is_exco_or_trustee():
             raise PermissionDenied("Only EXCO members can access this page.")
 
@@ -109,7 +119,7 @@ def verified_member_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect(_login_url_with_next(request))
+            return redirect(_get_login_url(request))
         if not request.user.is_verified:
             messages.warning(
                 request, "This feature is only available to verified members."

@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User
@@ -56,8 +58,6 @@ class NAAUserCreationForm(UserCreationForm):
             raise ValidationError("This username is already taken.")
 
         # Check format
-        import re
-
         if not re.match(r"^[a-zA-Z0-9_]{3,30}$", username):
             raise ValidationError(
                 "Username must be 3-30 characters and can only contain "
@@ -103,8 +103,6 @@ class NAAUserCreationForm(UserCreationForm):
             )
 
             # Ensure it starts with +234 or 0
-            import re
-
             if not re.match(r"^(\+234|0)\d{10}$", phone):
                 raise ValidationError(
                     "Phone number must be in format: +2348012345678 or 08012345678"
@@ -180,8 +178,6 @@ class StudentProfileForm(forms.ModelForm):
                 )
 
             # Basic format validation
-            import re
-
             if not re.match(r"^[A-Z0-9/]{5,30}$", matric):
                 raise ValidationError(
                     "Invalid matric number format. Use letters, numbers, and slashes only."
@@ -356,8 +352,6 @@ class ContactForm(forms.Form):
                 .replace("(", "")
                 .replace(")", "")
             )
-            import re
-
             if not re.match(r"^(\+234|0)?\d{10}$", phone):
                 raise ValidationError(
                     "Phone number must be in format: +2348012345678 or 08012345678"

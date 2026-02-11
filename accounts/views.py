@@ -64,6 +64,24 @@ from .serializers import MemberSerializer, CommitteeReportSerializer
 # Configure logging
 logger = logging.getLogger("accounts")
 
+# Tier hierarchy for resource access (single source of truth)
+TIER_RANK = {"student": 1, "associate": 2, "full": 3, "fellow": 4}
+
+
+def get_allowed_access_levels(user):
+    """Return list of resource access levels the user's tier can see."""
+    rank = TIER_RANK.get(user.membership_tier, 0)
+    levels = ["public"]
+    if rank >= 1:
+        levels.append("student")
+    if rank >= 2:
+        levels.append("associate")
+    if rank >= 3:
+        levels.append("full")
+    if rank >= 4:
+        levels.append("fellow")
+    return levels
+
 
 # ============================================================================
 # AUTHENTICATION VIEWS
@@ -263,7 +281,7 @@ def contact_us(request):
                     subject=f"NAA Contact Form: {subject}",
                     message=full_message,
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[settings.DEFAULT_FROM_EMAIL],  # Send to admin email
+                    recipient_list=settings.ADMIN_EMAILS,
                     fail_silently=False,
                 )
                 messages.success(request, "Your message has been sent successfully!")
@@ -371,18 +389,18 @@ def download_constitution(request):
 
     filename = ALLOWED_FILES[file_key]
 
-    # Construct safe file path
-    file_path = os.path.join(settings.BASE_DIR, "static", "docs", filename)
+    docs_dir = settings.CONSTITUTION_DOCS_DIR
+    file_path = docs_dir / filename
 
     # Verify path is within allowed directory (prevent path traversal)
-    allowed_dir = os.path.join(settings.BASE_DIR, "static", "docs")
-    real_path = os.path.realpath(file_path)
+    real_path = os.path.realpath(str(file_path))
+    allowed_dir_resolved = os.path.realpath(str(docs_dir))
 
-    if not real_path.startswith(os.path.realpath(allowed_dir)):
+    if not real_path.startswith(allowed_dir_resolved):
         logger.warning(f"Path traversal attempt by {request.user.username}")
         raise Http404("Access denied")
 
-    if not os.path.exists(file_path):
+    if not file_path.exists():
         messages.error(request, "Constitution file is currently unavailable.")
         return redirect("home")
 
@@ -419,22 +437,7 @@ def resource_library(request):
     Resource library with tier-based access control.
     """
     user = request.user
-
-    # Define tier hierarchy
-    tier_rank = {"student": 1, "associate": 2, "full": 3, "fellow": 4}
-
-    current_rank = tier_rank.get(user.membership_tier, 0)
-
-    # Build allowed access levels
-    allowed_levels = ["public"]
-    if current_rank >= 1:
-        allowed_levels.append("student")
-    if current_rank >= 2:
-        allowed_levels.append("associate")
-    if current_rank >= 3:
-        allowed_levels.append("full")
-    if current_rank >= 4:
-        allowed_levels.append("fellow")
+    allowed_levels = get_allowed_access_levels(user)
 
     # Fetch resources within allowed levels
     resources = (
@@ -673,59 +676,44 @@ def committee_workspace(request, pk):
     return render(request, "accounts/committee_workspace.html", context)
 
 
-@login_required
-def delete_committee_announcement(request, pk):
-    """Delete committee announcement (director/EXCO only)"""
-    announcement = get_object_or_404(CommitteeAnnouncement, pk=pk)
-    committee_id = announcement.committee.id
-
-    # Security check
-    is_director = announcement.committee.director == request.user
+def _delete_committee_related_object(request, obj, obj_type_label, pk):
+    """
+    Shared logic: check director/EXCO permission on obj.committee, delete obj,
+    set success message, return redirect to committee dashboard.
+    """
+    is_director = obj.committee.director == request.user
     is_exco = request.user.is_exco_or_trustee()
 
     if not (is_director or is_exco):
         logger.warning(
-            f"Unauthorized delete attempt by {request.user.username} "
-            f"on announcement {pk}"
+            f"Unauthorized delete attempt by {request.user.username} on {obj_type_label} {pk}"
         )
         raise PermissionDenied("You don't have permission to delete this.")
 
+    name = getattr(obj, "title", str(obj))
+    committee_name = obj.committee.name
     logger.info(
-        f"{request.user.username} deleted announcement '{announcement.title}' "
-        f"from {announcement.committee.name}"
+        f"{request.user.username} deleted {obj_type_label} '{name}' from {committee_name}"
     )
+    obj.delete()
+    messages.success(request, f"{obj_type_label.title()} deleted.")
+    return redirect("committee_dashboard", pk=obj.committee_id)
 
-    announcement.delete()
-    messages.success(request, "Announcement deleted.")
 
-    return redirect("committee_dashboard", pk=committee_id)
+@login_required
+def delete_committee_announcement(request, pk):
+    """Delete committee announcement (director/EXCO only)"""
+    announcement = get_object_or_404(CommitteeAnnouncement, pk=pk)
+    return _delete_committee_related_object(
+        request, announcement, "announcement", pk
+    )
 
 
 @login_required
 def delete_committee_report(request, pk):
     """Delete committee report (director/EXCO only)"""
     report = get_object_or_404(CommitteeReport, pk=pk)
-    committee_id = report.committee.id
-
-    # Security check
-    is_director = report.committee.director == request.user
-    is_exco = request.user.is_exco_or_trustee()
-
-    if not (is_director or is_exco):
-        logger.warning(
-            f"Unauthorized delete attempt by {request.user.username} " f"on report {pk}"
-        )
-        raise PermissionDenied("You don't have permission to delete this.")
-
-    logger.info(
-        f"{request.user.username} deleted report '{report.title}' "
-        f"from {report.committee.name}"
-    )
-
-    report.delete()
-    messages.success(request, "Report deleted.")
-
-    return redirect("committee_dashboard", pk=committee_id)
+    return _delete_committee_related_object(request, report, "report", pk)
 
 
 # ============================================================================
@@ -903,7 +891,7 @@ def submit_article(request):
                     subject="New NAA Article Submitted for Review",
                     message=f"Article '{article.title}' submitted by {request.user.username}",
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[settings.DEFAULT_FROM_EMAIL],
+                    recipient_list=settings.ADMIN_EMAILS,
                     fail_silently=True,
                 )
             except Exception as e:
