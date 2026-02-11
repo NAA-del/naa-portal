@@ -109,8 +109,7 @@ def verified_member_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            login_url = reverse(settings.LOGIN_URL) + "?next=" + quote(request.get_full_path())
-            return redirect(login_url)
+            return redirect(_login_url_with_next(request))
         if not request.user.is_verified:
             messages.warning(
                 request, "This feature is only available to verified members."
