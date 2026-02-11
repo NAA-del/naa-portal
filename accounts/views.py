@@ -3,6 +3,7 @@ import csv
 import logging
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -90,8 +91,12 @@ def login_view(request):
                 logger.info(f"User {username} logged in successfully")
                 messages.success(request, f"Welcome back, {username}!")
 
-                # Redirect to next page or home
+                # Redirect to next page or home (prevent open redirect)
                 redirect_url = request.GET.get("next", "home")
+                if redirect_url != "home" and not url_has_allowed_host_and_scheme(
+                    redirect_url, allowed_hosts=request.get_host()
+                ):
+                    redirect_url = "home"
                 return redirect(redirect_url)
             else:
                 logger.warning(f"Failed login attempt for username: {username}")
@@ -382,9 +387,14 @@ def download_constitution(request):
         return redirect("home")
 
     logger.info(f"{request.user.username} downloaded {filename}")
-    return FileResponse(
-        open(file_path, "rb"), as_attachment=True, filename=f"NAA_{filename}"
-    )
+    fh = open(file_path, "rb")
+    try:
+        return FileResponse(
+            fh, as_attachment=True, filename=f"NAA_{filename}"
+        )
+    except Exception:
+        fh.close()
+        raise
 
 
 @login_required
@@ -588,7 +598,7 @@ def committee_dashboard(request, pk):
     Committee management dashboard (directors only).
     Handles announcements, reports, and member management.
     """
-    committee = get_object_or_404(Committee, pk=pk)
+    committee = request.committee
 
     ann_form = CommitteeAnnouncementForm()
     report_form = CommitteeReportForm()
@@ -647,7 +657,7 @@ def committee_workspace(request, pk):
     """
     Committee workspace for members to view announcements and reports.
     """
-    committee = get_object_or_404(Committee, pk=pk)
+    committee = request.committee
 
     is_director = committee.director == request.user
     is_exco = request.user.is_exco_or_trustee()

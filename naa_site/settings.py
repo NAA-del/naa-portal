@@ -19,6 +19,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-produc
 # IMPORTANT: Set DEBUG=False in production
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
+# Prevent running in production with default SECRET_KEY
+if not DEBUG and SECRET_KEY == 'django-insecure-change-this-in-production':
+    raise ValueError(
+        "Set SECRET_KEY in the environment when DEBUG=False. "
+        "Do not use the default insecure key in production."
+    )
+
 ALLOWED_HOSTS = [
     'naa-portal.onrender.com',
     'localhost',
@@ -47,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     
     # Third-party apps
+    'csp',
     'cloudinary',
     'cloudinary_storage',
     'rest_framework',
@@ -240,8 +248,10 @@ CKEDITOR_5_CONFIGS = {
     }
 }
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-CKEDITOR_5_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+# Only use Cloudinary for media when configured (avoid errors when CLOUDINARY_URL is unset)
+if os.environ.get("CLOUDINARY_URL"):
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    CKEDITOR_5_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 # ============================================================================
 # PRODUCTION SECURITY SETTINGS
@@ -271,23 +281,26 @@ if not DEBUG:
     X_FRAME_OPTIONS = 'DENY'
     
 
-# ============================================================================ 
-# PRODUCTION SECURITY SETTINGS
+# ============================================================================
+# CONTENT SECURITY POLICY & PERMISSIONS
 # ============================================================================
 
 # -------------------------
-# Content Security Policy
+# Content Security Policy (django-csp 4.0+ format)
 # -------------------------
-# Django-CSP uses specific CSP_* variables, not SECURE_CONTENT_SECURITY_POLICY
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'",)
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")  # unsafe-inline needed for Django admin
-CSP_IMG_SRC = ("'self'", "data:", "https:", "res.cloudinary.com")  # Cloudinary images
-CSP_FONT_SRC = ("'self'",)
-CSP_CONNECT_SRC = ("'self'",)
-CSP_FRAME_ANCESTORS = ("'none'",)
-CSP_BASE_URI = ("'self'",)
-CSP_FORM_ACTION = ("'self'",)
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": ("'self'",),
+        "script-src": ("'self'",),
+        "style-src": ("'self'", "'unsafe-inline'"),  # unsafe-inline for Django admin
+        "img-src": ("'self'", "data:", "https:", "res.cloudinary.com"),
+        "font-src": ("'self'",),
+        "connect-src": ("'self'",),
+        "frame-ancestors": ("'none'",),
+        "base-uri": ("'self'",),
+        "form-action": ("'self'",),
+    }
+}
 
 # -------------------------
 # Permissions Policy

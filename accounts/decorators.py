@@ -1,8 +1,12 @@
 """Security decorators to protect views"""
 
 from functools import wraps
+from urllib.parse import quote
+
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.contrib import messages
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
 
@@ -14,6 +18,9 @@ def committee_director_required(view_func):
 
     @wraps(view_func)
     def wrapper(request, pk, *args, **kwargs):
+        if not request.user.is_authenticated:
+            login_url = reverse(settings.LOGIN_URL) + "?next=" + quote(request.get_full_path())
+            return redirect(login_url)
         from .models import Committee
 
         try:
@@ -32,6 +39,7 @@ def committee_director_required(view_func):
             )
             return redirect("profile")
 
+        request.committee = committee
         return view_func(request, pk, *args, **kwargs)
 
     return wrapper
@@ -45,6 +53,9 @@ def committee_member_required(view_func):
 
     @wraps(view_func)
     def wrapper(request, pk, *args, **kwargs):
+        if not request.user.is_authenticated:
+            login_url = reverse(settings.LOGIN_URL) + "?next=" + quote(request.get_full_path())
+            return redirect(login_url)
         from .models import Committee
 
         try:
@@ -64,6 +75,7 @@ def committee_member_required(view_func):
             )
             return redirect("profile")
 
+        request.committee = committee
         return view_func(request, pk, *args, **kwargs)
 
     return wrapper
@@ -77,6 +89,9 @@ def exco_required(view_func):
 
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            login_url = reverse(settings.LOGIN_URL) + "?next=" + quote(request.get_full_path())
+            return redirect(login_url)
         if not request.user.is_exco_or_trustee():
             raise PermissionDenied("Only EXCO members can access this page.")
 
@@ -93,6 +108,9 @@ def verified_member_required(view_func):
 
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            login_url = reverse(settings.LOGIN_URL) + "?next=" + quote(request.get_full_path())
+            return redirect(login_url)
         if not request.user.is_verified:
             messages.warning(
                 request, "This feature is only available to verified members."
