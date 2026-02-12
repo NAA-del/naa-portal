@@ -1,5 +1,5 @@
 /* Versioned cache names to safely manage updates */
-const SW_VERSION = 'v2';
+const SW_VERSION = 'v3';
 const STATIC_CACHE = `static-${SW_VERSION}`;
 const OFFLINE_CACHE = `offline-${SW_VERSION}`;
 const OFFLINE_URL = '/offline.html';
@@ -76,12 +76,52 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  /* Network-first for UI scripts to avoid stale/broken interactivity */
+  if (request.destination === 'script') {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(STATIC_CACHE);
+        try {
+          const networkResponse = await fetch(request);
+          if (networkResponse && networkResponse.ok) {
+            cache.put(request, networkResponse.clone());
+          }
+          return networkResponse;
+        } catch (err) {
+          const cached = await cache.match(request, { ignoreSearch: false });
+          return cached || new Response('', { status: 504 });
+        }
+      })()
+    );
+    return;
+  }
+
+  /* Network-first for CSS to avoid stale UI styles */
+  if (request.destination === 'style') {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(STATIC_CACHE);
+        try {
+          const networkResponse = await fetch(request);
+          if (networkResponse && networkResponse.ok) {
+            cache.put(request, networkResponse.clone());
+          }
+          return networkResponse;
+        } catch (err) {
+          const cached = await cache.match(request, { ignoreSearch: false });
+          return cached || new Response('', { status: 504 });
+        }
+      })()
+    );
+    return;
+  }
+
   /* Stale-While-Revalidate for static assets (CSS, JS, images, fonts) */
   if (isStaticAsset(request)) {
     event.respondWith(
       (async () => {
         const cache = await caches.open(STATIC_CACHE);
-        const cached = await cache.match(request, { ignoreSearch: true });
+        const cached = await cache.match(request, { ignoreSearch: false });
         const fetchAndUpdate = fetch(request)
           .then((res) => {
             if (res && res.ok) {
