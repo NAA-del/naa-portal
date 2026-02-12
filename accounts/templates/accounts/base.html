@@ -701,7 +701,7 @@
                 
                 {% if not user.is_authenticated %}
                 <li>
-                    <a href="#" class="nav-link" onclick="toggleMobileDropdown(event, 'memberAccess')" data-dropdown-toggle="true">
+                    <a href="#" class="nav-link" data-dropdown-toggle="true" data-target="memberAccess" role="button" aria-expanded="false">
                         Member Access
                         <i class="bi bi-chevron-down" style="font-size: 0.875rem;"></i>
                     </a>
@@ -824,12 +824,18 @@
             });
         });
 
-        // Mobile dropdown toggle
-        function toggleMobileDropdown(e, id) {
-            e.preventDefault();
-            const dropdown = document.getElementById(id);
-            dropdown.classList.toggle('show');
-        }
+        document.querySelectorAll('[data-dropdown-toggle]').forEach(el => {
+            const id = el.getAttribute('data-target');
+            const handler = (e) => {
+                e.preventDefault();
+                const dropdown = document.getElementById(id);
+                const now = !dropdown.classList.contains('show');
+                dropdown.classList.toggle('show', now);
+                el.setAttribute('aria-expanded', now ? 'true' : 'false');
+            };
+            el.addEventListener('click', handler);
+            el.addEventListener('touchstart', handler, { passive: false });
+        });
 
         // Header scroll effect
         const header = document.getElementById('header');
