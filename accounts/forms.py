@@ -1,12 +1,21 @@
+"""
+Django forms for the NAA application.
+
+This module contains all form classes for user registration, profile management,
+CPD tracking, committee operations, and public interactions.
+"""
+
 import re
+from datetime import date
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User
-from datetime import date
-from django_ckeditor_5.widgets import CKEditor5Widget
 from django.core.exceptions import ValidationError
+
+from django_ckeditor_5.widgets import CKEditor5Widget
+
 from .models import (
+    User,
     StudentProfile,
     CPDRecord,
     CommitteeReport,
@@ -15,20 +24,56 @@ from .models import (
 )
 
 
+# ============================================================================
+# VALIDATION HELPERS
+# ============================================================================
+
+def clean_phone_number(phone):
+    """
+    Normalize and validate Nigerian phone numbers.
+    
+    Accepts formats: +2348012345678 or 08012345678
+    Returns cleaned phone number or raises ValidationError.
+    """
+    if not phone:
+        return phone
+    
+    # Remove formatting characters
+    phone = phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+    
+    # Validate format
+    if not re.match(r"^(\+234|0)\d{10}$", phone):
+        raise ValidationError(
+            "Phone number must be in format: +2348012345678 or 08012345678"
+        )
+    
+    return phone
+
+
+# ============================================================================
+# USER AUTHENTICATION & REGISTRATION FORMS
+# ============================================================================
+
 class NAAUserCreationForm(UserCreationForm):
-    """Enhanced registration form with validation"""
+    """Enhanced user registration form with comprehensive validation."""
 
     email = forms.EmailField(
         required=True,
         widget=forms.EmailInput(
-            attrs={"class": "form-control", "placeholder": "your.email@example.com"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "your.email@example.com"
+            }
         ),
     )
 
     phone_number = forms.CharField(
         required=False,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "+2348012345678"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "+2348012345678"
+            }
         ),
     )
 
@@ -44,20 +89,25 @@ class NAAUserCreationForm(UserCreationForm):
         ]
         widgets = {
             "username": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Choose a username"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Choose a username"
+                }
             ),
-            "membership_tier": forms.Select(attrs={"class": "form-select"}),
+            "membership_tier": forms.Select(
+                attrs={"class": "form-select"}
+            ),
         }
 
     def clean_username(self):
-        """Validate username"""
+        """Validate username format and uniqueness."""
         username = self.cleaned_data.get("username")
 
-        # Check if username already exists (case-insensitive)
+        # Check uniqueness (case-insensitive)
         if User.objects.filter(username__iexact=username).exists():
             raise ValidationError("This username is already taken.")
 
-        # Check format
+        # Validate format
         if not re.match(r"^[a-zA-Z0-9_]{3,30}$", username):
             raise ValidationError(
                 "Username must be 3-30 characters and can only contain "
@@ -67,10 +117,10 @@ class NAAUserCreationForm(UserCreationForm):
         return username
 
     def clean_email(self):
-        """Validate email"""
+        """Validate email uniqueness and block disposable domains."""
         email = self.cleaned_data.get("email").lower()
 
-        # Check if email already exists
+        # Check uniqueness
         if User.objects.filter(email__iexact=email).exists():
             raise ValidationError("This email address is already registered.")
 
@@ -90,28 +140,11 @@ class NAAUserCreationForm(UserCreationForm):
         return email
 
     def clean_phone_number(self):
-        """Validate and normalize phone number"""
-        phone = self.cleaned_data.get("phone_number")
-
-        if phone:
-            # Remove spaces, dashes, parentheses
-            phone = (
-                phone.replace(" ", "")
-                .replace("-", "")
-                .replace("(", "")
-                .replace(")", "")
-            )
-
-            # Ensure it starts with +234 or 0
-            if not re.match(r"^(\+234|0)\d{10}$", phone):
-                raise ValidationError(
-                    "Phone number must be in format: +2348012345678 or 08012345678"
-                )
-
-        return phone
+        """Validate and normalize phone number."""
+        return clean_phone_number(self.cleaned_data.get("phone_number"))
 
     def clean(self):
-        """Cross-field validation"""
+        """Cross-field validation for passwords and username."""
         cleaned_data = super().clean()
         password1 = cleaned_data.get("password1")
         password2 = cleaned_data.get("password2")
@@ -121,7 +154,7 @@ class NAAUserCreationForm(UserCreationForm):
         if password1 and password2 and password1 != password2:
             raise ValidationError("Passwords do not match.")
 
-        # Ensure password isn't too similar to username
+        # Ensure password doesn't contain username
         if username and password1:
             if username.lower() in password1.lower():
                 raise ValidationError(
@@ -131,6 +164,7 @@ class NAAUserCreationForm(UserCreationForm):
         return cleaned_data
 
     def save(self, commit=True):
+        """Save user with normalized email."""
         user = super().save(commit=False)
         user.email = self.cleaned_data["email"].lower()
 
@@ -140,13 +174,65 @@ class NAAUserCreationForm(UserCreationForm):
         return user
 
 
+class UserUpdateForm(forms.ModelForm):
+    """Form for updating user profile information."""
+
+    first_name = forms.CharField(
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Enter your first name"
+            }
+        ),
+    )
+    
+    last_name = forms.CharField(
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Enter your last name"
+            }
+        ),
+    )
+
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name"]
+
+
+class ProfilePictureForm(forms.ModelForm):
+    """Form for uploading/updating user profile picture."""
+
+    class Meta:
+        model = User
+        fields = ["profile_picture"]
+        widgets = {
+            "profile_picture": forms.FileInput(
+                attrs={"class": "form-control"}
+            )
+        }
+
+
+# ============================================================================
+# STUDENT PROFILE FORMS
+# ============================================================================
+
 class StudentProfileForm(forms.ModelForm):
+    """Form for creating and updating student profiles."""
+
     class Meta:
         model = StudentProfile
         fields = ["university", "matric_number", "level"]
         widgets = {
             "university": forms.Select(
-                attrs={"class": "form-select", "required": True}
+                attrs={
+                    "class": "form-select",
+                    "required": True
+                }
             ),
             "matric_number": forms.TextInput(
                 attrs={
@@ -155,20 +241,24 @@ class StudentProfileForm(forms.ModelForm):
                     "required": True,
                 }
             ),
-            "level": forms.Select(attrs={"class": "form-select", "required": True}),
+            "level": forms.Select(
+                attrs={
+                    "class": "form-select",
+                    "required": True
+                }
+            ),
         }
 
     def clean_matric_number(self):
-        """Validate matric number format"""
+        """Validate matriculation number format and uniqueness."""
         matric = self.cleaned_data.get("matric_number")
 
         if matric:
-            # Convert to uppercase and remove spaces
+            # Normalize: uppercase and remove spaces
             matric = matric.replace(" ", "").upper()
 
-            # Check if it already exists (excluding current instance)
+            # Check uniqueness (excluding current instance)
             existing = StudentProfile.objects.filter(matric_number__iexact=matric)
-
             if self.instance.pk:
                 existing = existing.exclude(pk=self.instance.pk)
 
@@ -177,7 +267,7 @@ class StudentProfileForm(forms.ModelForm):
                     "This matriculation number is already registered."
                 )
 
-            # Basic format validation
+            # Validate format
             if not re.match(r"^[A-Z0-9/]{5,30}$", matric):
                 raise ValidationError(
                     "Invalid matric number format. Use letters, numbers, and slashes only."
@@ -186,15 +276,13 @@ class StudentProfileForm(forms.ModelForm):
         return matric
 
 
-# accounts/forms.py
-class ProfilePictureForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ["profile_picture"]
-        widgets = {"profile_picture": forms.FileInput(attrs={"class": "form-control"})}
-
+# ============================================================================
+# CPD (CONTINUING PROFESSIONAL DEVELOPMENT) FORMS
+# ============================================================================
 
 class CPDSubmissionForm(forms.ModelForm):
+    """Form for submitting CPD activity records."""
+
     class Meta:
         model = CPDRecord
         fields = ["activity_name", "date_completed", "points", "certificate"]
@@ -210,31 +298,39 @@ class CPDSubmissionForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "type": "date",
-                    "max": date.today().isoformat(),  # Can't be future date
+                    "max": date.today().isoformat(),
                 }
             ),
             "points": forms.NumberInput(
-                attrs={"class": "form-control", "min": 1, "max": 50, "value": 5}
+                attrs={
+                    "class": "form-control",
+                    "min": 1,
+                    "max": 50,
+                    "value": 5
+                }
             ),
             "certificate": forms.FileInput(
-                attrs={"class": "form-control", "accept": ".pdf"}
+                attrs={
+                    "class": "form-control",
+                    "accept": ".pdf"
+                }
             ),
         }
 
     def clean_activity_name(self):
-        """Validate activity name"""
+        """Validate activity name length."""
         name = self.cleaned_data.get("activity_name")
 
         if len(name) < 5:
-            raise ValidationError("Activity name is too short.")
+            raise ValidationError("Activity name is too short (minimum 5 characters).")
 
         if len(name) > 255:
-            raise ValidationError("Activity name is too long (max 255 characters).")
+            raise ValidationError("Activity name is too long (maximum 255 characters).")
 
         return name
 
     def clean_date_completed(self):
-        """Ensure date is not in the future"""
+        """Ensure activity date is not in the future."""
         date_completed = self.cleaned_data.get("date_completed")
 
         if date_completed and date_completed > date.today():
@@ -243,7 +339,7 @@ class CPDSubmissionForm(forms.ModelForm):
         return date_completed
 
     def clean_points(self):
-        """Validate CPD points"""
+        """Validate CPD points are within acceptable range."""
         points = self.cleaned_data.get("points")
 
         if points < 1:
@@ -255,7 +351,13 @@ class CPDSubmissionForm(forms.ModelForm):
         return points
 
 
+# ============================================================================
+# COMMITTEE FORMS
+# ============================================================================
+
 class CommitteeReportForm(forms.ModelForm):
+    """Form for uploading committee reports."""
+
     class Meta:
         model = CommitteeReport
         fields = ["title", "file"]
@@ -266,21 +368,38 @@ class CommitteeReportForm(forms.ModelForm):
                     "placeholder": "Monthly Report - Jan 2026",
                 }
             ),
-            "file": forms.FileInput(attrs={"class": "form-control"}),
+            "file": forms.FileInput(
+                attrs={"class": "form-control"}
+            ),
         }
 
 
 class CommitteeAnnouncementForm(forms.ModelForm):
+    """Form for creating committee announcements."""
+
     class Meta:
         model = CommitteeAnnouncement
         fields = ["title", "content"]
         widgets = {
-            "title": forms.TextInput(attrs={"class": "form-control"}),
-            "content": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            "title": forms.TextInput(
+                attrs={"class": "form-control"}
+            ),
+            "content": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 3
+                }
+            ),
         }
 
 
+# ============================================================================
+# CONTENT FORMS
+# ============================================================================
+
 class ArticleSubmissionForm(forms.ModelForm):
+    """Form for submitting articles with rich text content."""
+
     class Meta:
         model = Article
         fields = ["title", "image", "content"]
@@ -289,26 +408,9 @@ class ArticleSubmissionForm(forms.ModelForm):
         }
 
 
-class UserUpdateForm(forms.ModelForm):
-    first_name = forms.CharField(
-        max_length=30,
-        required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Enter your first name"}
-        ),
-    )
-    last_name = forms.CharField(
-        max_length=30,
-        required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Enter your last name"}
-        ),
-    )
-
-    class Meta:
-        model = User
-        fields = ["first_name", "last_name"]
-
+# ============================================================================
+# PUBLIC FORMS
+# ============================================================================
 
 class ContactForm(forms.Form):
     """Form for public contact messages."""
@@ -316,44 +418,67 @@ class ContactForm(forms.Form):
     name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Your Name"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "Your Name"
+            }
         ),
     )
+    
     email = forms.EmailField(
         widget=forms.EmailInput(
-            attrs={"class": "form-control", "placeholder": "your.email@example.com"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "your.email@example.com"
+            }
         )
     )
+    
     phone_number = forms.CharField(
         max_length=15,
         required=False,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "+2348012345678 (Optional)"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "+2348012345678 (Optional)"
+            }
         ),
     )
+    
     subject = forms.CharField(
         max_length=200,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Subject of your message"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "Subject of your message"
+            }
         ),
     )
+    
     message = forms.CharField(
         widget=forms.Textarea(
-            attrs={"class": "form-control", "rows": 5, "placeholder": "Your message"}
+            attrs={
+                "class": "form-control",
+                "rows": 5,
+                "placeholder": "Your message"
+            }
         )
     )
 
     def clean_phone_number(self):
+        """Validate and normalize phone number (optional field)."""
         phone = self.cleaned_data.get("phone_number")
-        if phone:
-            phone = (
-                phone.replace(" ", "")
-                .replace("-", "")
-                .replace("(", "")
-                .replace(")", "")
+        
+        if not phone:
+            return phone
+        
+        # Remove formatting
+        phone = phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+        
+        # Validate (more lenient - +234 prefix is optional)
+        if not re.match(r"^(\+234|0)?\d{10}$", phone):
+            raise ValidationError(
+                "Phone number must be in format: +2348012345678 or 08012345678"
             )
-            if not re.match(r"^(\+234|0)?\d{10}$", phone):
-                raise ValidationError(
-                    "Phone number must be in format: +2348012345678 or 08012345678"
-                )
+        
         return phone
