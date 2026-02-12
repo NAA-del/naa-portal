@@ -507,6 +507,10 @@
         html {
             scroll-behavior: smooth;
         }
+        /* Smooth chevron rotation for mobile dropdowns */
+        .mobile-nav-menu .nav-link .bi-chevron-down {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
     </style>
 </head>
 
@@ -826,15 +830,66 @@
 
         document.querySelectorAll('[data-dropdown-toggle]').forEach(el => {
             const id = el.getAttribute('data-target');
-            const handler = (e) => {
+            let touchStarted = false;
+            
+            // Handle touch devices
+            el.addEventListener('touchstart', (e) => {
+                touchStarted = true;
                 e.preventDefault();
+                e.stopPropagation();
+                
                 const dropdown = document.getElementById(id);
-                const now = !dropdown.classList.contains('show');
-                dropdown.classList.toggle('show', now);
-                el.setAttribute('aria-expanded', now ? 'true' : 'false');
-            };
-            el.addEventListener('click', handler);
-            el.addEventListener('touchstart', handler, { passive: false });
+                const isExpanded = dropdown.classList.contains('show');
+                
+                // Close all other dropdowns first
+                document.querySelectorAll('.mobile-dropdown-content.show').forEach(dd => {
+                    if (dd.id !== id) {
+                        dd.classList.remove('show');
+                    }
+                });
+                
+                // Toggle this dropdown
+                dropdown.classList.toggle('show', !isExpanded);
+                el.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
+                
+                // Rotate chevron icon
+                const chevron = el.querySelector('.bi-chevron-down');
+                if (chevron) {
+                    chevron.style.transform = !isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+                }
+            }, { passive: false });
+            
+            // Handle mouse clicks (desktop/fallback)
+            el.addEventListener('click', (e) => {
+                // If touch already handled it, skip click
+                if (touchStarted) {
+                    touchStarted = false;
+                    return;
+                }
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const dropdown = document.getElementById(id);
+                const isExpanded = dropdown.classList.contains('show');
+                
+                // Close all other dropdowns first
+                document.querySelectorAll('.mobile-dropdown-content.show').forEach(dd => {
+                    if (dd.id !== id) {
+                        dd.classList.remove('show');
+                    }
+                });
+                
+                // Toggle this dropdown
+                dropdown.classList.toggle('show', !isExpanded);
+                el.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
+                
+                // Rotate chevron icon
+                const chevron = el.querySelector('.bi-chevron-down');
+                if (chevron) {
+                    chevron.style.transform = !isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+                }
+            });
         });
 
         // Header scroll effect
