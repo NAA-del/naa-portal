@@ -48,6 +48,13 @@ self.addEventListener('activate', (event) => {
 /* Fetch: Hybrid strategy */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+  const reqOrigin = new URL(request.url).origin;
+  const swOrigin = self.location.origin;
+
+  /* Bypass all cross-origin requests (e.g., Cloudinary, third-party CDNs) */
+  if (reqOrigin !== swOrigin) {
+    return;
+  }
 
   /* Network-first for navigation (HTML) to avoid breaking Django auth/navigation */
   const isNavigation =
