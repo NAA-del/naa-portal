@@ -492,6 +492,64 @@ python manage.py migrate --no-input
 
 ---
 
+## 📱 Progressive Web App (PWA) & Offline Support
+
+### Overview
+- Adds a service worker served as a true root asset via WhiteNoise.
+- Provides reliable offline fallback and modern caching tuned for Django navigation and authentication.
+
+### Root Assets (served at “/”)
+- Service worker: `/sw.js` → [root_assets/sw.js](file:///c:/Users/HP/Desktop/naa_project/root_assets/sw.js)
+- Offline page: `/offline.html` → [root_assets/offline.html](file:///c:/Users/HP/Desktop/naa_project/root_assets/offline.html)
+
+### Settings Integration (WhiteNoise Root)
+```python
+# naa_site/settings.py
+ROOT_ASSETS_DIR = BASE_DIR / "root_assets"
+WHITENOISE_ROOT = ROOT_ASSETS_DIR
+```
+
+### Registration (Silent, CSP‑friendly)
+- Include the registration script in the base template:
+```html
+<!-- accounts/templates/accounts/base.html -->
+<script src="{% static 'js/sw-register.js' %}"></script>
+```
+- Script lives at: [static/js/sw-register.js](file:///c:/Users/HP/Desktop/naa_project/static/js/sw-register.js)
+- Registers `/sw.js` quietly with console logging only.
+
+### Caching Strategy
+- Navigation (HTML): Network‑first to avoid breaking auth/navigation.
+- JavaScript: Network‑first to avoid stale interactivity.
+- CSS: Network‑first to avoid stale UI styles.
+- Images/Fonts/Other static: Stale‑While‑Revalidate at runtime.
+- Cross‑origin requests: Bypassed entirely (e.g., Cloudinary/CDNs).
+- Precache minimal UI shell: `/offline.html`, `/static/images/favicon_bg.png?v=2`, `/static/images/logo.png`.
+- Versioned caches with cleanup on `activate`; bump `SW_VERSION` in `sw.js` for releases.
+
+### Safe Testing
+- Unregister old service workers:
+```javascript
+navigator.serviceWorker.getRegistrations()
+  .then(rs => rs.forEach(r => r.unregister()));
+```
+- Clear caches:
+```javascript
+caches.keys().then(names => Promise.all(names.map(n => caches.delete(n))));
+```
+- Offline verification (Chrome DevTools):
+  - Application → Service Workers → check active worker
+  - Network → toggle “Offline” → navigate pages
+  - Expect `/offline.html` for navigations and cached favicon/logo to display
+
+### Render Deployment Notes
+- Commit `root_assets/` and `static/js/sw-register.js`.
+- No Django views needed for `/sw.js` and `/offline.html` (served via WhiteNoise root).
+- When updating `sw.js`, bump `SW_VERSION` to invalidate old caches.
+- Standard Render build runs `collectstatic`; root assets are served directly and don’t require collection.
+
+---
+
 ## 🧑‍💼 Administrative Workflows
 
 ### Member Verification Process
