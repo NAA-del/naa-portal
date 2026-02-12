@@ -176,6 +176,11 @@ STORAGES = {
     },
 }
 
+# Additional root-level static assets served directly at "/"
+# This allows serving service worker and offline page without Django views
+ROOT_ASSETS_DIR = BASE_DIR / "root_assets"
+WHITENOISE_ROOT = ROOT_ASSETS_DIR
+
 # ============================================================================
 # MEDIA FILES (User Uploads)
 # ============================================================================

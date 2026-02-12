@@ -9,8 +9,8 @@
     
     <!-- Favicon: Use main logo to prevent 404 errors -->
     <link href="{% static 'images/favicon_bg.png' %}?v=2" rel="icon" type="image/png">
-    <link href="{% static 'images/logo.png' %}" rel="shortcut icon" type="image/png">
-    <link href="{% static 'images/logo.png' %}" rel="apple-touch-icon">
+    <link href="{% static 'images/favicon_bg.png' %}?v=2" rel="shortcut icon" type="image/png">
+    <link href="{% static 'images/favicon_bg.png' %}?v=2" rel="apple-touch-icon">
     
     <!-- Modern Font Stack -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -864,6 +864,7 @@
             }, 250);
         });
     </script>
+    <script src="{% static 'js/sw-register.js' %}"></script>
 </body>
 
 </html>
