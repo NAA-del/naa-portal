@@ -43,7 +43,7 @@
         {% include 'accounts/partials/card.html' with 
           card_class='shadow-sm h-100' 
           body_class='p-4' 
-          badge_html='<span class=\"text-primary small\">{{ post.date_posted|date:\"M d, Y\" }}</span>' 
+          subtitle=post.date_posted|date:"M d, Y" 
           link_url=ann_url
           title=post.title 
           text=post.summary|default:post.content|truncatewords:20 
@@ -153,16 +153,31 @@
       {% for article in articles %}
       <div class="col-lg-4">
         {% url 'article_detail' article.pk as art_url %}
-        {% include 'accounts/partials/card.html' with 
-          card_class='border-0 shadow-sm h-100 overflow-hidden' 
-          image_url=article.image.url 
-          image_alt=article.title 
-          body_class='p-4' 
-          title=article.title 
-          text=article.content|striptags|truncatewords:15 
-          action_url=art_url 
-          action_text='Read Full Article →' 
-          action_class='btn btn-link text-primary p-0' %}
+        {% if article.image %}
+          {% with img=article.image.url %}
+            {% include 'accounts/partials/card.html' with 
+              card_class='border-0 shadow-sm h-100 overflow-hidden' 
+              image_url=img 
+              image_alt=article.title 
+              body_class='p-4' 
+              title=article.title 
+              text=article.content|striptags|truncatewords:15 
+              action_url=art_url 
+              action_text='Read Full Article →' 
+              action_class='btn btn-link text-primary p-0' %}
+          {% endwith %}
+        {% else %}
+          {% include 'accounts/partials/card.html' with 
+            card_class='border-0 shadow-sm h-100 overflow-hidden' 
+            image_url=None 
+            image_alt=article.title 
+            body_class='p-4' 
+            title=article.title 
+            text=article.content|striptags|truncatewords:15 
+            action_url=art_url 
+            action_text='Read Full Article →' 
+            action_class='btn btn-link text-primary p-0' %}
+        {% endif %}
         {% empty %}
         <p class="text-center text-muted">Educational articles are coming soon.</p>
         {% endfor %}
