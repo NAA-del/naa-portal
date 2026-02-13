@@ -17,3 +17,7 @@ def list_comp(**kwargs):
 @register.inclusion_tag('components/hero.html')
 def hero(**kwargs):
     return kwargs
+
+@register.inclusion_tag('components/alert.html')
+def alert(**kwargs):
+    return kwargs
