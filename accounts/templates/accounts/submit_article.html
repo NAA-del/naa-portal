@@ -1,5 +1,6 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
+{% load components %}
 
 {% block title %}Submit Professional Article - NAA{% endblock %}
 
@@ -7,7 +8,7 @@
 <div class="container mt-5 pt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            {% include 'accounts/partials/card.html' with 
+            {% card 
                 card_class='shadow-sm border-0' 
                 header_html='<i class="bi bi-pencil-square me-2"></i>Submit Article for NAA Journal' 
                 header_class='bg-primary text-white py-3' 

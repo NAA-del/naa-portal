@@ -1,5 +1,6 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
+{% load components %}
 
 {% block title %}CPD Portfolio - NAA{% endblock %}
 
@@ -41,7 +42,7 @@
         {% endif %}
     </div>
 
-    {% include 'accounts/partials/card.html' with 
+    {% card 
         card_class='border-0 shadow-sm' 
         header_title='Activity History' 
         header_class='bg-white py-3' 

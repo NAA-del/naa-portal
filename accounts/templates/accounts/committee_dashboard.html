@@ -1,4 +1,5 @@
 {% extends 'accounts/base.html' %}
+{% load components %}
 
 {% block title %}{{ committee.name }} Management - NAA{% endblock %}
 
@@ -40,17 +41,17 @@
 
         <div class="col-lg-4">
 
-            {% include 'accounts/partials/card.html' with 
+            {% card 
                card_class='shadow-sm border-0 mb-4' 
                header_html='<h5 class="mb-0 small fw-bold"><i class="bi bi-megaphone me-2"></i>Post Committee Announcement</h5>' 
                header_class='bg-primary text-white py-3' 
                body_partial='accounts/partials/committee_dashboard/post_announcement_form.html' %}
 
-            {% include 'accounts/partials/card.html' with 
+            {% card 
                card_class='shadow-sm border-0 mb-4 p-3' 
                body_partial='accounts/partials/committee_dashboard/recent_announcements.html' %}
 
-            {% include 'accounts/partials/card.html' with 
+            {% card 
                card_class='shadow-sm border-0 mb-4' 
                header_html='<h5 class="mb-0 small fw-bold"><i class="bi bi-file-earmark-arrow-up me-2"></i>Submit Official Report</h5>' 
                header_class='bg-dark text-white py-3' 
@@ -59,7 +60,7 @@
         </div>
 
         <div class="col-lg-8">
-            {% include 'accounts/partials/card.html' with 
+            {% card 
                card_class='shadow-sm border-0 mb-4' 
                body_partial='accounts/partials/committee_dashboard/tabs.html' %}
         </div>

@@ -1,4 +1,5 @@
 {% extends 'accounts/base.html' %}
+{% load components %}
 
 {% block content %}
 <div class="container mt-5 pt-4">
@@ -12,13 +13,13 @@
 
         <div class="col-lg-8">
 
-            {% include 'accounts/partials/card.html' with 
+            {% card 
                card_class='shadow-sm border-0 mb-4' 
                header_title='Teammates' 
                header_class='bg-white fw-bold' 
                body_partial='accounts/partials/committee/teammates_table.html' %}
 
-            {% include 'accounts/partials/card.html' with 
+            {% card 
                card_class='shadow-sm border-0 mb-4' 
                header_html='<i class="bi bi-megaphone me-2"></i>Committee Announcements' 
                header_class='bg-primary text-white fw-bold' 
@@ -28,13 +29,13 @@
 
         <div class="col-lg-4">
 
-            {% include 'accounts/partials/card.html' with 
+            {% card 
                card_class='shadow-sm border-0 mb-4' 
                header_title='Shared Reports' 
                header_class='bg-dark text-white fw-bold' 
                body_partial='accounts/partials/committee/shared_reports_list.html' %}
 
-            {% include 'accounts/partials/card.html' with 
+            {% card 
                card_class='shadow-sm border-0 mb-4' 
                header_title='Committee Info' 
                header_class='bg-info text-white fw-bold' 

@@ -1,5 +1,6 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
+{% load components %}
 
 {% block title %}Resource Library - NAA{% endblock %}
 
@@ -35,7 +36,7 @@
     </div>
     {% endif %}
 
-    {% include 'accounts/partials/card.html' with 
+    {% card 
         card_class='shadow-sm border-0' 
         body_class='p-0' 
         body_partial='accounts/partials/resources/library_table.html' %}

@@ -1,5 +1,6 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
+{% load components %}
 
 {% block title %}Student Hub - NAA{% endblock %}
 
@@ -61,7 +62,7 @@
         <div class="row g-4">
             {% for announcement in student_announcements %}
             <div class="col-md-6">
-                {% include 'accounts/partials/card.html' with 
+                {% card 
                     card_class='border-0 shadow-sm h-100 hover-card' 
                     style='border-radius: 12px; border-left: 4px solid #667eea !important;' 
                     body_class='p-4' 
@@ -175,7 +176,7 @@
     </div>
 
     {% with actions_html='<a href="mailto:nigerianacademyofaudiology@gmail.com" class="btn btn-light btn-lg px-5 btn-rounded"><i class="bi bi-envelope me-2"></i> Contact Us</a>' %}
-    {% include 'accounts/partials/card.html' with card_class='border-0 shadow-sm card-gradient' body_class='p-5 text-center' title='Need Help or Have Questions?' actions_html=actions_html %}
+    {% card card_class='border-0 shadow-sm card-gradient' body_class='p-5 text-center' title='Need Help or Have Questions?' actions_html=actions_html %}
     {% endwith %}
 
 </div>
