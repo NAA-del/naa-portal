@@ -302,10 +302,10 @@ CONTENT_SECURITY_POLICY = {
     "DIRECTIVES": {
         "default-src": ("'self'",),
         "script-src": ("'self'",),
-        "style-src": ("'self'", "'unsafe-inline'"),  # unsafe-inline for Django admin
+        "style-src": ("'self'", "'unsafe-inline'", "https://fonts.googleapis.com"),
         "img-src": ("'self'", "data:", "https:", "res.cloudinary.com"),
-        "font-src": ("'self'",),
-        "connect-src": ("'self'",),
+        "font-src": ("'self'", "https://fonts.gstatic.com", "data:"),
+        "connect-src": ("'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"),
         "frame-ancestors": ("'none'",),
         "base-uri": ("'self'",),
         "form-action": ("'self'",),
