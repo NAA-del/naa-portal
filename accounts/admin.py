@@ -96,6 +96,8 @@ class NAAUserAdmin(BaseUserAdmin):
     search_fields = ("username", "email", "phone_number")
     ordering = ("username",)
 
+    actions = ["send_dashboard_notification", "send_email_to_selected"]
+
     # ================= EDIT USER =================
     fieldsets = BaseUserAdmin.fieldsets + (
         (
@@ -176,6 +178,24 @@ class NAAUserAdmin(BaseUserAdmin):
             request, f"Sent to {queryset.count()} members.", level=messages.SUCCESS
         )
 
+    @admin.action(description="Send email to selected members")
+    def send_email_to_selected(self, request, queryset):
+        email_template = EmailUpdate.objects.filter(is_active=True).first()
+        if not email_template:
+            self.message_user(request, "No active Email Template found.", level=messages.ERROR)
+            return
+        sent = 0
+        failed = 0
+        for user in queryset:
+            ok = EmailService.send_custom_template_email(user, email_template)
+            if ok:
+                sent += 1
+            else:
+                failed += 1
+        if failed == 0:
+            self.message_user(request, f"Emails sent to {sent} members.", level=messages.SUCCESS)
+        else:
+            self.message_user(request, f"Emails sent: {sent}, failed: {failed}.", level=messages.WARNING)
 
 # ================= CPD RECORD ADMIN =================
 @admin.register(CPDRecord)
