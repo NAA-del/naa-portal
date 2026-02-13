@@ -18,6 +18,7 @@
     display: flex;
     align-items: flex-start;
   }
+  .text-normalcase { text-transform: none; }
 </style>
 {% endblock %}
 
@@ -34,7 +35,7 @@
             <div class="col-lg-6">
                 <h2 style="color: #2c4964; font-weight: 700;">Our History</h2>
                 <div style="width: 50px; height: 3px; background: #3fbbc0; margin-bottom: 20px;"></div>
-                <p style="line-height: 1.8; color: #555;">{{ about.history_text|safe|linebreaks }}</p>
+                <p class="text-normalcase" style="line-height: 1.8; color: #555;">{{ about.history_text|safe|linebreaks }}</p>
             </div>
             <div class="col-lg-6">
                 {% if about.history_image %}
@@ -53,13 +54,13 @@
             <div class="col-md-6">
                 <div class="p-4 bg-white h-100 shadow-sm border-start border-4 border-info">
                     <h4 class="text-info"><i class="bi bi-eye"></i> Our Vision</h4>
-                    <p>{{ about.vision|safe }}</p>
+                    <p class="text-normalcase">{{ about.vision|safe }}</p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="p-4 bg-white h-100 shadow-sm border-start border-4 border-primary">
                     <h4 class="text-primary"><i class="bi bi-target"></i> Our Mission</h4>
-                    <p>{{ about.mission|safe }}</p>
+                    <p class="text-normalcase">{{ about.mission|safe }}</p>
                 </div>
             </div>
         </div>

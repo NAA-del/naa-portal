@@ -2,7 +2,7 @@ from django import template
 
 register = template.Library()
 
-@register.inclusion_tag('components/card.html')
+@register.inclusion_tag('accounts/partials/card.html')
 def card(**kwargs):
     return kwargs
 
