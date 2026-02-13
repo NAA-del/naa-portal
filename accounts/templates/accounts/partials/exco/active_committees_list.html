@@ -1,0 +1,8 @@
+<div class="list-group list-group-flush">
+  {% for comm in committees %}
+  <div class="list-group-item d-flex justify-content-between align-items-center">
+    {{ comm.name }}
+    <span class="badge bg-secondary">{{ comm.members.count }} Members</span>
+  </div>
+  {% endfor %}
+</div>

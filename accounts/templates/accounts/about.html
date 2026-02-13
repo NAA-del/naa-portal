@@ -71,18 +71,7 @@
         <div class="section-title text-center mb-5">
             <h2>Aims & Objectives</h2>
         </div>
-        <div class="card p-4 border-0 shadow-sm">
-            <ul class="list-unstyled objective-list">
-                {% for objective in about.aims_and_objectives.splitlines %}
-                    {% if objective %}
-                    <li>
-                        <i class="bi bi-check2-circle text-primary me-3 fs-4"></i>
-                        <span>{{ objective|safe }}</span>
-                    </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
+        {% include 'accounts/partials/accordion.html' with id='objectives' items=about.aims_and_objectives.splitlines prefix='Objective' %}
     </div>
 </section>
 {% endblock %}

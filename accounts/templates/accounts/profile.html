@@ -366,36 +366,11 @@
 
             <!-- COMMITTEE UPDATES -->
             {% if user.committees.exists %}
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; border-left: 4px solid #3fbbc0 !important;">
-                <div class="card-body p-4">
-                    <h5 class="card-title mb-3">
-                        <i class="bi bi-megaphone me-2"></i> Committee Updates
-                    </h5>
-
-                    {% for committee in user.committees.all %}
-                    <div class="mb-3">
-                        <h6 class="fw-bold text-primary mb-2">{{ committee.name }}</h6>
-                        
-                        {% for announcement in committee.announcements.all|dictsortreversed:"date_posted"|slice:":3" %}
-                        <div class="border-bottom pb-2 mb-2">
-                            <p class="fw-bold small mb-1">{{ announcement.title }}</p>
-                            <p class="text-muted small mb-1">
-                                {{ announcement.content|striptags|truncatewords:15 }}
-                            </p>
-                            <small class="text-info">{{ announcement.date_posted|date:"M d, Y" }}</small>
-                        </div>
-                        {% empty %}
-                        <p class="text-muted small mb-0">No recent announcements from this committee.</p>
-                        {% endfor %}
-                    </div>
-                    {% endfor %}
-
-                    <a href="{% url 'committee_workspace' user.committees.first.id %}" 
-                       class="btn btn-sm btn-outline-primary w-100 mt-2">
-                        <i class="bi bi-arrow-right me-2"></i> View All Committee Updates
-                    </a>
-                </div>
-            </div>
+            {% include 'accounts/partials/card.html' with 
+                card_class='border-0 shadow-sm mb-4' 
+                style='border-radius: 12px; border-left: 4px solid #3fbbc0 !important;' 
+                body_class='p-4' 
+                body_partial='accounts/partials/profile/committee_updates.html' %}
             {% endif %}
 
         </div>

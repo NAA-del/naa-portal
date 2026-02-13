@@ -1,0 +1,9 @@
+{% for ann in committee.announcements.all|dictsortreversed:"date_posted" %}
+<div class="border-bottom pb-2 mb-2">
+  <h6 class="mb-1 fw-bold">{{ ann.title }}</h6>
+  <p class="small text-muted mb-0">{{ ann.content|striptags|truncatechars:150 }}</p>
+  <small class="text-muted">Posted: {{ ann.date_posted|date:"M d, Y" }}</small>
+</div>
+{% empty %}
+<p class="text-muted small text-center mt-3">No announcements yet.</p>
+{% endfor %}

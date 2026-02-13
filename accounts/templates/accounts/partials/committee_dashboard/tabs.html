@@ -1,0 +1,93 @@
+  <ul class="nav nav-tabs" id="committeeTab" role="tablist">
+    <li class="nav-item">
+      <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#members" type="button">
+        Committee Members
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#reports" type="button">
+        Submission History
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content pt-3">
+    <div class="tab-pane fade show active" id="members">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+        <h6 class="fw-bold mb-2 mb-md-0">Member Directory</h6>
+
+        <form method="get" action="{% url 'export_committee_members_csv' committee.id %}" class="row g-2">
+          <div class="col-12 col-sm-6 col-md-auto">
+            <label for="start-date" class="form-label small mb-1 d-block d-md-none">Start Date</label>
+            <input type="date" name="start" class="form-control form-control-sm" 
+                   style="min-width: 120px; height: 35px;" title="Start Date" aria-label="Start Date">
+          </div>
+          <div class="col-12 col-sm-6 col-md-auto">
+            <label for="end-date" class="form-label small mb-1 d-block d-md-none">End Date</label>
+            <input type="date" name="end" class="form-control form-control-sm" 
+                   style="min-width: 120px; height: 35px;" title="End Date" aria-label="End Date">
+          </div>
+          <div class="col-12 col-md-auto">
+            <button type="submit" class="btn btn-sm btn-outline-success w-100">
+              <i class="bi bi-download me-1"></i>Export
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Member</th>
+              <th>Tier</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for member in members %}
+            <tr>
+              <td>
+                <strong>{{ member.username }}</strong><br>
+                <small class="text-muted">{{ member.email }}</small>
+              </td>
+              <td>
+                <span class="badge bg-info text-dark">
+                  {{ member.get_membership_tier_display }}
+                </span>
+              </td>
+              <td>
+                {% if member.is_verified %}
+                  <span class="text-success small">Verified</span>
+                {% else %}
+                  <span class="text-warning small">Pending</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="reports">
+      <ul class="list-group list-group-flush">
+        {% for report in reports %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <p class="mb-0 fw-bold">{{ report.title }}</p>
+            <small class="text-muted">{{ report.uploaded_at|date:"M d, Y" }}</small>
+          </div>
+          <div class="btn-group">
+            <a href="{{ report.file.url }}" class="btn btn-sm btn-outline-secondary" target="_blank">View</a>
+            <a href="{% url 'delete_report' report.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this report?');">
+              <i class="bi bi-trash"></i>
+            </a>
+          </div>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-center py-4 text-muted">No reports submitted yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>

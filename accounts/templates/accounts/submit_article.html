@@ -7,42 +7,12 @@
 <div class="container mt-5 pt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white py-3">
-                    <h4 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Submit Article for NAA Journal</h4>
-                </div>
-                <div class="card-body p-4">
-                    <div class="alert alert-info mb-4">
-                        <i class="bi bi-info-circle me-2"></i>
-                        <strong>Note:</strong> All submissions are reviewed by Admin before being published to the public homepage.
-                    </div>
-
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            {{ form.title.label_tag }}
-                            {{ form.title }}
-                        </div>
-                        
-                        <div class="mb-4">
-                            {{ form.image.label_tag }}
-                            {{ form.image }}
-                            <div class="form-text">Upload a high-quality cover image for your article.</div>
-                        </div>
-
-                        <div class="mb-4">
-                            {{ form.content.label_tag }}
-                            {{ form.content }}
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Submit for Review</button>
-                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">Cancel</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            {% include 'accounts/partials/card.html' with 
+                card_class='shadow-sm border-0' 
+                header_html='<i class="bi bi-pencil-square me-2"></i>Submit Article for NAA Journal' 
+                header_class='bg-primary text-white py-3' 
+                body_class='p-4' 
+                body_partial='accounts/partials/articles/submit_article_form.html' %}
         </div>
     </div>
 </div>

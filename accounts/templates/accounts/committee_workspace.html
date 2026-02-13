@@ -12,89 +12,33 @@
 
         <div class="col-lg-8">
 
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-white fw-bold">Teammates</div>
-                <div class="table-responsive">
-                    <table class="table align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Name</th>
-                                <th>Role</th>
-                                <th>Join Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for m in members %}
-                            <tr>
-                                <td>{{ m.get_full_name|default:m.username }}</td>
-                                <td>
-                                    {% if m == committee.director %}
-                                    <span class="badge bg-primary">Director</span>
-                                    {% else %}
-                                    <span class="badge bg-light text-dark">Member</span>
-                                    {% endif %}
-                                </td>
-                                <td class="small text-muted">{{ m.date_joined|date:"M Y" }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            {% include 'accounts/partials/card.html' with 
+               card_class='shadow-sm border-0 mb-4' 
+               header_title='Teammates' 
+               header_class='bg-white fw-bold' 
+               body_partial='accounts/partials/committee/teammates_table.html' %}
 
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-primary text-white fw-bold">
-                    <i class="bi bi-megaphone me-2"></i>Committee Announcements
-                </div>
-                <div class="card-body">
-                    {% for ann in committee.announcements.all|dictsortreversed:"date_posted" %}
-                    <div class="border-bottom pb-2 mb-2">
-                        <h6 class="mb-1 fw-bold">{{ ann.title }}</h6>
-                        <p class="small text-muted mb-0">{{ ann.content|striptags|truncatechars:150 }}</p>
-                        <small class="text-muted">Posted: {{ ann.date_posted|date:"M d, Y" }}</small>
-                    </div>
-                    {% empty %}
-                    <p class="text-muted small text-center mt-3">No announcements yet.</p>
-                    {% endfor %}
-                </div>
-            </div>
+            {% include 'accounts/partials/card.html' with 
+               card_class='shadow-sm border-0 mb-4' 
+               header_html='<i class="bi bi-megaphone me-2"></i>Committee Announcements' 
+               header_class='bg-primary text-white fw-bold' 
+               body_partial='accounts/partials/committee/committee_announcements.html' %}
 
         </div>
 
         <div class="col-lg-4">
 
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-dark text-white fw-bold">Shared Reports</div>
-                <div class="list-group list-group-flush">
-                    {% for report in reports %}
-                    <a href="{{ report.file.url }}" class="list-group-item list-group-item-action py-3" target="_blank">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="small fw-bold d-block">{{ report.title }}</span>
-                                <small class="text-muted">{{ report.uploaded_at|date:"M d, Y" }}</small>
-                            </div>
-                            <i class="bi bi-file-earmark-pdf text-danger fs-4"></i>
-                        </div>
-                    </a>
-                    {% empty %}
-                    <div class="p-4 text-center text-muted small">No shared files yet.</div>
-                    {% endfor %}
-                </div>
-            </div>
+            {% include 'accounts/partials/card.html' with 
+               card_class='shadow-sm border-0 mb-4' 
+               header_title='Shared Reports' 
+               header_class='bg-dark text-white fw-bold' 
+               body_partial='accounts/partials/committee/shared_reports_list.html' %}
 
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-info text-white fw-bold">Committee Info</div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Total Members:</span>
-                        <span class="fw-bold">{{ members|length }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Total Reports:</span>
-                        <span class="fw-bold">{{ reports|length }}</span>
-                    </div>
-                </div>
-            </div>
+            {% include 'accounts/partials/card.html' with 
+               card_class='shadow-sm border-0 mb-4' 
+               header_title='Committee Info' 
+               header_class='bg-info text-white fw-bold' 
+               body_partial='accounts/partials/committee/info_stats.html' %}
 
         </div>
     </div>

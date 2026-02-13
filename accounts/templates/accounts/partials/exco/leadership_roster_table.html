@@ -1,0 +1,22 @@
+<div class="table-responsive">
+  <table class="table align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th>Position</th>
+        <th>Officer Name</th>
+        <th>Term Started</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for officer in leadership_roster %}
+      <tr>
+        <td class="fw-bold">{{ officer.position }}</td>
+        <td>{{ officer.user.get_full_name|default:officer.user.username }}</td>
+        <td>{{ officer.term_start_date|date:"M d, Y" }}</td>
+        <td><span class="badge bg-success">Active</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,18 @@
+<table class="table mb-0 small">
+  <thead>
+    <tr>
+      <th>Committee</th>
+      <th>Date</th>
+      <th>File</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for rpt in latest_reports %}
+    <tr>
+      <td>{{ rpt.committee.name }}</td>
+      <td>{{ rpt.uploaded_at|date:"M d" }}</td>
+      <td><a href="{{ rpt.file.url }}" target="_blank">View</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
