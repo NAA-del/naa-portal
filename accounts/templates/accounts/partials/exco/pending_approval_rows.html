@@ -1,0 +1,9 @@
+{% for member in pending_members %}
+<tr>
+  <td>{{ member.username }}</td>
+  <td>{{ member.get_membership_tier_display }}</td>
+  <td>
+    <a href="{% url 'exco_verify_member' member.id %}" class="btn btn-sm btn-success">Approve Now</a>
+  </td>
+</tr>
+{% endfor %}
