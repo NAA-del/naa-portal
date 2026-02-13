@@ -1,0 +1,8 @@
+{% for officer in leadership_roster %}
+<tr>
+  <td class="fw-bold">{{ officer.position }}</td>
+  <td>{{ officer.user.get_full_name|default:officer.user.username }}</td>
+  <td>{{ officer.term_start_date|date:"M d, Y" }}</td>
+  <td><span class="badge bg-success">Active</span></td>
+</tr>
+{% endfor %}

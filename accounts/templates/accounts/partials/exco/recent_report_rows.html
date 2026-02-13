@@ -1,0 +1,13 @@
+{% for rpt in latest_reports %}
+<tr>
+  <td>{{ rpt.committee.name }}</td>
+  <td>{{ rpt.uploaded_at|date:"M d, Y" }}</td>
+  <td>
+    {% if rpt.file %}
+      <a href="{{ rpt.file.url }}" target="_blank">View</a>
+    {% else %}
+      <span class="text-muted">No File</span>
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}

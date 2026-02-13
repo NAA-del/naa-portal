@@ -1,15 +1,2 @@
-<div class="list-group list-group-flush">
-  {% for report in reports %}
-  <a href="{{ report.file.url }}" class="list-group-item list-group-item-action py-3" target="_blank">
-    <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <span class="small fw-bold d-block">{{ report.title }}</span>
-        <small class="text-muted">{{ report.uploaded_at|date:"M d, Y" }}</small>
-      </div>
-      <i class="bi bi-file-earmark-pdf text-danger fs-4"></i>
-    </div>
-  </a>
-  {% empty %}
-  <div class="p-4 text-center text-muted small">No shared files yet.</div>
-  {% endfor %}
-</div>
+{% load components %}
+{% list_comp container_class='list-group list-group-flush' item_partial='accounts/partials/committee/shared_report_items.html' empty_html='<div class="p-4 text-center text-muted small">No shared files yet.</div>' %}

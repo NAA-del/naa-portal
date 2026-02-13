@@ -1,18 +1,7 @@
-<table class="table mb-0 small">
-  <thead>
-    <tr>
-      <th>Committee</th>
-      <th>Date</th>
-      <th>File</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for rpt in latest_reports %}
-    <tr>
-      <td>{{ rpt.committee.name }}</td>
-      <td>{{ rpt.uploaded_at|date:"M d" }}</td>
-      <td><a href="{{ rpt.file.url }}" target="_blank">View</a></td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% load components %}
+{% table table_class='table mb-0 small' header_html='
+<tr>
+  <th>Committee</th>
+  <th>Date</th>
+  <th>File</th>
+</tr>' body_partial='accounts/partials/exco/recent_report_rows.html' %}
