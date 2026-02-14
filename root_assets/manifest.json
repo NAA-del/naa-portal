@@ -1,6 +1,6 @@
 {
-  "name": "Nigerian Academy of Audiology Portal",
-  "short_name": "NAA Portal",
+  "name": "Nigerian Academy of Audiology APP",
+  "short_name": "NAA APP",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
