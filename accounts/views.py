@@ -277,8 +277,13 @@ def contact_us(request):
             full_message = f"Name: {name}\nEmail: {email}\nPhone: {phone_number}\n\nMessage:\n{message}"
 
             try:
-                from .services import EmailService
-                EmailService.send_basic_email(settings.ADMIN_EMAILS[0], f"NAA Contact Form: {subject}", full_message)
+                send_mail(
+                    subject=f"NAA Contact Form: {subject}",
+                    message=full_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=settings.ADMIN_EMAILS,
+                    fail_silently=False,
+                )
                 messages.success(request, "Your message has been sent successfully!")
                 return redirect("contact")
             except Exception as e:

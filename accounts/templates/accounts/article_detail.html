@@ -1,5 +1,4 @@
 {% extends 'accounts/base.html' %}
-{% load components %}
 
 {% block title %}{{ article.title }}{% endblock %}
 
@@ -7,32 +6,18 @@
 <div class="container mt-5 pt-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
+            <h1 class="fw-bold" style="color: #2c4964;">{{ article.title }}</h1>
+            <p class="text-muted small">Published on {{ article.created_at|date:"M d, Y" }} by {{ article.author.username }}</p>
+            <hr>
+            
             {% if article.image %}
-              {% card 
-                card_class='border-0 shadow-sm' 
-                image_url=article.image.url 
-                image_alt=article.title 
-                body_class='p-4' 
-                title=article.title 
-                text=None 
-                meta_left_text=article.author.username 
-                meta_left_icon_class='bi bi-person-circle' 
-                meta_right_text=article.created_at|date:"M d, Y" 
-                meta_right_icon_class='bi bi-calendar3' 
-                body_html=article.content|safe %}
-            {% else %}
-              {% card 
-                card_class='border-0 shadow-sm' 
-                body_class='p-4' 
-                title=article.title 
-                text=None 
-                meta_left_text=article.author.username 
-                meta_left_icon_class='bi bi-person-circle' 
-                meta_right_text=article.created_at|date:"M d, Y" 
-                meta_right_icon_class='bi bi-calendar3' 
-                body_html=article.content|safe %}
+                <img src="{{ article.image.url }}" class="img-fluid rounded mb-4 w-100" alt="{{ article.title }}">
             {% endif %}
 
+            <div class="article-content" style="line-height: 1.8; font-size: 1.1rem;">
+                {{ article.content|safe }}
+            </div>
+            
             <div class="mt-5 p-4 bg-light rounded">
                 <h5>About the Author</h5>
                 <p class="mb-0">This article was contributed by a verified member of the Nigerian Academy of Audiology.</p>

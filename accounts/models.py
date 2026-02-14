@@ -712,11 +712,89 @@ class AboutPage(models.Model):
 
 
 def send_verification_email(user):
-    from .services import EmailService
+    """
+    Send verification email to newly verified user.
+    Uses SITE_URL and reverse() for links (no hardcoded paths).
+    """
+    from django.urls import reverse
+
     email_template = EmailUpdate.objects.filter(title__icontains="Verification").first()
-    EmailService.send_verification_email(user, email_update_obj=email_template)
+
+    if not email_template or not email_template.sendgrid_template_id:
+        logger.warning(f"No SendGrid Template found for verification.")
+        return
+
+    site_url = settings.SITE_URL.rstrip("/")
+    login_url = site_url + reverse("login")
+    profile_url = site_url + reverse("profile")
+
+    message = Mail(from_email=settings.DEFAULT_FROM_EMAIL, to_emails=user.email)
+
+    message.template_id = email_template.sendgrid_template_id
+
+    message.dynamic_template_data = {
+        "subject": email_template.subject,
+        "username": user.username,
+        "body_text": email_template.message,
+        "login_url": login_url,
+        "profile_url": profile_url,
+        "site_url": site_url,
+    }
+
+    try:
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        sg.send(message)
+        logger.info(f"Verification email sent to {user.email}")
+    except Exception as e:
+        logger.error(f"SendGrid Error: {e}")
 
 
 def send_custom_template_email(user, email_update_obj, context=None):
-    from .services import EmailService
-    return EmailService.send_custom_template_email(user, email_update_obj, context=context)
+    """
+    Send custom email template to user with dynamic site URLs.
+    Uses settings.SITE_URL and reverse() for links (no hardcoded paths).
+
+    Args:
+        user: User instance
+        email_update_obj: EmailUpdate instance
+        context: Optional dict of additional template variables
+
+    Returns:
+        bool: True if email sent successfully
+    """
+    from django.urls import reverse
+
+    if not email_update_obj.sendgrid_template_id or not user.email:
+        return False
+
+    site_url = settings.SITE_URL.rstrip("/")
+    login_url = site_url + reverse("login")
+    profile_url = site_url + reverse("profile")
+
+    message = Mail(from_email=settings.DEFAULT_FROM_EMAIL, to_emails=user.email)
+    message.template_id = email_update_obj.sendgrid_template_id
+
+    template_data = {
+        "subject": email_update_obj.subject,
+        "username": user.username,
+        "body_text": email_update_obj.message,
+        "login_url": login_url,
+        "profile_url": profile_url,
+        "home_url": site_url,
+        "site_url": site_url,
+    }
+
+    # Merge additional context if provided
+    if context:
+        template_data.update(context)
+
+    message.dynamic_template_data = template_data
+
+    try:
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        sg.send(message)
+        logger.info(f"Custom email sent to {user.email}")
+        return True
+    except Exception as e:
+        logger.error(f"Email send error: {e}")
+        return False

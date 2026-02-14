@@ -18,7 +18,6 @@ from .models import (
     CommitteeAnnouncement,
     Article,
 )
-from .services import NotificationService, EmailService
 
 admin.site.site_header = "NAA Portal Management"
 admin.site.site_title = "NAA Admin Portal"
@@ -96,8 +95,6 @@ class NAAUserAdmin(BaseUserAdmin):
     search_fields = ("username", "email", "phone_number")
     ordering = ("username",)
 
-    actions = ["send_dashboard_notification", "send_email_to_selected"]
-
     # ================= EDIT USER =================
     fieldsets = BaseUserAdmin.fieldsets + (
         (
@@ -162,6 +159,7 @@ class NAAUserAdmin(BaseUserAdmin):
 
     @admin.action(description="Notify selected members on their Dashboards")
     def send_dashboard_notification(self, request, queryset):
+        # Fetch the Active template
         email_template = EmailUpdate.objects.filter(is_active=True).first()
 
         if not email_template:
@@ -171,31 +169,25 @@ class NAAUserAdmin(BaseUserAdmin):
             return
 
         for user in queryset:
-            msg = EmailService.render_text(email_template.message, {"username": user.username})
-            NotificationService.create(user, email_template.subject, msg, send_email=False)
+            # 1. Clean the message and ensure replacement works
+            msg = email_template.message
+            # Replace common variations of the placeholder
+            msg = msg.replace("{{username}}", user.username).replace(
+                "{{ username }}", user.username
+            )
+
+            # 2. Create the notification
+            Notification.objects.create(
+                user=user,
+                title=email_template.subject,
+                message=msg,
+                is_read=False,  # Ensure it shows as NEW to the user
+            )
 
         self.message_user(
             request, f"Sent to {queryset.count()} members.", level=messages.SUCCESS
         )
 
-    @admin.action(description="Send email to selected members")
-    def send_email_to_selected(self, request, queryset):
-        email_template = EmailUpdate.objects.filter(is_active=True).first()
-        if not email_template:
-            self.message_user(request, "No active Email Template found.", level=messages.ERROR)
-            return
-        sent = 0
-        failed = 0
-        for user in queryset:
-            ok = EmailService.send_custom_template_email(user, email_template)
-            if ok:
-                sent += 1
-            else:
-                failed += 1
-        if failed == 0:
-            self.message_user(request, f"Emails sent to {sent} members.", level=messages.SUCCESS)
-        else:
-            self.message_user(request, f"Emails sent: {sent}, failed: {failed}.", level=messages.WARNING)
 
 # ================= CPD RECORD ADMIN =================
 @admin.register(CPDRecord)

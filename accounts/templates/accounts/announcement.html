@@ -1,32 +1,30 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
-{% load components %}
 
 {% block content %}
 <section class="section">
   <div class="container">
 
+    <h1 class="mb-2">{{ announcement.title }}</h1>
+
+    <p class="text-muted mb-4">
+      {{ announcement.date_posted|date:"F d, Y" }}
+      {% if announcement.author %}
+        • {{ announcement.author.username }}
+      {% endif %}
+    </p>
+
     {% if announcement.image %}
-      {% card 
-        card_class='border-0 shadow-sm' 
-        image_url=announcement.image.url 
-        image_alt=announcement.title 
-        body_class='p-4' 
-        title=announcement.title 
-        subtitle=announcement.author.username|default:'' 
-        meta_right_text=announcement.date_posted|date:"F d, Y" 
-        meta_right_icon_class='bi bi-calendar3' 
-        body_html=announcement.content|safe %}
-    {% else %}
-      {% card 
-        card_class='border-0 shadow-sm' 
-        body_class='p-4' 
-        title=announcement.title 
-        subtitle=announcement.author.username|default:'' 
-        meta_right_text=announcement.date_posted|date:"F d, Y" 
-        meta_right_icon_class='bi bi-calendar3' 
-        body_html=announcement.content|safe %}
+    <div class="mb-4">
+      <img src="{{ announcement.image.url }}"
+           class="img-fluid rounded shadow-sm"
+           alt="{{ announcement.title }}">
+    </div>
     {% endif %}
+
+    <div class="announcement-content">
+      {{ announcement.content|safe }}
+    </div>
 
   </div>
 </section>

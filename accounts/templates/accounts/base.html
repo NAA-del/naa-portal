@@ -26,8 +26,6 @@
     <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
     <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/css/naa.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/css/components.css' %}" rel="stylesheet">
 
     <style>
         :root {
@@ -772,19 +770,20 @@
         </div>
     </nav>
 
+    <!-- Main Content -->
     <main class="main">
-        <div class="page-container">
-            <div class="page-grid">
-                <div class="grid-span-12">
-                    <div class="container mt-3">
-                        {% include 'accounts/partials/messages.html' %}
-                    </div>
-                </div>
-                <div class="grid-span-12">
-                    {% block content %}{% endblock %}
-                </div>
+        <div class="container mt-3">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+                role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            {% endfor %}
+            {% endif %}
         </div>
+        {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->

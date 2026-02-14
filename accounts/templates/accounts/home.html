@@ -1,6 +1,5 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
-{% load components %}
 
 {% block content %}
 <section id="hero" class="hero section"
@@ -40,17 +39,22 @@
     <div class="row gy-4">
       {% for post in announcements %}
       <div class="col-lg-4 col-md-6">
-        {% url 'announcement' post.pk as ann_url %}
-        {% card 
-          card_class='shadow-sm h-100' 
-          body_class='p-4' 
-          subtitle=post.date_posted|date:"M d, Y" 
-          link_url=ann_url
-          title=post.title 
-          text=post.summary|default:post.content|truncatewords:20 
-          action_url=ann_url 
-          action_text='Read more →' 
-          action_class='btn btn-link text-primary p-0' %}
+        <div class="card shadow-sm h-100 p-4">
+          <span class="text-primary small">{{ post.date_posted|date:"M d, Y" }}</span>
+          <h3 class="mt-2">
+            <a href="{% url 'announcement' post.pk %}">
+              {{ post.title }}
+            </a>
+          </h3>
+
+          <p>
+            {{ post.summary|default:post.content|truncatewords:20 }}
+          </p>
+
+          <a href="{% url 'announcement' post.pk %}" class="small text-primary">
+            Read more →
+          </a>
+        </div>
       </div>
       {% empty %}
       <p class="text-center">No announcements at the moment.</p>
@@ -153,32 +157,19 @@
     <div class="row gy-4">
       {% for article in articles %}
       <div class="col-lg-4">
-        {% url 'article_detail' article.pk as art_url %}
-        {% if article.image %}
-          {% with img=article.image.url %}
-            {% card 
-              card_class='border-0 shadow-sm h-100 overflow-hidden' 
-              image_url=img 
-              image_alt=article.title 
-              body_class='p-4' 
-              title=article.title 
-              text=article.content|striptags|truncatewords:15 
-              action_url=art_url 
-              action_text='Read Full Article →' 
-              action_class='btn btn-link text-primary p-0' %}
-          {% endwith %}
-        {% else %}
-          {% card 
-            card_class='border-0 shadow-sm h-100 overflow-hidden' 
-            image_url=None 
-            image_alt=article.title 
-            body_class='p-4' 
-            title=article.title 
-            text=article.content|striptags|truncatewords:15 
-            action_url=art_url 
-            action_text='Read Full Article →' 
-            action_class='btn btn-link text-primary p-0' %}
-        {% endif %}
+        <div class="card border-0 shadow-sm h-100 overflow-hidden">
+          {% if article.image %}
+          <img src="{{ article.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="fw-bold">{{ article.title }}</h5>
+            <p class="text-muted small">{{ article.content|striptags|truncatewords:15 }}</p>
+
+            <a href="{% url 'article_detail' article.pk %}" class="btn btn-link text-primary p-0">
+              Read Full Article →
+            </a>
+          </div>
+        </div>
         {% empty %}
         <p class="text-center text-muted">Educational articles are coming soon.</p>
         {% endfor %}

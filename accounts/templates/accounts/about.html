@@ -18,7 +18,6 @@
     display: flex;
     align-items: flex-start;
   }
-  .text-normalcase { text-transform: none; }
 </style>
 {% endblock %}
 
@@ -35,7 +34,7 @@
             <div class="col-lg-6">
                 <h2 style="color: #2c4964; font-weight: 700;">Our History</h2>
                 <div style="width: 50px; height: 3px; background: #3fbbc0; margin-bottom: 20px;"></div>
-                <p class="text-normalcase" style="line-height: 1.8; color: #555;">{{ about.history_text|safe|linebreaks }}</p>
+                <p style="line-height: 1.8; color: #555;">{{ about.history_text|safe|linebreaks }}</p>
             </div>
             <div class="col-lg-6">
                 {% if about.history_image %}
@@ -54,13 +53,13 @@
             <div class="col-md-6">
                 <div class="p-4 bg-white h-100 shadow-sm border-start border-4 border-info">
                     <h4 class="text-info"><i class="bi bi-eye"></i> Our Vision</h4>
-                    <p class="text-normalcase">{{ about.vision|safe }}</p>
+                    <p>{{ about.vision|safe }}</p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="p-4 bg-white h-100 shadow-sm border-start border-4 border-primary">
                     <h4 class="text-primary"><i class="bi bi-target"></i> Our Mission</h4>
-                    <p class="text-normalcase">{{ about.mission|safe }}</p>
+                    <p>{{ about.mission|safe }}</p>
                 </div>
             </div>
         </div>
@@ -72,7 +71,18 @@
         <div class="section-title text-center mb-5">
             <h2>Aims & Objectives</h2>
         </div>
-        {% include 'accounts/partials/accordion.html' with id='objectives' items=about.aims_and_objectives.splitlines prefix='Objective' %}
+        <div class="card p-4 border-0 shadow-sm">
+            <ul class="list-unstyled objective-list">
+                {% for objective in about.aims_and_objectives.splitlines %}
+                    {% if objective %}
+                    <li>
+                        <i class="bi bi-check2-circle text-primary me-3 fs-4"></i>
+                        <span>{{ objective|safe }}</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </section>
 {% endblock %}

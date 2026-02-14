@@ -1,6 +1,0 @@
-<div class="alert alert-{{ type|default:'info' }} border-0 shadow-sm {{ extra_classes }}">
-  {% if icon_class %}<i class="{{ icon_class }} me-2"></i>{% endif %}
-  {% if title %}<strong>{{ title }}</strong>{% endif %}
-  {% if body %} {{ body }}{% endif %}
-  {% if body_html %} {{ body_html|safe }}{% endif %}
-</div>

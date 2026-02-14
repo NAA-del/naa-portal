@@ -1,5 +1,4 @@
 {% extends 'accounts/base.html' %}
-{% load components %}
 
 {% block title %}{{ committee.name }} Management - NAA{% endblock %}
 
@@ -41,28 +40,169 @@
 
         <div class="col-lg-4">
 
-            {% card 
-               card_class='shadow-sm border-0 mb-4' 
-               header_html='<h5 class="mb-0 small fw-bold"><i class="bi bi-megaphone me-2"></i>Post Committee Announcement</h5>' 
-               header_class='bg-primary text-white py-3' 
-               body_partial='accounts/partials/committee_dashboard/post_announcement_form.html' %}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 small fw-bold">
+                        <i class="bi bi-megaphone me-2"></i>Post Committee Announcement
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ ann_form.as_p }}
+                        <button type="submit" name="post_announcement" class="btn btn-primary w-100">
+                            Broadcast to Members
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-            {% card 
-               card_class='shadow-sm border-0 mb-4 p-3' 
-               body_partial='accounts/partials/committee_dashboard/recent_announcements.html' %}
+            <div class="card shadow-sm border-0 mb-4 p-3">
+                <h6 class="fw-bold border-bottom pb-2">Recent Announcements</h6>
+                {% for ann in announcements %}
+                <div class="d-flex justify-content-between align-items-start border-bottom pb-2 mb-2">
+                    <div>
+                        <h6 class="mb-0 fw-bold">{{ ann.title }}</h6>
+                        <p class="small text-muted mb-0">
+                            {{ ann.content|truncatechars:100|striptags }}
+                        </p>
+                    </div>
 
-            {% card 
-               card_class='shadow-sm border-0 mb-4' 
-               header_html='<h5 class="mb-0 small fw-bold"><i class="bi bi-file-earmark-arrow-up me-2"></i>Submit Official Report</h5>' 
-               header_class='bg-dark text-white py-3' 
-               body_partial='accounts/partials/committee_dashboard/submit_report_form.html' %}
+                    <form method="post" action="{% url 'delete_announcement' ann.pk %}" class="ms-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-danger p-0" onclick="return confirm('Are you sure?');">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+                {% empty %}
+                <p class="text-muted small text-center mt-3">No announcements yet.</p>
+                {% endfor %}
+            </div>
+
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0 small fw-bold">
+                        <i class="bi bi-file-earmark-arrow-up me-2"></i>Submit Official Report
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ report_form.as_p }}
+                        <button type="submit" name="upload_report" class="btn btn-outline-dark w-100">
+                            Upload for EXCO Review
+                        </button>
+                    </form>
+                </div>
+            </div>
 
         </div>
 
         <div class="col-lg-8">
-            {% card 
-               card_class='shadow-sm border-0 mb-4' 
-               body_partial='accounts/partials/committee_dashboard/tabs.html' %}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+
+                    <ul class="nav nav-tabs" id="committeeTab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#members" type="button">
+                                Committee Members
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#reports" type="button">
+                                Submission History
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content pt-3">
+
+                        <div class="tab-pane fade show active" id="members">
+
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+                                <h6 class="fw-bold mb-2 mb-md-0">Member Directory</h6>
+
+                                <form method="get" action="{% url 'export_committee_members_csv' committee.id %}" class="row g-2">
+                                    <div class="col-12 col-sm-6 col-md-auto">
+                                        <label for="start-date" class="form-label small mb-1 d-block d-md-none">Start Date</label>
+                                        <input type="date" name="start" class="form-control form-control-sm" 
+                                               style="min-width: 120px; height: 35px;" title="Start Date" aria-label="Start Date">
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-auto">
+                                        <label for="end-date" class="form-label small mb-1 d-block d-md-none">End Date</label>
+                                        <input type="date" name="end" class="form-control form-control-sm" 
+                                               style="min-width: 120px; height: 35px;" title="End Date" aria-label="End Date">
+                                    </div>
+                                    <div class="col-12 col-md-auto">
+                                        <button type="submit" class="btn btn-sm btn-outline-success w-100">
+                                            <i class="bi bi-download me-1"></i>Export
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Member</th>
+                                            <th>Tier</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for member in members %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ member.username }}</strong><br>
+                                                <small class="text-muted">{{ member.email }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info text-dark">
+                                                    {{ member.get_membership_tier_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {% if member.is_verified %}
+                                                    <span class="text-success small">Verified</span>
+                                                {% else %}
+                                                    <span class="text-warning small">Pending</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane fade" id="reports">
+                            <ul class="list-group list-group-flush">
+                                {% for report in reports %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="mb-0 fw-bold">{{ report.title }}</p>
+                                        <small class="text-muted">{{ report.uploaded_at|date:"M d, Y" }}</small>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a href="{{ report.file.url }}" class="btn btn-sm btn-outline-secondary" target="_blank">View</a>
+                                        <a href="{% url 'delete_report' report.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this report?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </li>
+                                {% empty %}
+                                <li class="list-group-item text-center py-4 text-muted">No reports submitted yet.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
         </div>
 
     </div>

@@ -1,7 +1,0 @@
-<p class="small text-muted">This will appear on the Home Page for all members.</p>
-<form method="post" action="{% url 'post_national_announcement' %}">
-  {% csrf_token %}
-  <input type="text" name="title" class="form-control mb-2" placeholder="Title">
-  <textarea name="content" class="form-control mb-3" rows="3" placeholder="Message..."></textarea>
-  <button class="btn btn-primary w-100">Publish to Academy</button>
-</form>

@@ -1,6 +1,5 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
-{% load components %}
 
 {% block title %}CPD Portfolio - NAA{% endblock %}
 
@@ -42,12 +41,60 @@
         {% endif %}
     </div>
 
-    {% card 
-        card_class='border-0 shadow-sm' 
-        header_title='Activity History' 
-        header_class='bg-white py-3' 
-        body_class='p-0' 
-        body_partial='accounts/partials/cpd/activity_table.html' %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-bold" style="color: #2c4964;">Activity History</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="px-4 py-3">Date</th>
+                            <th class="py-3">Activity Description</th>
+                            <th class="py-3 text-center">Points</th>
+                            <th class="py-3 text-center">Status</th>
+                            <th class="py-3 text-center">Certificate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                        <tr>
+                            <td class="px-4 py-3">{{ record.date_completed|date:"M d, Y" }}</td>
+                            <td class="py-3 fw-bold text-dark">{{ record.activity_name }}</td>
+                            <td class="py-3 text-center">
+                                <span class="badge rounded-pill bg-info text-dark px-3">{{ record.points }}</span>
+                            </td>
+                            <td class="py-3 text-center">
+                                {% if record.is_verified %}
+                                    <span class="text-success small fw-bold"><i class="bi bi-patch-check-fill"></i> Verified</span>
+                                {% else %}
+                                    <span class="text-warning small">Pending Review</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 text-center">
+                                {% if record.certificate %}
+                                    <a href="{{ record.certificate.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-file-earmark-pdf me-1"></i> View
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted small">No File</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-folder2-open fs-2 d-block mb-2"></i>
+                                No CPD activities recorded yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal for New Activity -->
